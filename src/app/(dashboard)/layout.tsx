@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import {Menu} from '../../components/Menu';
+import Navbar from '@/components/Navbar';
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,7 +35,8 @@ export default function RootLayout({
         bg-[#F7F8FA]
         overflow-scroll"
       >
-        Right
+        <Navbar />
+        {children}
       </div>
       
     </div>
