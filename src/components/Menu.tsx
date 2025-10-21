@@ -41,7 +41,7 @@ export const Menu = () => {
       {menuItems.map((section) => (
         <div key={section.title} className="flex flex-col gap-2">
           {/* Section title */}
-          <span className="hidden lg:block text-gray-400 font-light my-4">
+          <span className="hidden lg:block text-gray-400 font-light my-2">
             {section.title}
           </span>
 
@@ -63,12 +63,12 @@ export const Menu = () => {
             >
               <Image
                 src={item.icon}
-                width={20}
-                height={20}
+                width={15}
+                height={15}
                 alt={item.label}
                 className="transition-transform duration-300 ease-in-out group-hover:rotate-6"
               />
-              <span className="hidden lg:block">{item.label}</span>
+              <span className="hidden lg:block text-sm">{item.label}</span>
             </Link>
           ))}
         </div>
