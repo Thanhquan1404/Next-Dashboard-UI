@@ -11,11 +11,11 @@ const data = [
 
 const CountChart = () => {
   return (
-    <div className="bg-white rounded-2xl w-full h-full p-4 flex flex-col justify-between">
+    <div className="bg-white rounded-2xl w-full h-full p-4 flex flex-col justify-between transition-all duration-300 hover:scale-101 hover:shadow-lg hover:shadow-gray-300/50">
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-lg font-semibold">Student</h1>
-        <Image src="/moredark.png" alt="more-icon" width={20} height={20} />
+        <Image src="/moredark.png" alt="more-icon" width={20} height={20} className="cursor-pointer"/>
       </div>
 
       {/* Chart */}
