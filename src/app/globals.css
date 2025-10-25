@@ -16,3 +16,68 @@
     background: #C3EBFA !important;
     color: black !important;
 }
+
+/* BigCalendar component overide style */
+.rbc-btn-group:first-child{
+  display: none !important;
+}
+.rbc-toolbar-label{
+  text-align: right !important;
+}
+.rbc-btn-group{
+  font-size: 13px !important;
+}
+.rbc-btn-group button{
+  border: none !important;
+  background-color: #f1f0ff !important;
+  margin-left: 2px !important;
+}
+.rbc-toolbar button.rbc-active{
+  background-color: #dbdafe !important;
+  box-shadow: none !important;
+}
+.rbc-time-view{
+  border-color: #eee !important; 
+  border-radius: 15px;
+  background-color: #fff;
+}
+.rbc-time-header{
+  display: none !important;
+}
+.rbc-time-content{
+  border: none !important;
+}
+.rbc-time-slot{
+  font-size: 14px !important;
+  padding: 0 15px !important;
+}
+.rbc-event{
+  border: none !important;
+  width: fit-content !important;
+  font-size: 14px;
+  color: black !important;
+  padding: 10px;
+  margin: 10px;
+  transition: all 0.4s ease-in-out;
+}
+.rbc-event:hover{
+  transform: scale(1.04);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.05);
+}
+.rbc-event:nth-child(1){
+  background-color: #ffaecc !important;
+}
+.rbc-event:nth-child(2){
+  background-color: #bde0fe !important;
+}
+.rbc-event:nth-child(3){
+  background-color: #a2daff !important;
+}
+.rbc-event-label{
+  color: rgba(50,50,50,0.8) !important;
+}
+.rbc-event-content{
+  font-weight: 500 !important;
+  font-size: 15px;
+}

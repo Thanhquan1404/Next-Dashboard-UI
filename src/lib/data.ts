@@ -1,6 +1,6 @@
 // TEMPORARY DATA
 
-export let role = "admin";
+export let role = "student";
 
 export const teachersData = [
   {
@@ -918,146 +918,125 @@ export const announcementsData = [
 
 // YOU SHOULD CHANGE THE DATES OF THE EVENTS TO THE CURRENT DATE TO SEE THE EVENTS ON THE CALENDAR
 export const calendarEvents = [
+  // Week 1
   {
     title: "Math",
     allDay: false,
-    start: new Date(2024, 7, 12, 8, 0),
-    end: new Date(2024, 7, 12, 8, 45),
+    start: new Date(2025, 9, 20, 8, 0),   // Oct 20, 2025 - 08:00
+    end: new Date(2025, 9, 20, 8, 45),
   },
   {
     title: "English",
     allDay: false,
-    start: new Date(2024, 7, 12, 9, 0),
-    end: new Date(2024, 7, 12, 9, 45),
+    start: new Date(2025, 9, 22, 9, 0),   // Oct 21, 2025 - 09:00
+    end: new Date(2025, 9, 22, 9, 45),
   },
   {
     title: "Biology",
     allDay: false,
-    start: new Date(2024, 7, 12, 10, 0),
-    end: new Date(2024, 7, 12, 10, 45),
+    start: new Date(2025, 9, 22, 10, 0),  // Oct 22, 2025 - 10:00
+    end: new Date(2025, 9, 22, 10, 45),
+  },
+  {
+    title: "History",
+    allDay: false,
+    start: new Date(2025, 9, 23, 11, 0),  // Oct 23, 2025 - 11:00
+    end: new Date(2025, 9, 23, 11, 45),
   },
   {
     title: "Physics",
     allDay: false,
-    start: new Date(2024, 7, 12, 11, 0),
-    end: new Date(2024, 7, 12, 11, 45),
+    start: new Date(2025, 9, 24, 8, 0),   // Oct 24, 2025 - 08:00
+    end: new Date(2025, 9, 24, 8, 45),
   },
   {
     title: "Chemistry",
     allDay: false,
-    start: new Date(2024, 7, 12, 13, 0),
-    end: new Date(2024, 7, 12, 13, 45),
-  },
-  {
-    title: "History",
-    allDay: false,
-    start: new Date(2024, 7, 12, 14, 0),
-    end: new Date(2024, 7, 12, 14, 45),
-  },
-  {
-    title: "English",
-    allDay: false,
-    start: new Date(2024, 7, 13, 9, 0),
-    end: new Date(2024, 7, 13, 9, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2024, 7, 13, 10, 0),
-    end: new Date(2024, 7, 13, 10, 45),
-  },
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2024, 7, 13, 11, 0),
-    end: new Date(2024, 7, 13, 11, 45),
+    start: new Date(2025, 9, 25, 9, 0),   // Oct 25, 2025 - 09:00
+    end: new Date(2025, 9, 25, 9, 45),
   },
 
+  // Week 2
   {
-    title: "History",
+    title: "Music",
     allDay: false,
-    start: new Date(2024, 7, 13, 14, 0),
-    end: new Date(2024, 7, 13, 14, 45),
+    start: new Date(2025, 9, 25, 11, 0),  // Oct 27, 2025 - 10:00
+    end: new Date(2025, 9, 25, 11, 45),
   },
   {
-    title: "Math",
+    title: "Geography",
     allDay: false,
-    start: new Date(2024, 7, 14, 8, 0),
-    end: new Date(2024, 7, 14, 8, 45),
+    start: new Date(2025, 9, 25, 13, 0),  // Oct 28, 2025 - 13:00
+    end: new Date(2025, 9, 25, 13, 45),
   },
   {
-    title: "Biology",
+    title: "Art",
     allDay: false,
-    start: new Date(2024, 7, 14, 10, 0),
-    end: new Date(2024, 7, 14, 10, 45),
-  },
-
-  {
-    title: "Chemistry",
-    allDay: false,
-    start: new Date(2024, 7, 14, 13, 0),
-    end: new Date(2024, 7, 14, 13, 45),
+    start: new Date(2025, 9, 25, 8, 0),   // Oct 29, 2025 - 08:00
+    end: new Date(2025, 9, 25, 8, 45),
   },
   {
-    title: "History",
+    title: "Literature",
     allDay: false,
-    start: new Date(2024, 7, 14, 14, 0),
-    end: new Date(2024, 7, 13, 14, 45),
-  },
-  {
-    title: "English",
-    allDay: false,
-    start: new Date(2024, 7, 15, 9, 0),
-    end: new Date(2024, 7, 15, 9, 45),
-  },
-  {
-    title: "Biology",
-    allDay: false,
-    start: new Date(2024, 7, 15, 10, 0),
-    end: new Date(2024, 7, 15, 10, 45),
-  },
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2024, 7, 15, 11, 0),
-    end: new Date(2024, 7, 15, 11, 45),
+    start: new Date(2025, 9, 25, 9, 0),   // Nov 1, 2025 - 09:00
+    end: new Date(2025, 9, 25, 9, 45),
   },
 
+  // Extra activities & duplicates for variety
   {
-    title: "History",
+    title: "Math Review Session",
     allDay: false,
-    start: new Date(2024, 7, 15, 14, 0),
-    end: new Date(2024, 7, 15, 14, 45),
+    start: new Date(2025, 9, 22, 15, 0),  // Oct 22, 2025 - 15:00
+    end: new Date(2025, 9, 22, 16, 0),
   },
   {
-    title: "Math",
+    title: "Science Club Meeting",
     allDay: false,
-    start: new Date(2024, 7, 16, 8, 0),
-    end: new Date(2024, 7, 16, 8, 45),
+    start: new Date(2025, 9, 24, 14, 0),  // Oct 24, 2025 - 14:00
+    end: new Date(2025, 9, 24, 15, 0),
   },
   {
-    title: "English",
+    title: "Class Council Meeting",
     allDay: false,
-    start: new Date(2024, 7, 16, 9, 0),
-    end: new Date(2024, 7, 16, 9, 45),
-  },
-
-  {
-    title: "Physics",
-    allDay: false,
-    start: new Date(2024, 7, 16, 11, 0),
-    end: new Date(2024, 7, 16, 11, 45),
+    start: new Date(2025, 9, 25, 16, 0),  // Oct 25, 2025 - 16:00
+    end: new Date(2025, 9, 25, 17, 0),
   },
   {
-    title: "Chemistry",
+    title: "English Debate Practice",
     allDay: false,
-    start: new Date(2024, 7, 16, 13, 0),
-    end: new Date(2024, 7, 16, 13, 45),
+    start: new Date(2025, 9, 28, 10, 0),  // Oct 28, 2025 - 10:00
+    end: new Date(2025, 9, 28, 11, 0),
   },
   {
-    title: "History",
+    title: "Midterm Exam - Physics",
     allDay: false,
-    start: new Date(2024, 7, 16, 14, 0),
-    end: new Date(2024, 7, 16, 14, 45),
+    start: new Date(2025, 9, 30, 9, 0),   // Oct 30, 2025 - 09:00
+    end: new Date(2025, 9, 30, 10, 0),
+  },
+  {
+    title: "Sports Day",
+    allDay: true,
+    start: new Date(2025, 9, 31),         // Oct 31, 2025
+    end: new Date(2025, 9, 31),
+  },
+  {
+    title: "Parent Meeting",
+    allDay: false,
+    start: new Date(2025, 10, 2, 14, 0),  // Nov 2, 2025 - 14:00
+    end: new Date(2025, 10, 2, 15, 30),
+  },
+  {
+    title: "Group Project Presentation",
+    allDay: false,
+    start: new Date(2025, 10, 3, 9, 0),   // Nov 3, 2025 - 09:00
+    end: new Date(2025, 10, 3, 10, 30),
+  },
+  {
+    title: "Final Exam - Chemistry",
+    allDay: false,
+    start: new Date(2025, 10, 5, 8, 30),  // Nov 5, 2025 - 08:30
+    end: new Date(2025, 10, 5, 10, 0),
   },
 ];
+
+
