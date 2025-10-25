@@ -981,6 +981,12 @@ export const calendarEvents = [
     start: new Date(2025, 9, 25, 9, 0),   // Nov 1, 2025 - 09:00
     end: new Date(2025, 9, 25, 9, 45),
   },
+  {
+    title: "Cycber security",
+    allDay: false,
+    start: new Date(2025, 9, 25, 9, 0),   // Nov 1, 2025 - 09:00
+    end: new Date(2025, 9, 25, 9, 45),
+  },
 
   // Extra activities & duplicates for variety
   {
@@ -1039,4 +1045,102 @@ export const calendarEvents = [
   },
 ];
 
-
+// Set up Sales Dashboard data
+//**** Last week financial data
+export const lastWeekFinancialData = [
+  {
+    title: "Total revenue",
+    amount: 2600000,
+    duration: "from last week",
+    status: "profit",
+    percentage: 10,
+  },
+  {
+    title: "Average order revenue",
+    amount: 455,
+    duration: "from last week",
+    status: "profit",
+    percentage: 10,
+  },
+  {
+    title: "Product sold",
+    amount: 5888,
+    duration: "from last week",
+    status: "profit",
+    percentage: 10,
+  },
+  {
+    title: "Pageviews",
+    amount: 823067,
+    duration: "from last week",
+    status: "profit",
+    percentage: 10,
+  },
+];
+//**** Last week financial comparation
+export const lastWeekFinancialComparation = [
+  {
+    name: "E-Commerce Sales",
+    currentAmount: 28500,
+    pastAmount: 19432,
+    percentage: 46.6,
+    status: "profit",
+    chartData: [
+      { name: "Mon", current: 4200, past: 2900 },
+      { name: "Tue", current: 3800, past: 2800 },
+      { name: "Wed", current: 3600, past: 2600 },
+      { name: "Thu", current: 4600, past: 3200 },
+      { name: "Fri", current: 5800, past: 3400 },
+      { name: "Sat", current: 4200, past: 2100 },
+      { name: "Sun", current: 3300, past: 2232 },
+    ],
+  },
+  {
+    name: "In-Store Retail",
+    currentAmount: 14200,
+    pastAmount: 18950,
+    percentage: -25.1,
+    status: "loss",
+    chartData: [
+      { name: "Mon", current: 1800, past: 2600 },
+      { name: "Tue", current: 1700, past: 2550 },
+      { name: "Wed", current: 1600, past: 2450 },
+      { name: "Thu", current: 2000, past: 2900 },
+      { name: "Fri", current: 2500, past: 3350 },
+      { name: "Sat", current: 2200, past: 3100 },
+      { name: "Sun", current: 2400, past: 2000 },
+    ],
+  },
+  {
+    name: "Digital Subscriptions",
+    currentAmount: 18800,
+    pastAmount: 14200,
+    percentage: 32.4,
+    status: "profit",
+    chartData: [
+      { name: "Mon", current: 2600, past: 2000 },
+      { name: "Tue", current: 2700, past: 1980 },
+      { name: "Wed", current: 2750, past: 1950 },
+      { name: "Thu", current: 2800, past: 2050 },
+      { name: "Fri", current: 2850, past: 2100 },
+      { name: "Sat", current: 2700, past: 2080 },
+      { name: "Sun", current: 2400, past: 2040 },
+    ],
+  },
+  {
+    name: "Enterprise Contracts",
+    currentAmount: 25800,
+    pastAmount: 29800,
+    percentage: -13.4,
+    status: "loss",
+    chartData: [
+      { name: "Mon", current: 3500, past: 4600 },
+      { name: "Tue", current: 3200, past: 4100 },
+      { name: "Wed", current: 3000, past: 3800 },
+      { name: "Thu", current: 3800, past: 4400 },
+      { name: "Fri", current: 4200, past: 4700 },
+      { name: "Sat", current: 3600, past: 3900 },
+      { name: "Sun", current: 2000, past: 3500 },
+    ],
+  },
+];

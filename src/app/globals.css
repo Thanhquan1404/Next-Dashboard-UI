@@ -52,13 +52,15 @@
   padding: 0 15px !important;
 }
 .rbc-event{
+  border-radius: 10px !important;
   border: none !important;
   width: fit-content !important;
   font-size: 14px;
   color: black !important;
-  padding: 10px;
-  margin: 10px;
   transition: all 0.4s ease-in-out;
+  max-width: 180px !important;
+  width: fit-content !important;
+  flex-wrap: wrap;
 }
 .rbc-event:hover{
   transform: scale(1.04);
@@ -69,15 +71,34 @@
   background-color: #ffaecc !important;
 }
 .rbc-event:nth-child(2){
-  background-color: #bde0fe !important;
+  background-color: #E9F5FF !important;
 }
 .rbc-event:nth-child(3){
-  background-color: #a2daff !important;
+  background-color: #CCFFE2 !important;
+}
+.rbc-event:nth-child(4){
+  background-color: #82AAF2 !important;
+}
+.rbc-event:nth-child(5){
+  background-color: #0080F9 !important;
+}
+.rbc-event:nth-child(6){
+  background-color: #cbfbfd !important;
 }
 .rbc-event-label{
-  color: rgba(50,50,50,0.8) !important;
+  margin: 3px 0;
 }
+
 .rbc-event-content{
   font-weight: 500 !important;
   font-size: 15px;
+  display: block;
+}
+@media (max-width: 1285px) {
+  .rbc-event-content {
+    display: none !important;
+  }
+}
+.rbc-timeslot-group{
+  background-color: white !important;
 }
