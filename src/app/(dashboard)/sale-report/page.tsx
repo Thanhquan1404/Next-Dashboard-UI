@@ -1,5 +1,6 @@
 import LastWeekFinancialComparation from "./LastWeekFinancialComparation"
 import LastWeekFinancialReport from "./LastWeekFinancialReport"
+import SalesTable from "./SalesTable"
 // step 1: Set up layout 
 const Page = () => {
   return (
@@ -9,6 +10,8 @@ const Page = () => {
       <LastWeekFinancialReport />
       {/* Last week financial comparation  */}
       <LastWeekFinancialComparation />
+      {/* SALES TABLE  */}
+      <SalesTable />
     </div>
   )
 }

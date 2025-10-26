@@ -1144,3 +1144,106 @@ export const lastWeekFinancialComparation = [
     ],
   },
 ];
+//**** Sales table data structure 
+export type saleRow = {
+  NameUser: string;
+  UserAvatar: string;
+  Company: string;
+  Phone: string;
+  JoiningData: string;
+  Projects: number;
+  Status: "Active" | "Pending" | "Inactive" | "Failed";
+};
+
+export const salesDataRow: saleRow[] = [
+  {
+    NameUser: "Zachary Gomez",
+    UserAvatar: "https://upload.wikimedia.org/wikipedia/commons/d/d7/Cristiano_Ronaldo_playing_for_Al_Nassr_FC_against_Persepolis%2C_September_2023_%28cropped%29.jpg",
+    Company: "IBM",
+    Phone: "+1 454 544 85 58",
+    JoiningData: "8 March 2025",
+    Projects: 21,
+    Status: "Pending",
+  },
+  {
+    NameUser: "Emily Tran",
+    UserAvatar: "https://upload.wikimedia.org/wikipedia/commons/5/59/Emma_Watson_2013.jpg",
+    Company: "Google",
+    Phone: "+84 965 225 899",
+    JoiningData: "12 July 2025",
+    Projects: 34,
+    Status: "Active",
+  },
+  {
+    NameUser: "Michael Chen",
+    UserAvatar: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Michael_Chen_portrait.jpg",
+    Company: "Tencent",
+    Phone: "+86 137 9954 2211",
+    JoiningData: "3 May 2024",
+    Projects: 10,
+    Status: "Inactive",
+  },
+  {
+    NameUser: "Hana Suzuki",
+    UserAvatar: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Haru_Nemuri_at_Japan_Nite_2019_%28cropped%29.jpg",
+    Company: "Sony",
+    Phone: "+81 70 3321 9988",
+    JoiningData: "14 September 2023",
+    Projects: 42,
+    Status: "Active",
+  },
+  {
+    NameUser: "Kim Minho",
+    UserAvatar: "https://upload.wikimedia.org/wikipedia/commons/4/46/Minho_at_a_fansigning_event_in_2021.jpg",
+    Company: "Samsung",
+    Phone: "+82 10 4423 1212",
+    JoiningData: "22 January 2025",
+    Projects: 17,
+    Status: "Pending",
+  },
+  {
+    NameUser: "Anna Schmidt",
+    UserAvatar: "https://upload.wikimedia.org/wikipedia/commons/1/1b/Anna_Schmidt_portrait.jpg",
+    Company: "Siemens",
+    Phone: "+49 162 889 5521",
+    JoiningData: "5 June 2024",
+    Projects: 26,
+    Status: "Active",
+  },
+  {
+    NameUser: "Nguyen Van Nam",
+    UserAvatar: "https://upload.wikimedia.org/wikipedia/commons/8/85/Nguyen_Van_Nam_portrait.jpg",
+    Company: "VNG Corp",
+    Phone: "+84 912 123 456",
+    JoiningData: "18 February 2025",
+    Projects: 9,
+    Status: "Inactive",
+  },
+  {
+    NameUser: "John Carter",
+    UserAvatar: "https://upload.wikimedia.org/wikipedia/commons/8/8d/John_Carter_portrait.jpg",
+    Company: "Amazon",
+    Phone: "+1 202 555 0148",
+    JoiningData: "9 November 2024",
+    Projects: 31,
+    Status: "Active",
+  },
+  {
+    NameUser: "Li Wei",
+    UserAvatar: "https://upload.wikimedia.org/wikipedia/commons/a/a3/Li_Wei_portrait.jpg",
+    Company: "Alibaba",
+    Phone: "+86 189 5544 6622",
+    JoiningData: "1 August 2025",
+    Projects: 12,
+    Status: "Failed",
+  },
+  {
+    NameUser: "Yuna Park",
+    UserAvatar: "https://upload.wikimedia.org/wikipedia/commons/5/52/Yuna_Park_portrait.jpg",
+    Company: "Hyundai",
+    Phone: "+82 10 7777 9999",
+    JoiningData: "15 December 2024",
+    Projects: 24,
+    Status: "Pending",
+  },
+];
