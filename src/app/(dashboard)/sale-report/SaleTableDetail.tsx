@@ -2,6 +2,10 @@
 import { Avatar } from "@mui/material";
 import { salesDataRow, saleRow  } from "@/lib/data";
 import { nationAvatar } from "./nationAvatarIndentification";
+import { useMemo, useState } from "react";
+import SortIcon from "./SortIcon";
+
+
 // table header datatype
 type TableHeaderEntry = {
   id: number;
@@ -79,6 +83,43 @@ const statusComponent = (status: string) => {
 };
 
 const SaleTableDetail = () => {
+  // sort function when click on header
+  /// useState component for handling the sort column and sor direction
+  const [sort, setSort] = useState<{ columnName: keyof saleRow; direction: "asc" | "desc" }>({
+    columnName: "NameUser" as keyof saleRow,
+    direction: "asc",
+  });
+  /// Set the direction whenever click on header
+  const sortFunction = (header: TableHeaderEntry) => {
+    setSort((prev) => ({
+      columnName: header.key,
+      direction:
+        prev.columnName === header.key ? (prev.direction === "asc" ? "desc" : "asc") : "asc",
+    }));
+  }
+
+  const sortedData = useMemo(() => {
+    const arr = [...salesDataRow];
+    arr.sort((a, b) => {
+      const valA = a[sort.columnName];
+      const valB = b[sort.columnName];
+
+      if (typeof valA === "number" && typeof valB === "number") {
+        return sort.direction === "asc" ? valA - valB : valB - valA;
+      }
+      return sort.direction === "asc"
+        ? String(valA).localeCompare(String(valB))
+        : String(valB).localeCompare(String(valA));
+    });
+    return arr;
+  }, [sort]);
+
+  
+
+
+  
+
+
   return (
     <div className="overflow-x-auto border border-gray-200 shadow-sm mt-2">
       <table className="w-full text-sm text-gray-700">
@@ -88,9 +129,13 @@ const SaleTableDetail = () => {
             {tableHeader.map((data) => (
               <th
                 key={data.id}
-                className={`px-6 py-3 text-left font-semibold tracking-wide border-b border-blue-400 ${data.width}`}
-              >
-                {data.label}
+                className={`px-6 py-3 text-left cursor-pointer font-semibold tracking-wide border-b border-blue-400 ${data.width}`}
+                onClick={() => sortFunction(data)}
+              > 
+                <div className="flex gap-2">
+                  {sort.columnName === data.key && <SortIcon direction={sort.direction} className={"size-4"} />}
+                  <span>{data.label}</span>
+                </div>
               </th>
             ))}
           </tr>
@@ -98,7 +143,7 @@ const SaleTableDetail = () => {
 
         {/* BODY */}
         <tbody className="bg-white">
-          {salesDataRow.map((row, i) => (
+          {sortedData.map((row, i) => (
             <tr
               key={i}
               className="hover:bg-blue-50 cursor-pointer transition-colors duration-200 border-b last:border-none"
