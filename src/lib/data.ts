@@ -1,6 +1,6 @@
 // TEMPORARY DATA
 
-export let role = "student";
+export let role = "admin";
 
 export const teachersData = [
   {
@@ -1245,5 +1245,121 @@ export const salesDataRow: saleRow[] = [
     JoiningData: "15 December 2024",
     Projects: 24,
     Status: "Pending",
+  },
+];
+
+// Set up Customer table data
+//**** Declare the tableRowDataType
+export type tableRowDataType = {
+  info: string;
+  gmail: string;
+  customerID: string;
+  majority: string;
+  company: string;
+  phone: string;
+  address: string;
+  actions: string;
+};
+//**** sample dataset
+export const tableRows: tableRowDataType[] = [
+  {
+    info: "Nguyen Van An",
+    gmail: "an.nguyen@gmail.com",
+    customerID: "CUST001",
+    majority: "Retail",
+    company: "AnMart",
+    phone: "+84 912 345 678",
+    address: "12 Nguyen Trai, District 5, HCMC",
+    actions: "View | Edit | Delete",
+  },
+  {
+    info: "Tran Thanh Thao",
+    gmail: "thao.tran@viettrade.vn",
+    customerID: "CUST002",
+    majority: "Wholesale",
+    company: "VietTrade Co., Ltd",
+    phone: "+84 911 234 567",
+    address: "45 Hai Ba Trung, District 1, HCMC",
+    actions: "Verify | Delete",
+  },
+  {
+    info: "Le Minh",
+    gmail: "minh.le@technova.vn",
+    customerID: "CUST003",
+    majority: "Corporate",
+    company: "TechNova Solutions",
+    phone: "+84 905 678 910",
+    address: "22 Pham Van Dong, Thu Duc City",
+    actions: "View | Edit",
+  },
+  {
+    info: "Pham Hoa",
+    gmail: "hoa.pham@smarthome.vn",
+    customerID: "CUST004",
+    majority: "Retail",
+    company: "SmartHome Depot",
+    phone: "+84 937 123 456",
+    address: "90 Le Loi, District 3, HCMC",
+    actions: "View | Delete",
+  },
+  {
+    info: "Nguyen Quan",
+    gmail: "quang.nguyen@megabuild.vn",
+    customerID: "CUST005",
+    majority: "Enterprise",
+    company: "MegaBuild Construction",
+    phone: "+84 902 555 111",
+    address: "8 Nguyen Hue, District 1, HCMC",
+    actions: "View | Edit | Promote",
+  },
+  {
+    info: "Tran Lan",
+    gmail: "lan.tran@ecostyle.vn",
+    customerID: "CUST006",
+    majority: "Retail",
+    company: "EcoStyle Fashion",
+    phone: "+84 916 777 222",
+    address: "34 Tran Hung Dao, District 1, HCMC",
+    actions: "View | Reactivate | Delete",
+  },
+  {
+    info: "Huy Do",
+    gmail: "huy.do@greentech.vn",
+    customerID: "CUST007",
+    majority: "Corporate",
+    company: "GreenTech Energy",
+    phone: "+84 938 111 444",
+    address: "128 Vo Van Tan, District 3, HCMC",
+    actions: "View | Edit",
+  },
+  {
+    info: "Linh Pham",
+    gmail: "linh.pham@quickbuy.vn",
+    customerID: "CUST008",
+    majority: "Retail",
+    company: "QuickBuy Express",
+    phone: "+84 909 888 777",
+    address: "56 Cach Mang Thang 8, District 10, HCMC",
+    actions: "View | Resolve | Delete",
+  },
+  {
+    info: "Thanh Nguyen",
+    gmail: "thanh.nguyen@lotusfood.vn",
+    customerID: "CUST009",
+    majority: "Wholesale",
+    company: "Lotus Food Imports",
+    phone: "+84 919 222 333",
+    address: "77 Nguyen Thi Minh Khai, District 3, HCMC",
+    actions: "View | Edit",
+  },
+  {
+    info: "Duy Tran",
+    gmail: "duy.tran@bluesky.vn",
+    customerID: "CUST010",
+    majority: "Retail",
+    company: "BlueSky Electronics",
+    phone: "+84 903 444 999",
+    address: "21 Ly Thuong Kiet, District 10, HCMC",
+    actions: "View | Reward | Delete",
   },
 ];
