@@ -35,7 +35,8 @@ export default function RootLayout({
         bg-[#F7F8FA]
         overflow-scroll
         flex 
-        flex-col"
+        flex-col
+        pl-4"
       >
         <Navbar />
         {children}

@@ -1,10 +1,11 @@
 import Image from "next/image";
+import { role } from "@/lib/data";
 
 const newAnnouncement = [1, 2, 3, 4];
 
 const Navbar = () => {
   return (
-    <div className="flex items-center justify-between p-4 bg-white shadow-sm">
+    <div className="flex items-center justify-between p-4 bg-transparent shadow-sm">
       {/* Search bar */}
       <div className="hidden md:flex items-center justify-center gap-2 ring-[1.5px] ring-gray-300 rounded-full px-2 text-xs transition-all duration-300 focus-within:ring-purple-400 hover:ring-purple-300">
         <Image
@@ -51,7 +52,7 @@ const Navbar = () => {
           <span className="text-xs leading-3 font-medium">
             Nguyen Thanh Quan
           </span>
-          <span className="text-[12px] text-gray-500">Admin</span>
+          <span className="text-[12px] text-gray-500">{role}</span>
         </div>
 
         {/* Avatar */}

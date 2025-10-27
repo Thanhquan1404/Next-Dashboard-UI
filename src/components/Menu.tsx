@@ -9,7 +9,7 @@ const menuItems = [
     title: "MENU",
     items: [
       { icon: "/home.png", label: "Home", href: "/", visible: ["admin", "teacher", "student", "parent"] },
-      { icon: "/teacher.png", label: "Teachers", href: "/list/teachers", visible: ["admin", "teacher"] },
+      { icon: "/teacher.png", label: "Customers", href: "/customers", visible: ["admin", "teacher"] },
       { icon: "/student.png", label: "Students", href: "/list/students", visible: ["admin", "teacher"] },
       { icon: "/parent.png", label: "Parents", href: "/list/parents", visible: ["admin", "teacher"] },
       { icon: "/subject.png", label: "Subjects", href: "/list/subjects", visible: ["admin"] },
