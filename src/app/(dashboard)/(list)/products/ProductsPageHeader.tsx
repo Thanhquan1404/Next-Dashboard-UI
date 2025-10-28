@@ -14,7 +14,7 @@ const ProductsPageHeader = () => {
   const [sortByOptionSelect, setSortByOptionSelect] = useState(sortByOptions[0]);
 
   return (
-    <div className='w-full flex justify-between items-center'>
+    <div className='w-full flex justify-between items-center px-4'>
       {/* LEFTSIDE COMPONENT  */}
       <div className="w-4/5 flex gap-3">
         {/* ARANGE BUTTON  */}
