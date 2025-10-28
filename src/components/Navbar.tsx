@@ -5,7 +5,7 @@ const newAnnouncement = [1, 2, 3, 4];
 
 const Navbar = () => {
   return (
-    <div className="flex items-center justify-between p-4 bg-transparent shadow-sm">
+    <div className="border-none flex items-center justify-between p-4 bg-transparent">
       {/* Search bar */}
       <div className="hidden md:flex items-center justify-center gap-2 ring-[1.5px] ring-gray-300 rounded-full px-2 text-xs transition-all duration-300 focus-within:ring-purple-400 hover:ring-purple-300">
         <Image
