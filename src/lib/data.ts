@@ -1363,3 +1363,27 @@ export const tableRows: tableRowDataType[] = [
     actions: "View | Reward | Delete",
   },
 ];
+
+// --- PRODUCT DATATYPE ---
+export type ProductDataType = {
+  PRODUCT_NAME: string;
+  PURCHASE_UNIT_PRICE: number;
+  PRODUCTS: number;
+  VIEWS: number;
+  STATUS: string;
+  ACTION: string;
+};
+
+// --- SAMPLE DATA ---
+export const sampleProducts: ProductDataType[] = [
+  { PRODUCT_NAME: "MacBook Pro 16-inch (M3 Max, 2024)", PURCHASE_UNIT_PRICE: 3499, PRODUCTS: 12, VIEWS: 1820, STATUS: "Active", ACTION: "Edit" },
+  { PRODUCT_NAME: "MacBook Air 13-inch (M3, 2024)", PURCHASE_UNIT_PRICE: 1299, PRODUCTS: 24, VIEWS: 2305, STATUS: "Active", ACTION: "Edit" },
+  { PRODUCT_NAME: "iPhone 15 Pro Max", PURCHASE_UNIT_PRICE: 1199, PRODUCTS: 38, VIEWS: 5120, STATUS: "Active", ACTION: "Edit" },
+  { PRODUCT_NAME: "iPhone SE (3rd Generation)", PURCHASE_UNIT_PRICE: 429, PRODUCTS: 45, VIEWS: 870, STATUS: "Low Stock", ACTION: "Edit" },
+  { PRODUCT_NAME: "iPad Pro 12.9-inch (M2, 2023)", PURCHASE_UNIT_PRICE: 1099, PRODUCTS: 18, VIEWS: 1940, STATUS: "Active", ACTION: "Edit" },
+  { PRODUCT_NAME: "Apple Watch Ultra 2", PURCHASE_UNIT_PRICE: 799, PRODUCTS: 25, VIEWS: 1440, STATUS: "Active", ACTION: "Edit" },
+  { PRODUCT_NAME: "AirPods Pro (2nd Generation)", PURCHASE_UNIT_PRICE: 249, PRODUCTS: 65, VIEWS: 3380, STATUS: "Active", ACTION: "Edit" },
+  { PRODUCT_NAME: "Apple Vision Pro", PURCHASE_UNIT_PRICE: 3499, PRODUCTS: 5, VIEWS: 6210, STATUS: "Preorder", ACTION: "Edit" },
+  { PRODUCT_NAME: "HomePod Mini", PURCHASE_UNIT_PRICE: 99, PRODUCTS: 90, VIEWS: 720, STATUS: "Active", ACTION: "Edit" },
+  { PRODUCT_NAME: "Magic Keyboard for iPad Pro", PURCHASE_UNIT_PRICE: 349, PRODUCTS: 40, VIEWS: 450, STATUS: "Out of Stock", ACTION: "Edit" },
+];
