@@ -14,26 +14,26 @@ const CategoryOptions = () => {
   const [storeOption, setStoreOption] = useState(storeOptions[0]);
 
   return (
-    <div className='w-full h-fit flex border-y border-gray-200 gap-5 py-4 px-4'>
+    <div className='w-full h-fit flex gap-5 py-4 px-4 bg-white'>
       {/* CATEGORY SELECTOR  */}
       <div className="flex flex-col gap-2 w-1/4">
-        <span className="text-sm text-gray-700 font-semibold">Category</span>
-        <SelectorComponent width="w-full" rounded="rounded-md" options={categoryOptions} optionSelector={categoryOption} setOptionSelector={setCategoryOption}/>
+        <span className="text-xs text-gray-600 font-semibold">Category</span>
+        <SelectorComponent width="w-full" rounded="rounded-md" options={categoryOptions} optionSelector={categoryOption} setOptionSelector={setCategoryOption} fontSize={"text-xs"}/>
       </div>
       {/* STATUS SELECTOR  */}
       <div className="flex flex-col gap-2 w-1/4">
-        <span className="text-sm text-gray-700 font-semibold">Status</span>
-        <SelectorComponent width="w-full" rounded="rounded-md" options={statusOptions} optionSelector={statusOption} setOptionSelector={setStatusOption}/>
+        <span className="text-xs text-gray-600 font-semibold">Status</span>
+        <SelectorComponent width="w-full" rounded="rounded-md" options={statusOptions} optionSelector={statusOption} setOptionSelector={setStatusOption} fontSize={"text-xs"}/>
       </div>
       {/* PRICE SELECTOR  */}
       <div className="flex flex-col gap-2 w-1/4">
-        <span className="text-sm text-gray-700 font-semibold">Price</span>
-        <SelectorComponent width="w-full" rounded="rounded-md" options={priceOptions} optionSelector={priceOption} setOptionSelector={setPriceOption}/>
+        <span className="text-xs text-gray-600 font-semibold">Price</span>
+        <SelectorComponent width="w-full" rounded="rounded-md" options={priceOptions} optionSelector={priceOption} setOptionSelector={setPriceOption} fontSize={"text-xs"}/>
       </div>
       {/* STORE SELECTOR  */}
       <div className="flex flex-col gap-2 w-1/4">
-        <span className="text-sm text-gray-700 font-semibold">Stores</span>
-        <SelectorComponent width="w-full" rounded="rounded-md" options={storeOptions} optionSelector={storeOption} setOptionSelector={setStoreOption}/>
+        <span className="text-xs text-gray-600 font-semibold">Stores</span>
+        <SelectorComponent width="w-full" rounded="rounded-md" options={storeOptions} optionSelector={storeOption} setOptionSelector={setStoreOption} fontSize={"text-xs"}/>
       </div>
     </div>
   )
