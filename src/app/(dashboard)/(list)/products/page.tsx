@@ -8,10 +8,19 @@ import { useState } from "react";
 const Page = () => {
   // STATE HOOK TO MAKE ADDING WINDOW APPEAR
   const [windowVisible, setWindowVisible] = useState<boolean>(true);
+  // upload image 1 state 
+  const [image1, setImage1] = useState<string | null>(null);
+  // upload image 2 state 
+  const [image2, setImage2] = useState<string | null>(null);
+  // upload image 3 state 
+  const [image3, setImage3] = useState<string | null>(null);
 
   // FUNCTION TO HANDLE 'ADDING' WINDOW TOGGLE
   const handleWindowToggle = (): void => {
     setWindowVisible((prev) => !prev);
+    setImage1(null);
+    setImage2(null);
+    setImage3(null);
   };
 
   return (
@@ -41,7 +50,15 @@ const Page = () => {
           windowVisible ? "bottom-0" : "translate-y-full"
         }`}
       >
-        <AddingProductWindow handleWindowToggle={handleWindowToggle}/>
+        <AddingProductWindow 
+          handleWindowToggle={handleWindowToggle} 
+          image1={image1}
+          image2={image2}
+          image3={image3}
+          setImage1={setImage1}
+          setImage2={setImage2}
+          setImage3={setImage3}
+        />
       </div>
     </div>
   );
