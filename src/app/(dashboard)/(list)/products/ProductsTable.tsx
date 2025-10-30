@@ -91,7 +91,7 @@ const ProductsTable = () => {
 
 
   return (
-    <div className="w-full h-full bg-white shadow-sm p-4 rounded-xl">
+    <div className="w-full h-full bg-white shadow-sm px-4 rounded-xl">
       <table className="w-full border-separate border-spacing-y-2">
         {/* --- TABLE HEADER --- */}
         <thead>

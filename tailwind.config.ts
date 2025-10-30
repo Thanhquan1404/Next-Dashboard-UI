@@ -23,6 +23,7 @@ const config: Config = {
       },
       fontFamily:{
         'michroma': ["Michroma", 'sans-serif'],
+        'orbitron': ["Orbitron", 'sans-serif'],
       }
     },
   },

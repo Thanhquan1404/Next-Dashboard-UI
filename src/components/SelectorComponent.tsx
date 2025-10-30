@@ -4,25 +4,27 @@ import { ChevronDown } from "lucide-react";
 import React from "react";
 
 interface SelectorProps {
-  width?: string; // optional: "w-40", "w-56", etc.
+  width?: string; // e.g. "w-56"
+  height?: string; // 🆕 e.g. "h-10" or "h-[42px]"
   label?: string; // e.g. "Show:" or "Sort by:"
   options: string[];
   optionSelector: string;
   setOptionSelector: React.Dispatch<React.SetStateAction<string>>;
 
-  bgColor?: string; // e.g. "bg-gray-100"
-  hoverBgColor?: string; // e.g. "hover:bg-white/70"
-  textColor?: string; // e.g. "text-gray-700"
-  borderColor?: string; // e.g. "border-gray-200"
-  rounded?: string; // e.g. "rounded-lg" or "rounded-xl"
-  fontSize?: string; // e.g. "text-sm"
-  fontWeight?: string; // e.g. "font-semibold"
-  showIcon?: boolean; // toggle dropdown icon
-  customIcon?: React.ReactNode; // replace ChevronDown
+  bgColor?: string;
+  hoverBgColor?: string;
+  textColor?: string;
+  borderColor?: string;
+  rounded?: string;
+  fontSize?: string;
+  fontWeight?: string;
+  showIcon?: boolean;
+  customIcon?: React.ReactNode;
 }
 
 const SelectorComponent: React.FC<SelectorProps> = ({
   width = "w-56",
+  height = "h-9", 
   label = "Show:",
   options,
   optionSelector,
@@ -39,22 +41,28 @@ const SelectorComponent: React.FC<SelectorProps> = ({
   customIcon,
 }) => {
   return (
-    <div className={`relative ${width}`}>
+    <div className={`relative ${width} ${height}`}>
       <Listbox value={optionSelector} onChange={setOptionSelector}>
         <div className="relative">
           {/* --- Dropdown Button --- */}
           <Listbox.Button
             className={`
               ${bgColor} ${hoverBgColor} ${borderColor}
-              transition-all duration-300 w-full
+              transition-all duration-300 w-full ${height}
               flex justify-between items-center
               backdrop-blur-md border ${rounded}
-              px-4 py-1 ${textColor} shadow-sm
+              px-4 ${textColor} shadow-sm
             `}
           >
             <div className="flex items-center gap-1">
-              {label && <span className="block text-xs text-gray-500">{label}</span>}
-              <span className={`${fontWeight} ${fontSize}`}>{optionSelector}</span>
+              {label && (
+                <span className="block text-xs text-gray-500 whitespace-nowrap">
+                  {label}
+                </span>
+              )}
+              <span className={`${fontWeight} ${fontSize} truncate`}>
+                {optionSelector}
+              </span>
             </div>
 
             {/* Icon */}
