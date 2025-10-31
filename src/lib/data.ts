@@ -1367,6 +1367,7 @@ export const tableRows: tableRowDataType[] = [
 // --- PRODUCT DATATYPE ---
 export type ProductDataType = {
   PRODUCT_NAME: string;
+  PRODUCT_SUBTITLE: string;   // Added subtitle field
   PURCHASE_UNIT_PRICE: number;
   PRODUCTS: number;
   VIEWS: number;
@@ -1376,14 +1377,160 @@ export type ProductDataType = {
 
 // --- SAMPLE DATA ---
 export const sampleProducts: ProductDataType[] = [
-  { PRODUCT_NAME: "MacBook Pro 16-inch (M3 Max, 2024)", PURCHASE_UNIT_PRICE: 3499, PRODUCTS: 12, VIEWS: 1820, STATUS: "Active", ACTION: "Edit" },
-  { PRODUCT_NAME: "MacBook Air 13-inch (M3, 2024)", PURCHASE_UNIT_PRICE: 1299, PRODUCTS: 24, VIEWS: 2305, STATUS: "Active", ACTION: "Edit" },
-  { PRODUCT_NAME: "iPhone 15 Pro Max", PURCHASE_UNIT_PRICE: 1199, PRODUCTS: 38, VIEWS: 5120, STATUS: "Active", ACTION: "Edit" },
-  { PRODUCT_NAME: "iPhone SE (3rd Generation)", PURCHASE_UNIT_PRICE: 429, PRODUCTS: 45, VIEWS: 870, STATUS: "Low Stock", ACTION: "Edit" },
-  { PRODUCT_NAME: "iPad Pro 12.9-inch (M2, 2023)", PURCHASE_UNIT_PRICE: 1099, PRODUCTS: 18, VIEWS: 1940, STATUS: "Active", ACTION: "Edit" },
-  { PRODUCT_NAME: "Apple Watch Ultra 2", PURCHASE_UNIT_PRICE: 799, PRODUCTS: 25, VIEWS: 1440, STATUS: "Active", ACTION: "Edit" },
-  { PRODUCT_NAME: "AirPods Pro (2nd Generation)", PURCHASE_UNIT_PRICE: 249, PRODUCTS: 65, VIEWS: 3380, STATUS: "Active", ACTION: "Edit" },
-  { PRODUCT_NAME: "Apple Vision Pro", PURCHASE_UNIT_PRICE: 3499, PRODUCTS: 5, VIEWS: 6210, STATUS: "Preorder", ACTION: "Edit" },
-  { PRODUCT_NAME: "HomePod Mini", PURCHASE_UNIT_PRICE: 99, PRODUCTS: 90, VIEWS: 720, STATUS: "Active", ACTION: "Edit" },
-  { PRODUCT_NAME: "Magic Keyboard for iPad Pro", PURCHASE_UNIT_PRICE: 349, PRODUCTS: 40, VIEWS: 450, STATUS: "Out of Stock", ACTION: "Edit" },
+  { 
+    PRODUCT_NAME: "MacBook Pro 16-inch (M3 Max, 2024)", 
+    PRODUCT_SUBTITLE: "16-inch - 16GB - 512GB - Space Gray",
+    PURCHASE_UNIT_PRICE: 3499, 
+    PRODUCTS: 12, 
+    VIEWS: 1820, 
+    STATUS: "Active", 
+    ACTION: "Edit" 
+  },
+  { 
+    PRODUCT_NAME: "MacBook Air 13-inch (M3, 2024)", 
+    PRODUCT_SUBTITLE: "13-inch - 8GB - 256GB - Midnight", 
+    PURCHASE_UNIT_PRICE: 1299, 
+    PRODUCTS: 24, 
+    VIEWS: 2305, 
+    STATUS: "Active", 
+    ACTION: "Edit" 
+  },
+  { 
+    PRODUCT_NAME: "iPhone 15 Pro Max", 
+    PRODUCT_SUBTITLE: "6.7-inch - 256GB - Natural Titanium", 
+    PURCHASE_UNIT_PRICE: 1199, 
+    PRODUCTS: 38, 
+    VIEWS: 5120, 
+    STATUS: "Active", 
+    ACTION: "Edit" 
+  },
+  { 
+    PRODUCT_NAME: "iPhone SE (3rd Generation)", 
+    PRODUCT_SUBTITLE: "4.7-inch - 64GB - (Product) Red", 
+    PURCHASE_UNIT_PRICE: 429, 
+    PRODUCTS: 45, 
+    VIEWS: 870, 
+    STATUS: "Low Stock", 
+    ACTION: "Edit" 
+  },
+  { 
+    PRODUCT_NAME: "iPad Pro 12.9-inch (M2, 2023)", 
+    PRODUCT_SUBTITLE: "12.9-inch - 8GB - 256GB - Silver", 
+    PURCHASE_UNIT_PRICE: 1099, 
+    PRODUCTS: 18, 
+    VIEWS: 1940, 
+    STATUS: "Active", 
+    ACTION: "Edit" 
+  },
+  { 
+    PRODUCT_NAME: "Apple Watch Ultra 2", 
+    PRODUCT_SUBTITLE: "49mm - Titanium - Ocean Band", 
+    PURCHASE_UNIT_PRICE: 799, 
+    PRODUCTS: 25, 
+    VIEWS: 1440, 
+    STATUS: "Active", 
+    ACTION: "Edit" 
+  },
 ];
+
+
+// DECLEAR PRODUCT CATEGORY 
+export type productCategoryType = {
+  id: number,
+  key: string,
+  label: string,
+};
+
+export const productCategory: productCategoryType[] = [
+  {
+    id: 1,
+    key: "MACBOOK",
+    label: "Macbook",
+  },
+  {
+    id: 2,
+    key: "IPAD",
+    label: "Ipad",
+  },
+  {
+    id: 3,
+    key: "IPHONE",
+    label: "Phone",
+  },
+  {
+    id: 4,
+    key: "AIRPOD",
+    label: "Air pod",
+  },
+  {
+    id: 5,
+    key: "IMAC",
+    label: "Imac",
+  },
+  {
+    id: 6,
+    key: "MACMINI",
+    label: "Mac mini",
+  },
+  {
+    id: 7,
+    key: "APPLEDISPLAY",
+    label: "Apple display",
+  },
+  {
+    id: 8,
+    key: "ACCESSORIES",
+    label: "Apple accessories"
+  }
+];
+// DECLEAR PRODUCT COLORS
+export type productColorType = {
+  id: number,
+  key: string,
+  colors: string[],
+}
+export const productColor: productColorType[] = [
+  {
+    id: 1,
+    key: "MACBOOK",
+    colors: ["#D4AF37", "#B8B0B0", "#A3AAAE", "#F5F5F7"], 
+  },
+  {
+    id: 2,
+    key: "IPAD",
+    colors: ["#E8C5A3", "#B1B1B1", "#1C1C1E", "#F5F5F7", "#C5B9E3"], // Starlight, Silver, Space Gray, Blue, Purple
+  },
+  {
+    id: 3,
+    key: "IPHONE",
+    // iPhone 15 style colors
+    colors: ["#1C1C1E", "#D4AF37", "#F2F2F2", "#C5B9E3", "#E8C5A3", "#2B6CB0"], // Black, Gold, White, Purple, Starlight, Blue
+  },
+  {
+    id: 4,
+    key: "AIRPOD",
+    colors: ["#F2F2F2"], // White
+  },
+  {
+    id: 5,
+    key: "IMAC",
+    colors: ["#0A84FF", "#FF453A", "#30D158", "#FFD60A", "#BF5AF2", "#FF9F0A", "#F5F5F7"], // Blue, Red, Green, Yellow, Purple, Orange, Silver
+  },
+  {
+    id: 6,
+    key: "MACMINI",
+    colors: ["#B1B1B1", "#1C1C1E"], // Silver, Space Gray
+  },
+  {
+    id: 7,
+    key: "APPLEDISPLAY",
+    colors: ["#F5F5F7", "#A3AAAE"], // Silver, Space Gray
+  },
+  {
+    id: 8,
+    key: "ACCESSORIES",
+    colors: ["#1C1C1E", "#F5F5F7", "#E8C5A3", "#0A84FF", "#FF9F0A"], // Black, White, Starlight, Blue, Orange
+  },
+];
+//get the label only
+export const categoryOption = productCategory.map(item => item.label);

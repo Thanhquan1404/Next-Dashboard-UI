@@ -3,7 +3,8 @@
 import StatusComponent from "./StatusComponent";
 import { useState, useMemo } from "react";
 import SortIcon from "@/components/SortIcon";
-import { ProductDataType, sampleProducts } from "@/lib/data"
+import { ProductDataType } from "@/lib/data"
+import { moneyFormat } from "@/util/moneyFormat";
 // --- HEADER DATATYPE ---
 type HeaderDataType = {
   id: number;
@@ -59,7 +60,11 @@ const tableHeaders: HeaderDataType[] = [
   },
 ];
 
-const ProductsTable = () => {
+interface Props {
+  sampleProducts: ProductDataType[],
+}
+
+const ProductsTable = ({ sampleProducts }: Props) => {
   const [sort, setSort] = useState<{ columnName: keyof ProductDataType; direction: "asc" | "desc" }>({
     columnName: "PRODUCT_NAME" as keyof ProductDataType,
     direction: "desc",
@@ -87,12 +92,12 @@ const ProductsTable = () => {
         : String(valB).localeCompare(String(valA));
     });
     return arr;
-  }, [sort]);
+  }, [sort, sampleProducts]); // Asurance for changing in sampleProducts item
 
 
   return (
     <div className="w-full h-full bg-white shadow-sm px-4 rounded-xl">
-      <table className="w-full border-separate border-spacing-y-2">
+      <table className="w-full border-separate border-spacing-y-1">
         {/* --- TABLE HEADER --- */}
         <thead>
           <tr className="text-gray-400 font-semibold text-sm">
@@ -164,6 +169,24 @@ const ProductsTable = () => {
                           </svg>
                         </button>
                       </div>
+                    </td>
+                  );
+                }
+
+                // PRICE COLUMN 
+                if (column.key === "PURCHASE_UNIT_PRICE") {
+                  return (
+                    <td key={idx} className="py-2">
+                      <div className={`flex ${column.justifyItems}`}>{ moneyFormat(row["PURCHASE_UNIT_PRICE"])}$</div>
+                    </td>
+                  );
+                }
+
+                if (column.key === "PRODUCT_NAME") {
+                  return (
+                    <td key={idx} className="py-2">
+                      <div className={`flex ${column.justifyItems}`}>{row["PRODUCT_NAME"]}</div>
+                      <div className="text-xs text-gray-400 mt-1">{row["PRODUCT_SUBTITLE"]}</div>
                     </td>
                   );
                 }

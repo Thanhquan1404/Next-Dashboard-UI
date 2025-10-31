@@ -4,10 +4,13 @@ import CategoryOptions from "./CategoryOptions";
 import ProductsPageHeader from "./ProductsPageHeader";
 import ProductsTable from "./ProductsTable";
 import { useState } from "react";
+import { sampleProducts, ProductDataType } from "@/lib/data";
 
 const Page = () => {
+  // STATE HOOK TO HANDLE PRODUCTS ARRAY
+  const [products, setProducts] = useState<ProductDataType[]>(sampleProducts);
   // STATE HOOK TO MAKE ADDING WINDOW APPEAR
-  const [windowVisible, setWindowVisible] = useState<boolean>(true);
+  const [windowVisible, setWindowVisible] = useState<boolean>(false);
   // upload image 1 state 
   const [image1, setImage1] = useState<string | null>(null);
   // upload image 2 state 
@@ -22,6 +25,12 @@ const Page = () => {
     setImage2(null);
     setImage3(null);
   };
+  // FUNCTION TO HANDLE 'ADDING PRODUCT' ACTION
+  const handleAddingProductEvent = (newProduct: ProductDataType): void => {
+    const arr = [...products];
+    arr.push(newProduct);
+    setProducts(arr);
+  }
 
   return (
     <div className="w-full h-full relative overflow-hidden">
@@ -31,7 +40,7 @@ const Page = () => {
         {/* CATEGORY FILTER */}
         <CategoryOptions />
         {/* PRODUCT TABLE */}
-        <ProductsTable />
+        <ProductsTable sampleProducts={products}/>
       </div>
 
       {/* --- BACKDROP OVERLAY --- */}
@@ -39,7 +48,7 @@ const Page = () => {
         className={`fixed inset-0 z-[90] transition-all duration-500 ${
           windowVisible
             ? "bg-black/40 backdrop-blur-sm visible opacity-100"
-             : "" //"invisible opacity-0"
+             : "invisible opacity-0"
         }`}
         onClick={handleWindowToggle} // click outside to close
       ></div>
@@ -58,6 +67,7 @@ const Page = () => {
           setImage1={setImage1}
           setImage2={setImage2}
           setImage3={setImage3}
+          handleAddingProductEvent={handleAddingProductEvent}
         />
       </div>
     </div>
