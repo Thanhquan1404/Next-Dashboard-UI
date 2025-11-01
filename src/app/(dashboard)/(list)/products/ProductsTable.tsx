@@ -1,5 +1,11 @@
 "use client";
 
+// step 1: Inherit the adding window to show the detail product display, enable to make edit on this
+// step 2: re-change the structure of data of sample products in form which could illustrate all fields of a product
+// step 3: in detail, whenever we click on the edit button of a specific products, retrieve its key or ID value
+// step 4: base on this ID, let retrieve its element in database
+// step 5: let use state to handle original data, if there is any changes, the state could catch up, in this case, we could assign to the old one
+
 import StatusComponent from "./StatusComponent";
 import { useState, useMemo } from "react";
 import SortIcon from "@/components/SortIcon";
@@ -62,9 +68,11 @@ const tableHeaders: HeaderDataType[] = [
 
 interface Props {
   sampleProducts: ProductDataType[],
+  handleWindowToggle: () => void,
+  handleDetailProductWindowToggle: (product: HTMLElement) => void,
 }
 
-const ProductsTable = ({ sampleProducts }: Props) => {
+const ProductsTable = ({ sampleProducts, handleWindowToggle, handleDetailProductWindowToggle }: Props) => {
   const [sort, setSort] = useState<{ columnName: keyof ProductDataType; direction: "asc" | "desc" }>({
     columnName: "PRODUCT_NAME" as keyof ProductDataType,
     direction: "desc",
@@ -137,7 +145,7 @@ const ProductsTable = ({ sampleProducts }: Props) => {
                 // ACTION COLUMN
                 if (column.key === "ACTION") {
                   return (
-                    <td key={idx} className="py-2">
+                    <td key={idx} className="py-2" id={row["PRODUCT_ID"]}>
                       <div className="flex justify-end gap-2 text-xs">
                         {/* EDIT BUTTON */}
                         <button
@@ -147,6 +155,13 @@ const ProductsTable = ({ sampleProducts }: Props) => {
                             transition-all duration-300 ease-in-out
                             hover:bg-blue-600 hover:scale-105 hover:shadow-md
                           "
+                          onClick={(e) => {
+                            const element = e.currentTarget.closest("td");
+                            handleWindowToggle();
+                            if (element) {
+                              handleDetailProductWindowToggle(element);
+                            }
+                          }}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
                             <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />

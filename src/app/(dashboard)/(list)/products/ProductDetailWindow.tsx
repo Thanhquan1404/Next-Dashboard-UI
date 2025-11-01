@@ -1,78 +1,85 @@
 "use client";
-import SelectorComponent from "@/components/SelectorComponent";
+import { sampleDetailProducts, ProductDetailType, productCategory, productColor, categoryOption, discountOption } from "@/lib/data";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import UploadImageIcon from "@/components/UploadImageIcon";
 import { Listbox } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
-import { useState } from "react";
-import { productCategoryType, discountOption, productCategory, productColor, productColorType, categoryOption, ProductDataType } from "@/lib/data";
-import UploadImageIcon from "@/components/UploadImageIcon";
-import { randomUUID } from "crypto";
+import SelectorComponent from "@/components/SelectorComponent";
+
 
 interface Props {
+  productID: string | null;
+  image1: string | null;
+  image2: string | null;
+  image3: string | null;
+  setImage1: React.Dispatch<React.SetStateAction<string | null>>;
+  setImage2: React.Dispatch<React.SetStateAction<string | null>>;
+  setImage3: React.Dispatch<React.SetStateAction<string | null>>;
   handleWindowToggle: () => void,
-  image1: string | null,
-  setImage1: React.Dispatch<React.SetStateAction<string | null>>,
-  image2: string | null,
-  setImage2: React.Dispatch<React.SetStateAction<string | null>>,
-  image3: string | null,
-  setImage3: React.Dispatch<React.SetStateAction<string | null>>,
-  handleAddingProductEvent: (newProduct: ProductDataType) => void,
 }
 
-
-const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setImage1, setImage2, setImage3, handleAddingProductEvent }: Props) => {
-  // DISCOUNT STATE
-  const [discount, setDiscount] = useState<string>(discountOption[0]);
-
-  // CATEGORY + COLOR STATE
-  const [selectedCategory, setSelectedCategory] = useState<string>(categoryOption[0]);
+const ProductDetailWindow = ({ productID, image1, image2, image3, setImage1, setImage2, setImage3, handleWindowToggle }: Props) => {
+  // RETRIEVE PRODUCT FROM DETAIL PRODUCT ARRAY
+  const retrievedProduct = useMemo(() => {
+    return sampleDetailProducts.find((item) => item.PRODUCT_ID === productID);
+  }, [productID]);
+  // STATE TO HANDLE ALL DETAIL PRODUCT DATATYPE 
+  const [selectedProduct, setSelectedProduct] = useState<ProductDetailType>({
+    PRODUCT_ID: "",
+    PRODUCT_CATEGORY: "",
+    PRODUCT_NAME: "",
+    PRODUCT_BRAND: "",
+    DESCRIPTION: "",
+    PRODUCT_SUBTITLE: "",
+    PURCHASE_UNIT_PRICE: 0,
+    PRODUCTS: 0,
+    VIEWS: 0,
+    STATUS: "",
+    IMAGE1_URL: "",
+    IMAGE2_URL: "",
+    IMAGE3_URL: "",
+    TAG: "",
+    DISCOUNT: 0,
+    DISCOUNT_TYPE: "",
+    COLOR: "",
+  });
+  // SET UP ALL STATE TO HANDLE ALL SELECTOR 
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [availableColor, setAvailableColor] = useState<string[] | null>(productColor[0].colors);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [discount, setDiscount] = useState<string>("");
+  // EFFECT HOOK TO ASSIGN ALL RETRIEVE INFORMATION TO HOOK
+  useEffect(() => {
+  if (retrievedProduct) {
+    setSelectedProduct({
+      PRODUCT_ID: retrievedProduct.PRODUCT_ID,
+      PRODUCT_CATEGORY: retrievedProduct.PRODUCT_CATEGORY,
+      PRODUCT_NAME: retrievedProduct.PRODUCT_NAME,
+      PRODUCT_BRAND: retrievedProduct.PRODUCT_BRAND,
+      DESCRIPTION: retrievedProduct.DESCRIPTION || "",
+      PRODUCT_SUBTITLE: retrievedProduct.PRODUCT_SUBTITLE,
+      PURCHASE_UNIT_PRICE: retrievedProduct.PURCHASE_UNIT_PRICE,
+      PRODUCTS: retrievedProduct.PRODUCTS,
+      VIEWS: retrievedProduct.VIEWS,
+      STATUS: retrievedProduct.STATUS,
+      IMAGE1_URL: retrievedProduct.IMAGE1_URL || "",
+      IMAGE2_URL: retrievedProduct.IMAGE2_URL || "",
+      IMAGE3_URL: retrievedProduct.IMAGE3_URL || "",
+      TAG: retrievedProduct.TAG || "",
+      DISCOUNT: retrievedProduct.DISCOUNT || 0,
+      DISCOUNT_TYPE: retrievedProduct.DISCOUNT_TYPE || "",
+      COLOR: retrievedProduct.COLOR,
+    });
 
-  // INPUT ELEMENT STATE
-  const [inputProductName, setInputProductsName] = useState<string>("");
-  const [inputBrandName, setInputBrandName] = useState<string>("");
-  const [inputProductNumber, setInputProductsNumber] = useState<string>("");
-  const [inputProductDescription, setInputProductDesccription] = useState<string>("");
-  const [inputProductPrice, setInputProductPrice] = useState<string>("");
-
-
-  // HANDLE 'PUBLISH' ICON BUTTON
-  const handlePublishButtonToggle = () => {
-    const newProduct: ProductDataType = {
-      PRODUCT_ID: crypto.randomUUID(),
-      PRODUCT_NAME: inputProductName || "",
-      PRODUCT_SUBTITLE: "",
-      PURCHASE_UNIT_PRICE: Number(inputProductPrice) || 0,
-      PRODUCTS: Number(inputProductNumber) || 0,
-      VIEWS: 1,
-      STATUS: "Active",
-      ACTION: "Edit",
-    };
-
-    if (!newProduct.PRODUCT_NAME) {
-      alert("⚠️ Please enter a product name!");
-    } else if (newProduct.PURCHASE_UNIT_PRICE <= 0) {
-      alert("⚠️ Please enter a valid product price greater than 0!");
-    } else if (newProduct.PRODUCTS <= 0) {
-      alert("⚠️ Please enter a valid product quantity greater than 0!");
-    } else {
-      alert("✅ Product added successfully!");
-      console.log("New product:", newProduct);
-    }
-
-    handleAddingProductEvent(newProduct);
-
-    setInputProductsName("");
-    setInputBrandName("");
-    setInputProductsNumber("");
-    setInputProductDesccription("");
-    setInputProductPrice("");
-    setImage1(null);
-    setImage2(null);
-    setImage3(null);
+    setSelectedCategory(retrievedProduct.PRODUCT_CATEGORY);
+    setDiscount(retrievedProduct.DISCOUNT_TYPE || "");
   }
+}, [retrievedProduct]); 
 
+
+
+  //
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
     const selectedCategoryKey = productCategory.find(item => item.label === category)?.key;
@@ -82,6 +89,13 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
       setAvailableColor(colors);
       setSelectedColor(null);
     }
+  }
+
+  // HANDLE THE UNIDENTIFIED PRODUCT
+  if (!retrievedProduct) {
+    return (
+      <div className="p-5 text-gray-600">Product not found</div>
+    );
   }
 
   return (
@@ -103,8 +117,8 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
               <input
                 type="text"
                 placeholder="Product name..."
-                onChange={(e) => setInputProductsName(e.target.value)}
-                value={inputProductName || ""}
+                // onChange={(e) => setInputProductsName(e.target.value)}
+                value={selectedProduct.PRODUCT_NAME || ""}
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
             </div>
@@ -115,8 +129,8 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
               <input
                 type="text"
                 placeholder="Brand..."
-                onChange={(e) => setInputBrandName(e.target.value)}
-                value={inputBrandName || ""}
+                // onChange={(e) => setInputBrandName(e.target.value)}
+                value={selectedProduct.PRODUCT_BRAND || ""}
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
             </div>
@@ -154,8 +168,8 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
               <input
                 type="text"
                 placeholder="Number of products"
-                onChange={(e) => setInputProductsNumber(e.target.value)}
-                value={inputProductNumber || ""}
+                // onChange={(e) => setInputProductsNumber(e.target.value)}
+                value={selectedProduct.PRODUCTS || ""}
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
             </div>
@@ -166,7 +180,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
             <span className="px-1 text-gray-600">Description</span>
             <textarea
               placeholder="Description..."
-              onChange={(e) => setInputProductDesccription(e.target.value)}
+              // onChange={(e) => setInputProductDesccription(e.target.value)}
               className="border rounded-lg px-3 py-2 text-xs resize-none h-full focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
             ></textarea>
           </div>
@@ -179,31 +193,36 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
               <input
                 type="text"
                 placeholder="Sale price"
-                onChange={ (e) => setInputProductPrice(e.target.value)}
-                value={inputProductPrice || ""}
+                // onChange={(e) => setInputProductPrice(e.target.value)}
+                value={selectedProduct.PURCHASE_UNIT_PRICE || ""}
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
             </div>
 
             {/* DISCOUNT */}
-            <div className="flex flex-col w-1/2 gap-1 text-sm font-normal gap-1">
+            <div className="flex flex-col w-1/2 gap-1 text-sm font-normal">
               <span className="px-1 text-gray-600">Discount</span>
-              <div className="flex gap-2 items-center">
-                <input
-                  type="text"
-                  placeholder="Discount"
-                  className="border rounded-lg w-3/4 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
-                />
-                <SelectorComponent
-                  options={discountOption}
-                  optionSelector={discount}
-                  setOptionSelector={setDiscount}
-                  rounded="rounded-lg"
-                  width="w-2/5"
-                  fontSize="text-sm"
-                  height="h-10"
-                />
-              </div>
+              <Listbox value={discount} onChange={setDiscount}>
+                <div className="relative">
+                  <Listbox.Button className="border rounded-lg px-4 py-2 w-full text-left flex justify-between items-center text-xs text-gray-800 focus:ring-2 focus:ring-blue-400 transition-all duration-200">
+                    <span className={discount ? "text-gray-900" : "text-gray-500"}>
+                      {discount || "No discount"}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                  </Listbox.Button>
+                  <Listbox.Options className="absolute z-10 mt-2 w-full bg-white rounded-xl shadow-lg ring-1 ring-gray-200 max-h-60 overflow-auto">
+                    {discountOption.map((option) => (
+                      <Listbox.Option
+                        key={option}
+                        value={option}
+                        className="cursor-pointer px-4 py-2 text-xs text-gray-700 hover:bg-gray-100 transition-all duration-200"
+                      >
+                        {option}
+                      </Listbox.Option>
+                    ))}
+                  </Listbox.Options>
+                </div>
+              </Listbox>
             </div>
           </div>
 
@@ -231,8 +250,8 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
           <button className="border-[1px] px-4 py-2 rounded-lg text-xs hover:bg-gray-100 transition-all duration-200" onClick={() => handleWindowToggle()}>
             Cancel
           </button>
-          <button onClick={handlePublishButtonToggle} className="px-4 py-2 rounded-lg text-xs bg-blue-500 text-white/90 hover:bg-blue-600 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-sm">
-            Publish
+          <button className="px-4 py-2 rounded-lg text-xs bg-blue-500 text-white/90 hover:bg-blue-600 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-sm">
+            Confirm
           </button>
         </div>
       </div>
@@ -255,15 +274,18 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
           <div className="w-full h-[220px] gap-4 flex">
             {/* MAIN IMAGE */}
             <div className="w-1/2 h-full border rounded-lg flex justify-center items-center relative overflow-hidden group">
-              {image1 ? (
+              {selectedProduct.IMAGE1_URL ? (
                 <Image
-                  src={image1}
+                  src={selectedProduct.IMAGE1_URL}
                   alt="Preview"
                   fill
                   className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                 />
               ) : (
-                <UploadImageIcon image={image1} setImage={setImage1} />
+                <UploadImageIcon
+                  image={image1}
+                  setImage={setImage1}
+                />
               )}
             </div>
 
@@ -271,9 +293,9 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
             <div className="w-1/2 h-full gap-3 flex flex-col rounded-lg">
               {/* SECOND IMAGE */}
               <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                {image2 ? (
+                {selectedProduct.IMAGE2_URL ? (
                   <Image
-                    src={image2}
+                    src={selectedProduct.IMAGE2_URL}
                     alt="Preview"
                     fill
                     className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
@@ -285,9 +307,9 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
 
               {/* THIRD IMAGE */}
               <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                {image3 ? (
+                {selectedProduct.IMAGE3_URL ? (
                   <Image
-                    src={image3}
+                    src={selectedProduct.IMAGE3_URL}
                     alt="Preview"
                     fill
                     className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
@@ -302,6 +324,6 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
       </div>
     </div>
   );
-};
+}
 
-export default AddingProductWindow;
+export default ProductDetailWindow;

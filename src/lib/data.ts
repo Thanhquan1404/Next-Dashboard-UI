@@ -1364,8 +1364,9 @@ export const tableRows: tableRowDataType[] = [
   },
 ];
 
-// --- PRODUCT DATATYPE ---
+// ---  PRODUCT (DISPLAY IN PRODUCT TABLE) DATATYPE ---
 export type ProductDataType = {
+  PRODUCT_ID: string,
   PRODUCT_NAME: string;
   PRODUCT_SUBTITLE: string;   // Added subtitle field
   PURCHASE_UNIT_PRICE: number;
@@ -1375,9 +1376,10 @@ export type ProductDataType = {
   ACTION: string;
 };
 
-// --- SAMPLE DATA ---
+// --- SAMPLE PRODUCT (DISPLAY IN PRODUCT TABLE) DATA ---
 export const sampleProducts: ProductDataType[] = [
   { 
+    PRODUCT_ID: "1",
     PRODUCT_NAME: "MacBook Pro 16-inch (M3 Max, 2024)", 
     PRODUCT_SUBTITLE: "16-inch - 16GB - 512GB - Space Gray",
     PURCHASE_UNIT_PRICE: 3499, 
@@ -1387,6 +1389,7 @@ export const sampleProducts: ProductDataType[] = [
     ACTION: "Edit" 
   },
   { 
+    PRODUCT_ID: "2",
     PRODUCT_NAME: "MacBook Air 13-inch (M3, 2024)", 
     PRODUCT_SUBTITLE: "13-inch - 8GB - 256GB - Midnight", 
     PURCHASE_UNIT_PRICE: 1299, 
@@ -1396,6 +1399,7 @@ export const sampleProducts: ProductDataType[] = [
     ACTION: "Edit" 
   },
   { 
+    PRODUCT_ID: "3",
     PRODUCT_NAME: "iPhone 15 Pro Max", 
     PRODUCT_SUBTITLE: "6.7-inch - 256GB - Natural Titanium", 
     PURCHASE_UNIT_PRICE: 1199, 
@@ -1405,6 +1409,7 @@ export const sampleProducts: ProductDataType[] = [
     ACTION: "Edit" 
   },
   { 
+    PRODUCT_ID: "4",
     PRODUCT_NAME: "iPhone SE (3rd Generation)", 
     PRODUCT_SUBTITLE: "4.7-inch - 64GB - (Product) Red", 
     PURCHASE_UNIT_PRICE: 429, 
@@ -1414,6 +1419,7 @@ export const sampleProducts: ProductDataType[] = [
     ACTION: "Edit" 
   },
   { 
+    PRODUCT_ID: "5",
     PRODUCT_NAME: "iPad Pro 12.9-inch (M2, 2023)", 
     PRODUCT_SUBTITLE: "12.9-inch - 8GB - 256GB - Silver", 
     PURCHASE_UNIT_PRICE: 1099, 
@@ -1423,6 +1429,7 @@ export const sampleProducts: ProductDataType[] = [
     ACTION: "Edit" 
   },
   { 
+    PRODUCT_ID: "6",
     PRODUCT_NAME: "Apple Watch Ultra 2", 
     PRODUCT_SUBTITLE: "49mm - Titanium - Ocean Band", 
     PURCHASE_UNIT_PRICE: 799, 
@@ -1432,7 +1439,147 @@ export const sampleProducts: ProductDataType[] = [
     ACTION: "Edit" 
   },
 ];
+// --- DETAIL PRODUCT DATATYPE ---
+export type ProductDetailType = {
+  PRODUCT_ID: string,
+  PRODUCT_BRAND: string,
+  PRODUCT_CATEGORY: string,
+  PRODUCT_NAME: string;
+  DESCRIPTION: string;
+  PRODUCT_SUBTITLE: string;
+  PURCHASE_UNIT_PRICE: number;
+  PRODUCTS: number;
+  VIEWS: number;
+  STATUS: string;
+  IMAGE1_URL: string;
+  IMAGE2_URL: string;
+  IMAGE3_URL: string;
+  TAG: string;
+  DISCOUNT: number;
+  DISCOUNT_TYPE: string;
+  COLOR: string;
+};
 
+// --- SAMPLE DETAIL PRODUCT DATA ---
+export const sampleDetailProducts: ProductDetailType[] = [
+  {
+    PRODUCT_ID: "1",
+    PRODUCT_BRAND: "Apple",
+    PRODUCT_CATEGORY: "MacBook",
+    PRODUCT_NAME: "MacBook Pro 16-inch (M3 Max, 2024)",
+    DESCRIPTION: "",
+    PRODUCT_SUBTITLE: "16-inch - 16GB - 512GB - Space Gray",
+    PURCHASE_UNIT_PRICE: 3499,
+    PRODUCTS: 12,
+    VIEWS: 1820,
+    STATUS: "Active",
+    IMAGE1_URL: "/productDetailImage/product_1_image_1.webp",
+    IMAGE2_URL: "/productDetailImage/product_1_image_2.webp",
+    IMAGE3_URL: "/productDetailImage/product_1_image_3.webp",
+    TAG: "",
+    DISCOUNT: 10,
+    DISCOUNT_TYPE: "percentage",
+    COLOR: "#A3AAAE",
+  },
+  {
+    PRODUCT_ID: "2",
+    PRODUCT_BRAND: "Apple",
+    PRODUCT_CATEGORY: "MacBook",
+    PRODUCT_NAME: "MacBook Air 13-inch (M3, 2024)",
+    DESCRIPTION: "",
+    PRODUCT_SUBTITLE: "13-inch - 8GB - 256GB - Midnight",
+    PURCHASE_UNIT_PRICE: 1299,
+    PRODUCTS: 24,
+    VIEWS: 2305,
+    STATUS: "Active",
+    IMAGE1_URL: "",
+    IMAGE2_URL: "",
+    IMAGE3_URL: "",
+    TAG: "",
+    DISCOUNT: 5,
+    DISCOUNT_TYPE: "percentage",
+    COLOR: "#1E1E2C",
+  },
+  {
+    PRODUCT_ID: "3",
+    PRODUCT_BRAND: "Apple",
+    PRODUCT_CATEGORY: "iPhone",
+    PRODUCT_NAME: "iPhone 15 Pro Max",
+    DESCRIPTION: "",
+    PRODUCT_SUBTITLE: "6.7-inch - 256GB - Natural Titanium",
+    PURCHASE_UNIT_PRICE: 1199,
+    PRODUCTS: 38,
+    VIEWS: 5120,
+    STATUS: "Active",
+    IMAGE1_URL: "",
+    IMAGE2_URL: "",
+    IMAGE3_URL: "",
+    TAG: "",
+    DISCOUNT: 0,
+    DISCOUNT_TYPE: "",
+    COLOR: "#C5BEB3",
+  },
+  {
+    PRODUCT_ID: "4",
+    PRODUCT_BRAND: "Apple",
+    PRODUCT_CATEGORY: "iPhone",
+    PRODUCT_NAME: "iPhone SE (3rd Generation)",
+    DESCRIPTION: "",
+    PRODUCT_SUBTITLE: "4.7-inch - 64GB - (Product) Red",
+    PURCHASE_UNIT_PRICE: 429,
+    PRODUCTS: 45,
+    VIEWS: 870,
+    STATUS: "Low Stock",
+    IMAGE1_URL: "",
+    IMAGE2_URL: "",
+    IMAGE3_URL: "",
+    TAG: "",
+    DISCOUNT: 0,
+    DISCOUNT_TYPE: "",
+    COLOR: "#C91C1C",
+  },
+  {
+    PRODUCT_ID: "5",
+    PRODUCT_BRAND: "Apple",
+    PRODUCT_CATEGORY: "iPad",
+    PRODUCT_NAME: "iPad Pro 12.9-inch (M2, 2023)",
+    DESCRIPTION: "",
+    PRODUCT_SUBTITLE: "12.9-inch - 8GB - 256GB - Silver",
+    PURCHASE_UNIT_PRICE: 1099,
+    PRODUCTS: 18,
+    VIEWS: 1940,
+    STATUS: "Active",
+    IMAGE1_URL: "",
+    IMAGE2_URL: "",
+    IMAGE3_URL: "",
+    TAG: "",
+    DISCOUNT: 0,
+    DISCOUNT_TYPE: "",
+    COLOR: "#E6E6E6",
+  },
+  {
+    PRODUCT_ID: "6",
+    PRODUCT_BRAND: "Apple",
+    PRODUCT_CATEGORY: "Apple Watch",
+    PRODUCT_NAME: "Apple Watch Ultra 2",
+    DESCRIPTION: "",
+    PRODUCT_SUBTITLE: "49mm - Titanium - Ocean Band",
+    PURCHASE_UNIT_PRICE: 799,
+    PRODUCTS: 25,
+    VIEWS: 1440,
+    STATUS: "Active",
+    IMAGE1_URL: "",
+    IMAGE2_URL: "",
+    IMAGE3_URL: "",
+    TAG: "",
+    DISCOUNT: 0,
+    DISCOUNT_TYPE: "",
+    COLOR: "#C1B69A",
+  },
+];
+
+
+export const discountOption = ["percentage", "currency"];
 
 // DECLEAR PRODUCT CATEGORY 
 export type productCategoryType = {
@@ -1483,6 +1630,7 @@ export const productCategory: productCategoryType[] = [
     label: "Apple accessories"
   }
 ];
+
 // DECLEAR PRODUCT COLORS
 export type productColorType = {
   id: number,
@@ -1532,5 +1680,5 @@ export const productColor: productColorType[] = [
     colors: ["#1C1C1E", "#F5F5F7", "#E8C5A3", "#0A84FF", "#FF9F0A"], // Black, White, Starlight, Blue, Orange
   },
 ];
-//get the label only
+// GET THE LABEL OF PRODUCTCATEGORY ONLY
 export const categoryOption = productCategory.map(item => item.label);
