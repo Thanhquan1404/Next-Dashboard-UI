@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Listbox } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { discountOption, productCategory, productColor, categoryOption, ProductDataType, ProductDetailType } from "@/lib/data";
+import { discountOption, productCategory, productColor, categoryOption, ProductDataType, ProductDetailType, productStatusOption } from "@/lib/data";
 import UploadImageIcon from "@/components/UploadImageIcon";
 import { randomUUID } from "crypto";
 import { moneyFormat } from "@/util/moneyFormat";
@@ -26,7 +26,10 @@ interface Props {
 const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setImage1, setImage2, setImage3, handleAddingProductEvent, handleAddingDetailProductEvent }: Props) => {
   // DISCOUNT STATE
   const [discountType, setDiscountType] = useState<string>(discountOption[0]);
+  // CREATED DATE STATE
   const [createdDate, setCreatedDate] = useState<string>("");
+  // PRODUCT STATUS STATE
+  const [inputProductStatus, setInputProductStatus] = useState<string>(productStatusOption[0]);
 
   // CATEGORY + COLOR STATE
   const [selectedCategory, setSelectedCategory] = useState<string>(categoryOption[0]);
@@ -40,6 +43,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
   const [inputProductPrice, setInputProductPrice] = useState<string>("");
   const [inputProductBrand, setInputProductBrand] = useState<string>("");
   const [inputProductTag, setInputProductTag] = useState<string>("");
+  const [inputProductSubtitle, setInputProductSubtitle] = useState<string>("");
 
   // HANDLE 'PUBLISH' ICON BUTTON
   const handlePublishButtonToggle = () => {
@@ -50,11 +54,11 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
       PRODUCT_CATEGORY: selectedCategory,
       PRODUCT_NAME: inputProductName,
       DESCRIPTION: inputProductDescription,
-      PRODUCT_SUBTITLE: "16-inch - 16GB - 512GB - Space Gray",
+      PRODUCT_SUBTITLE: inputProductSubtitle,
       PURCHASE_UNIT_PRICE: Number(inputProductPrice),
       PRODUCTS: Number(inputProductNumber),
       VIEWS: 1,
-      STATUS: "Active",
+      STATUS: inputProductStatus,
       IMAGE1_URL: image1,
       IMAGE2_URL: image2,
       IMAGE3_URL: image3,
@@ -118,7 +122,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
 
   return (
     <div className="bg-gray-200 w-full h-full flex p-5 gap-3 rounded-t-2xl shadow-2xl transition-all duration-500">
-      {/* RIGHT SIDE */}
+      {/* LEFT SIDE */}
       <div className="bg-white w-2/3 rounded-2xl p-5 flex flex-col gap-4 justify-between shadow-md hover:shadow-lg transition-all duration-300">
         {/* FORM CONTENT */}
         <div className="flex flex-col gap-4 h-4/5 overflow-y-auto px-2 py-2">
@@ -232,7 +236,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
                   setOptionSelector={setDiscountType}
                   rounded="rounded-lg"
                   width="w-2/5"
-                  fontSize="text-sm"
+                  fontSize="text-xs"
                   height="h-10"
                 />
               </div>
@@ -269,7 +273,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
         </div>
       </div>
 
-      {/* LEFT SIDE */}
+      {/* RIGHT SIDE */}
       <div className="h-full w-1/3 flex flex-col gap-3">
         {/* LEFT UPPER SIDE  */}
         <div className="w-full h-fit bg-white rounded-2xl py-4 px-4 shadow-md hover:shadow-lg transition-all duration-300 gap-3 flex flex-col">
@@ -283,6 +287,23 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
               className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
             />
           </div>
+          {/* PRODUCT SUBTITLE + STATUS  */}
+          <div className="flex gap-3">
+            <div className="flex flex-col w-1/2 gap-3">
+              <span className="px-1 text-gray-600">Product subtitle</span>
+              <input
+                type="text"
+                placeholder="Type and enter"
+                onChange={(e) => setInputProductSubtitle(e.target.value)}
+                className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
+              />
+            </div>
+            <div className="flex flex-col w-1/2 gap-3">
+              <span className="px-1 text-gray-600">Product subtitle</span>
+              <SelectorComponent fontSize={"text-xs"} width={"w-full"} options={productStatusOption} optionSelector={inputProductStatus} setOptionSelector={setInputProductStatus}/>
+            </div>
+          </div>
+
           {/* IMAGE UPLOAD FROM USER  */}
           <div className="flex flex-col w-full gap-1 text-sm font-normal gap-2">
             <span className="px-1 text-gray-600">Product image</span>

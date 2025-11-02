@@ -1364,6 +1364,7 @@ export const tableRows: tableRowDataType[] = [
   },
 ];
 
+//************************************************ PRODUCT PAGE ****************************************************/
 // ---  PRODUCT (DISPLAY IN PRODUCT TABLE) DATATYPE ---
 export type ProductDataType = {
   PRODUCT_ID: string,
@@ -1479,7 +1480,7 @@ export const sampleDetailProducts: ProductDetailType[] = [
     TAG: "",
     DISCOUNT: 10,
     DISCOUNT_TYPE: "percentage",
-    COLOR: "#A3AAAE",
+    COLOR: "#A3AAAE", // Space Gray (from MACBOOK colors)
   },
   {
     PRODUCT_ID: "2",
@@ -1492,13 +1493,13 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCTS: 24,
     VIEWS: 2305,
     STATUS: "Active",
-    IMAGE1_URL: "",
-    IMAGE2_URL: "",
-    IMAGE3_URL: "",
+    IMAGE1_URL: "/productDetailImage/product_2_image_1.webp",
+    IMAGE2_URL: "/productDetailImage/product_2_image_2.webp",
+    IMAGE3_URL: "/productDetailImage/product_2_image_3.webp",
     TAG: "",
     DISCOUNT: 5,
     DISCOUNT_TYPE: "percentage",
-    COLOR: "#1E1E2C",
+    COLOR: "#1C1C1E", // Space Gray / Dark tone (from MACBOOK colors)
   },
   {
     PRODUCT_ID: "3",
@@ -1511,13 +1512,13 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCTS: 38,
     VIEWS: 5120,
     STATUS: "Active",
-    IMAGE1_URL: "",
-    IMAGE2_URL: "",
-    IMAGE3_URL: "",
+    IMAGE1_URL: "/productDetailImage/product_3_image_1.webp",
+    IMAGE2_URL: "/productDetailImage/product_3_image_2.webp",
+    IMAGE3_URL: "/productDetailImage/product_3_image_3.webp",
     TAG: "",
     DISCOUNT: 0,
     DISCOUNT_TYPE: "",
-    COLOR: "#C5BEB3",
+    COLOR: "#E8C5A3", // Starlight (from IPHONE colors)
   },
   {
     PRODUCT_ID: "4",
@@ -1530,13 +1531,13 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCTS: 45,
     VIEWS: 870,
     STATUS: "Low Stock",
-    IMAGE1_URL: "",
-    IMAGE2_URL: "",
-    IMAGE3_URL: "",
+    IMAGE1_URL: "/productDetailImage/product_4_image_1.webp",
+    IMAGE2_URL: "/productDetailImage/product_4_image_2.webp",
+    IMAGE3_URL: "/productDetailImage/product_4_image_3.webp",
     TAG: "",
     DISCOUNT: 0,
     DISCOUNT_TYPE: "",
-    COLOR: "#C91C1C",
+    COLOR: "#2B6CB0", // Blue (mapped to available IPHONE colors)
   },
   {
     PRODUCT_ID: "5",
@@ -1549,13 +1550,13 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCTS: 18,
     VIEWS: 1940,
     STATUS: "Active",
-    IMAGE1_URL: "",
-    IMAGE2_URL: "",
-    IMAGE3_URL: "",
+    IMAGE1_URL: "/productDetailImage/product_5_image_1.webp",
+    IMAGE2_URL: "/productDetailImage/product_5_image_2.webp",
+    IMAGE3_URL: "/productDetailImage/product_5_image_3.webp",
     TAG: "",
     DISCOUNT: 0,
     DISCOUNT_TYPE: "",
-    COLOR: "#E6E6E6",
+    COLOR: "#B1B1B1", // Silver (from IPAD colors)
   },
   {
     PRODUCT_ID: "6",
@@ -1568,16 +1569,34 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCTS: 25,
     VIEWS: 1440,
     STATUS: "Active",
-    IMAGE1_URL: "",
-    IMAGE2_URL: "",
-    IMAGE3_URL: "",
-    TAG: "",
+    IMAGE1_URL: "/productDetailImage/product_6_image_1.webp",
+    IMAGE2_URL: "/productDetailImage/product_6_image_2.webp",
+    IMAGE3_URL: "/productDetailImage/product_6_image_3.webp",
+    TAG: "Titanium, Ocean Band",
     DISCOUNT: 0,
     DISCOUNT_TYPE: "",
-    COLOR: "#C1B69A",
+    COLOR: "#C0C6CC", // Silver (from APPLE_WATCH colors)
+  },
+  {
+    PRODUCT_ID: "7",
+    PRODUCT_BRAND: "Apple",
+    PRODUCT_CATEGORY: "Apple Watch",
+    PRODUCT_NAME: "Apple Watch Series 9",
+    DESCRIPTION: "",
+    PRODUCT_SUBTITLE: "45mm - Starlight Aluminum Case - Sport Band",
+    PURCHASE_UNIT_PRICE: 399,
+    PRODUCTS: 32,
+    VIEWS: 1650,
+    STATUS: "Active",
+    IMAGE1_URL: "/productDetailImage/product_7_image_1.webp",
+    IMAGE2_URL: "/productDetailImage/product_7_image_2.webp",
+    IMAGE3_URL: "/productDetailImage/product_7_image_3.webp",
+    TAG: "Aluminum, Starlight",
+    DISCOUNT: 5,
+    DISCOUNT_TYPE: "percentage",
+    COLOR: "#F3EAE3", // Starlight (from APPLE_WATCH colors)
   },
 ];
-
 
 export const discountOption = ["percentage", "currency"];
 
@@ -1704,5 +1723,7 @@ export const productColor: productColorType[] = [
     ]
   }
 ];
-// GET THE LABEL OF PRODUCTCATEGORY ONLY
+// GET THE LABEL OF PRODUCT CATEGORY ONLY
 export const categoryOption = productCategory.map(item => item.label);
+// PRODUCT STATUS OPTION 
+export const productStatusOption = ["Active", "Low Stock", "Preorder", "Out of Stock"];

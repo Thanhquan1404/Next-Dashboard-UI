@@ -75,11 +75,11 @@ export const productInputFormat = (detailProduct: ProductDetailType): ProductDat
   const formatted: ProductDataType = {
     PRODUCT_ID: detailProduct.PRODUCT_ID,
     PRODUCT_NAME: detailProduct.PRODUCT_NAME,
-    PRODUCT_SUBTITLE: "",
+    PRODUCT_SUBTITLE: detailProduct.PRODUCT_SUBTITLE,
     PURCHASE_UNIT_PRICE: publicProductPrice(),
     PRODUCTS: detailProduct.PRODUCTS,
     VIEWS: 1,
-    STATUS: "Active",
+    STATUS: detailProduct.STATUS,
     ACTION: "Edit",
   };
 
