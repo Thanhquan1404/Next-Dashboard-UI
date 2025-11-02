@@ -4,12 +4,14 @@ import CategoryOptions from "./CategoryOptions";
 import ProductsPageHeader from "./ProductsPageHeader";
 import ProductsTable from "./ProductsTable";
 import { useState } from "react";
-import { sampleProducts, ProductDataType } from "@/lib/data";
+import { sampleProducts, ProductDataType, ProductDetailType, sampleDetailProducts } from "@/lib/data";
 import ProductDetailWindow from "./ProductDetailWindow";
 
 const Page = () => {
   // STATE HOOK TO HANDLE PRODUCTS ARRAY
   const [products, setProducts] = useState<ProductDataType[]>(sampleProducts);
+  // STATE HOOK TO HANDLE DETAIL PRODUCT ARRAY
+  const [detailProducts, setDetailProducts] = useState<ProductDetailType[]>(sampleDetailProducts);
   // STATE HOOK TO MAKE ADDING WINDOW APPEAR
   const [windowVisible, setWindowVisible] = useState<boolean>(false);
   // STATE HOOK TO MAKE DETAIL PRODUCT WINDOW APPEAR 
@@ -32,6 +34,12 @@ const Page = () => {
     arr.push(newProduct);
     setProducts(arr);
     console.log(arr);
+  }
+  // FUNCTION TO HANDLE 'ADDING PRODUCT DETAIL' ACTION
+  const handleAddingDetailProductEvent = (newProductDetail: ProductDetailType): void => {
+    const arr = [...detailProducts];
+    arr.push(newProductDetail);
+    setDetailProducts(arr);
   }
   //  FUNCTION TO HANDLE 'VIEW PRODUCT DETAIL' ACTION
   const handleDetailProductWindowToggle = (product: HTMLElement | null): void => {
@@ -80,6 +88,7 @@ const Page = () => {
           >
             <ProductDetailWindow 
               productID={selectedProduct} 
+              detailProductArray={detailProducts}
               image1={image1}
               image2={image2}
               image3={image3}
@@ -108,6 +117,7 @@ const Page = () => {
           >
             <AddingProductWindow
               handleWindowToggle={handleWindowToggle}
+              handleAddingDetailProductEvent={handleAddingDetailProductEvent}
               image1={image1}
               image2={image2}
               image3={image3}

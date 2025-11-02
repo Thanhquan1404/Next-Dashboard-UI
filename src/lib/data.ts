@@ -1451,13 +1451,13 @@ export type ProductDetailType = {
   PRODUCTS: number;
   VIEWS: number;
   STATUS: string;
-  IMAGE1_URL: string;
-  IMAGE2_URL: string;
-  IMAGE3_URL: string;
-  TAG: string;
-  DISCOUNT: number;
+  IMAGE1_URL: string | null;
+  IMAGE2_URL: string | null;
+  IMAGE3_URL: string | null;
+  TAG: string | null;
+  DISCOUNT: number | null;
   DISCOUNT_TYPE: string;
-  COLOR: string;
+  COLOR: string | null;
 };
 
 // --- SAMPLE DETAIL PRODUCT DATA ---

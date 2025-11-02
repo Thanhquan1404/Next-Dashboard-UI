@@ -10,6 +10,7 @@ import SelectorComponent from "@/components/SelectorComponent";
 
 interface Props {
   productID: string | null;
+  detailProductArray: ProductDetailType[];
   image1: string | null;
   image2: string | null;
   image3: string | null;
@@ -19,12 +20,12 @@ interface Props {
   handleWindowToggle: () => void,
 }
 
-const ProductDetailWindow = ({ productID, image1, image2, image3, setImage1, setImage2, setImage3, handleWindowToggle }: Props) => {
+const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, image3, setImage1, setImage2, setImage3, handleWindowToggle }: Props) => {
   // RETRIEVE PRODUCT FROM DETAIL PRODUCT ARRAY
-  const retrievedProduct = useMemo(() => {
-    return sampleDetailProducts.find((item) => item.PRODUCT_ID === productID);
-  }, [productID]);
-  // STATE TO HANDLE ALL DETAIL PRODUCT DATATYPE 
+    const retrievedProduct = useMemo(() => {
+      return detailProductArray.find((item) => item.PRODUCT_ID === productID);
+    }, [productID, detailProductArray]);
+    // STATE TO HANDLE ALL DETAIL PRODUCT DATATYPE 
   const [selectedProduct, setSelectedProduct] = useState<ProductDetailType>({
     PRODUCT_ID: "",
     PRODUCT_CATEGORY: "",
@@ -51,31 +52,31 @@ const ProductDetailWindow = ({ productID, image1, image2, image3, setImage1, set
   const [discount, setDiscount] = useState<string>("");
   // EFFECT HOOK TO ASSIGN ALL RETRIEVE INFORMATION TO HOOK
   useEffect(() => {
-  if (retrievedProduct) {
-    setSelectedProduct({
-      PRODUCT_ID: retrievedProduct.PRODUCT_ID,
-      PRODUCT_CATEGORY: retrievedProduct.PRODUCT_CATEGORY,
-      PRODUCT_NAME: retrievedProduct.PRODUCT_NAME,
-      PRODUCT_BRAND: retrievedProduct.PRODUCT_BRAND,
-      DESCRIPTION: retrievedProduct.DESCRIPTION || "",
-      PRODUCT_SUBTITLE: retrievedProduct.PRODUCT_SUBTITLE,
-      PURCHASE_UNIT_PRICE: retrievedProduct.PURCHASE_UNIT_PRICE,
-      PRODUCTS: retrievedProduct.PRODUCTS,
-      VIEWS: retrievedProduct.VIEWS,
-      STATUS: retrievedProduct.STATUS,
-      IMAGE1_URL: retrievedProduct.IMAGE1_URL || "",
-      IMAGE2_URL: retrievedProduct.IMAGE2_URL || "",
-      IMAGE3_URL: retrievedProduct.IMAGE3_URL || "",
-      TAG: retrievedProduct.TAG || "",
-      DISCOUNT: retrievedProduct.DISCOUNT || 0,
-      DISCOUNT_TYPE: retrievedProduct.DISCOUNT_TYPE || "",
-      COLOR: retrievedProduct.COLOR,
-    });
+    if (retrievedProduct) {
+      setSelectedProduct({
+        PRODUCT_ID: retrievedProduct.PRODUCT_ID,
+        PRODUCT_CATEGORY: retrievedProduct.PRODUCT_CATEGORY,
+        PRODUCT_NAME: retrievedProduct.PRODUCT_NAME,
+        PRODUCT_BRAND: retrievedProduct.PRODUCT_BRAND,
+        DESCRIPTION: retrievedProduct.DESCRIPTION || "",
+        PRODUCT_SUBTITLE: retrievedProduct.PRODUCT_SUBTITLE,
+        PURCHASE_UNIT_PRICE: retrievedProduct.PURCHASE_UNIT_PRICE,
+        PRODUCTS: retrievedProduct.PRODUCTS,
+        VIEWS: retrievedProduct.VIEWS,
+        STATUS: retrievedProduct.STATUS,
+        IMAGE1_URL: retrievedProduct.IMAGE1_URL || "",
+        IMAGE2_URL: retrievedProduct.IMAGE2_URL || "",
+        IMAGE3_URL: retrievedProduct.IMAGE3_URL || "",
+        TAG: retrievedProduct.TAG || "",
+        DISCOUNT: retrievedProduct.DISCOUNT || 0,
+        DISCOUNT_TYPE: retrievedProduct.DISCOUNT_TYPE || "",
+        COLOR: retrievedProduct.COLOR,
+      });
 
-    setSelectedCategory(retrievedProduct.PRODUCT_CATEGORY);
-    setDiscount(retrievedProduct.DISCOUNT_TYPE || "");
-  }
-}, [retrievedProduct]); 
+      setSelectedCategory(retrievedProduct.PRODUCT_CATEGORY);
+      setDiscount(retrievedProduct.DISCOUNT_TYPE || "");
+    }
+  }, [retrievedProduct]);
 
 
 
@@ -257,70 +258,101 @@ const ProductDetailWindow = ({ productID, image1, image2, image3, setImage1, set
       </div>
 
       {/* LEFT SIDE */}
-      <div className="bg-white w-1/3 rounded-2xl shadow-md hover:shadow-lg flex flex-col gap-3 transition-all duration-300 py-4 px-4">
-        {/* TAG  */}
-        <div className="flex flex-col wfull gap-1 text-sm font-normal gap-2">
-          <span className="px-1 text-gray-600">Tag</span>
-          <input
-            type="text"
-            placeholder="Type and enter"
-            className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
-          />
-        </div>
-        {/* IMAGE UPLOAD FROM USER  */}
-        <div className="flex flex-col w-full gap-1 text-sm font-normal gap-2">
-          <span className="px-1 text-gray-600">Product image</span>
+      <div className="h-full w-1/3 flex flex-col gap-3">
+        {/* LEFT UPPER SIDE  */}
+        <div className="w-full h-fit bg-white rounded-2xl py-4 px-4 shadow-md hover:shadow-lg transition-all duration-300 gap-3 flex flex-col">
+          {/* TAG  */}
+          <div className="flex flex-col wfull gap-1 text-sm font-normal gap-2">
+            <span className="px-1 text-gray-600">Tag</span>
+            <input
+              type="text"
+              placeholder="Type and enter"
+              className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
+            />
+          </div>
+          {/* IMAGE UPLOAD FROM USER  */}
+          <div className="flex flex-col w-full gap-1 text-sm font-normal gap-2">
+            <span className="px-1 text-gray-600">Product image</span>
 
-          <div className="w-full h-[220px] gap-4 flex">
-            {/* MAIN IMAGE */}
-            <div className="w-1/2 h-full border rounded-lg flex justify-center items-center relative overflow-hidden group">
-              {selectedProduct.IMAGE1_URL ? (
-                <Image
-                  src={selectedProduct.IMAGE1_URL}
-                  alt="Preview"
-                  fill
-                  className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                />
-              ) : (
-                <UploadImageIcon
-                  image={image1}
-                  setImage={setImage1}
-                />
-              )}
-            </div>
-
-            {/* SECONDARY IMAGES */}
-            <div className="w-1/2 h-full gap-3 flex flex-col rounded-lg">
-              {/* SECOND IMAGE */}
-              <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                {selectedProduct.IMAGE2_URL ? (
+            <div className="w-full h-[220px] gap-4 flex">
+              {/* MAIN IMAGE */}
+              <div className="w-1/2 h-full border rounded-lg flex justify-center items-center relative overflow-hidden group">
+                {selectedProduct.IMAGE1_URL ? (
                   <Image
-                    src={selectedProduct.IMAGE2_URL}
+                    src={selectedProduct.IMAGE1_URL}
                     alt="Preview"
                     fill
                     className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
-                  <UploadImageIcon image={image2} setImage={setImage2} />
+                  <UploadImageIcon
+                    image={image1}
+                    setImage={setImage1}
+                  />
                 )}
               </div>
 
-              {/* THIRD IMAGE */}
-              <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                {selectedProduct.IMAGE3_URL ? (
-                  <Image
-                    src={selectedProduct.IMAGE3_URL}
-                    alt="Preview"
-                    fill
-                    className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                  />
-                ) : (
-                  <UploadImageIcon image={image3} setImage={setImage3} />
-                )}
+              {/* SECONDARY IMAGES */}
+              <div className="w-1/2 h-full gap-3 flex flex-col rounded-lg">
+                {/* SECOND IMAGE */}
+                <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
+                  {selectedProduct.IMAGE2_URL ? (
+                    <Image
+                      src={selectedProduct.IMAGE2_URL}
+                      alt="Preview"
+                      fill
+                      className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <UploadImageIcon image={image2} setImage={setImage2} />
+                  )}
+                </div>
+
+                {/* THIRD IMAGE */}
+                <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
+                  {selectedProduct.IMAGE3_URL ? (
+                    <Image
+                      src={selectedProduct.IMAGE3_URL}
+                      alt="Preview"
+                      fill
+                      className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <UploadImageIcon image={image3} setImage={setImage3} />
+                  )}
+                </div>
               </div>
             </div>
           </div>
+          {/* CAUTION MESSAGE  */}
+          <div className="flex items-start gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 text-sm shadow-sm">
+            {/* Icon */}
+            <div className="flex-shrink-0 mt-[2px] text-blue-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                />
+              </svg>
+            </div>
+
+            {/* Text */}
+            <span className="leading-relaxed">
+              You need at least <span className="font-semibold text-gray-700">3 images</span>.
+              Pay attention to the quality of the pictures you add
+              <span className="text-red-500 font-medium"> (important)</span>.
+            </span>
+          </div>
         </div>
+
       </div>
     </div>
   );

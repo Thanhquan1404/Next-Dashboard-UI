@@ -4,9 +4,11 @@ import Image from "next/image";
 import { Listbox } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { productCategoryType, discountOption, productCategory, productColor, productColorType, categoryOption, ProductDataType } from "@/lib/data";
+import { discountOption, productCategory, productColor, categoryOption, ProductDataType, ProductDetailType } from "@/lib/data";
 import UploadImageIcon from "@/components/UploadImageIcon";
 import { randomUUID } from "crypto";
+import { moneyFormat } from "@/util/moneyFormat";
+import { productInputFormat } from "@/util/productInputFormat";
 
 interface Props {
   handleWindowToggle: () => void,
@@ -17,12 +19,14 @@ interface Props {
   image3: string | null,
   setImage3: React.Dispatch<React.SetStateAction<string | null>>,
   handleAddingProductEvent: (newProduct: ProductDataType) => void,
+  handleAddingDetailProductEvent: (newProductDetail: ProductDetailType) => void,
 }
 
 
-const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setImage1, setImage2, setImage3, handleAddingProductEvent }: Props) => {
+const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setImage1, setImage2, setImage3, handleAddingProductEvent, handleAddingDetailProductEvent }: Props) => {
   // DISCOUNT STATE
-  const [discount, setDiscount] = useState<string>(discountOption[0]);
+  const [discountType, setDiscountType] = useState<string>(discountOption[0]);
+  const [createdDate, setCreatedDate] = useState<string>("");
 
   // CATEGORY + COLOR STATE
   const [selectedCategory, setSelectedCategory] = useState<string>(categoryOption[0]);
@@ -31,46 +35,74 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
 
   // INPUT ELEMENT STATE
   const [inputProductName, setInputProductsName] = useState<string>("");
-  const [inputBrandName, setInputBrandName] = useState<string>("");
   const [inputProductNumber, setInputProductsNumber] = useState<string>("");
   const [inputProductDescription, setInputProductDesccription] = useState<string>("");
   const [inputProductPrice, setInputProductPrice] = useState<string>("");
-
+  const [inputProductBrand, setInputProductBrand] = useState<string>("");
+  const [inputProductTag, setInputProductTag] = useState<string>("");
 
   // HANDLE 'PUBLISH' ICON BUTTON
   const handlePublishButtonToggle = () => {
-    const newProduct: ProductDataType = {
+    // SET UP THE PRODUCT DETAIL DATA FIELDS
+    const newDetailProduct: ProductDetailType = {
       PRODUCT_ID: crypto.randomUUID(),
-      PRODUCT_NAME: inputProductName || "",
-      PRODUCT_SUBTITLE: "",
-      PURCHASE_UNIT_PRICE: Number(inputProductPrice) || 0,
-      PRODUCTS: Number(inputProductNumber) || 0,
+      PRODUCT_BRAND: inputProductBrand,
+      PRODUCT_CATEGORY: selectedCategory,
+      PRODUCT_NAME: inputProductName,
+      DESCRIPTION: inputProductDescription,
+      PRODUCT_SUBTITLE: "16-inch - 16GB - 512GB - Space Gray",
+      PURCHASE_UNIT_PRICE: Number(inputProductPrice),
+      PRODUCTS: Number(inputProductNumber),
       VIEWS: 1,
       STATUS: "Active",
-      ACTION: "Edit",
+      IMAGE1_URL: image1,
+      IMAGE2_URL: image2,
+      IMAGE3_URL: image3,
+      TAG: inputProductTag,
+      DISCOUNT: 10,
+      DISCOUNT_TYPE: discountType,
+      COLOR: selectedColor,
     };
+    console.log(newDetailProduct);
+    // DATA FORMATTING BEFORE DISPLAYING ON TABLE (INCLUDE: CALCULATE PUBLIC PRICE)
+    const newProductLine = productInputFormat(newDetailProduct);
+    console.log(newProductLine);
 
-    if (!newProduct.PRODUCT_NAME) {
-      alert("⚠️ Please enter a product name!");
-    } else if (newProduct.PURCHASE_UNIT_PRICE <= 0) {
-      alert("⚠️ Please enter a valid product price greater than 0!");
-    } else if (newProduct.PRODUCTS <= 0) {
-      alert("⚠️ Please enter a valid product quantity greater than 0!");
-    } else {
-      alert("✅ Product added successfully!");
-      console.log("New product:", newProduct);
+    if (newProductLine !== null) {
+      handleAddingProductEvent(newProductLine);
+      handleAddingDetailProductEvent(newDetailProduct);
     }
 
-    handleAddingProductEvent(newProduct);
+    // RESET ALL INPUT FIELDS TO DEFAULT STATE
+    const resetAllFields = () => {
+      // RESET TEXT INPUTS
+      setInputProductsName("");
+      setInputProductsNumber("");
+      setInputProductDesccription("");
+      setInputProductPrice("");
+      setInputProductBrand("");
+      setInputProductTag("");
 
-    setInputProductsName("");
-    setInputBrandName("");
-    setInputProductsNumber("");
-    setInputProductDesccription("");
-    setInputProductPrice("");
-    setImage1(null);
-    setImage2(null);
-    setImage3(null);
+      // RESET DROPDOWNS
+      setSelectedCategory(categoryOption[0]);
+      setDiscountType(discountOption[0]);
+
+      // RESET COLOR OPTIONS
+      setAvailableColor(productColor[0].colors);
+      setSelectedColor(productColor[0].colors ? productColor[0].colors[0] : null);
+
+      // RESET IMAGES
+      setImage1(null);
+      setImage2(null);
+      setImage3(null);
+
+      // RESET DATE (IF ANY)
+      setCreatedDate("");
+
+      alert("✅ Adding new product successfully");
+    };
+
+    handleWindowToggle();
   }
 
   const handleCategoryChange = (category: string) => {
@@ -80,7 +112,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
     if (selectedCategoryKey) {
       const colors = productColor.find(item => item.key === selectedCategoryKey)?.colors || [];
       setAvailableColor(colors);
-      setSelectedColor(null);
+      setSelectedColor(colors[0]);
     }
   }
 
@@ -115,8 +147,8 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
               <input
                 type="text"
                 placeholder="Brand..."
-                onChange={(e) => setInputBrandName(e.target.value)}
-                value={inputBrandName || ""}
+                onChange={(e) => setInputProductBrand(e.target.value)}
+                value={inputProductBrand || ""}
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
             </div>
@@ -179,7 +211,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
               <input
                 type="text"
                 placeholder="Sale price"
-                onChange={ (e) => setInputProductPrice(e.target.value)}
+                onChange={(e) => setInputProductPrice(e.target.value)}
                 value={inputProductPrice || ""}
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
@@ -196,8 +228,8 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
                 />
                 <SelectorComponent
                   options={discountOption}
-                  optionSelector={discount}
-                  setOptionSelector={setDiscount}
+                  optionSelector={discountType}
+                  setOptionSelector={setDiscountType}
                   rounded="rounded-lg"
                   width="w-2/5"
                   fontSize="text-sm"
@@ -238,66 +270,103 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
       </div>
 
       {/* LEFT SIDE */}
-      <div className="bg-white w-1/3 rounded-2xl shadow-md hover:shadow-lg flex flex-col gap-3 transition-all duration-300 py-4 px-4">
-        {/* TAG  */}
-        <div className="flex flex-col wfull gap-1 text-sm font-normal gap-2">
-          <span className="px-1 text-gray-600">Tag</span>
-          <input
-            type="text"
-            placeholder="Type and enter"
-            className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
-          />
-        </div>
-        {/* IMAGE UPLOAD FROM USER  */}
-        <div className="flex flex-col w-full gap-1 text-sm font-normal gap-2">
-          <span className="px-1 text-gray-600">Product image</span>
+      <div className="h-full w-1/3 flex flex-col gap-3">
+        {/* LEFT UPPER SIDE  */}
+        <div className="w-full h-fit bg-white rounded-2xl py-4 px-4 shadow-md hover:shadow-lg transition-all duration-300 gap-3 flex flex-col">
+          {/* TAG  */}
+          <div className="flex flex-col gap-1 text-sm font-normal gap-2">
+            <span className="px-1 text-gray-600">Tag</span>
+            <input
+              type="text"
+              placeholder="Type and enter"
+              onChange={(e) => setInputProductTag(e.target.value)}
+              className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
+            />
+          </div>
+          {/* IMAGE UPLOAD FROM USER  */}
+          <div className="flex flex-col w-full gap-1 text-sm font-normal gap-2">
+            <span className="px-1 text-gray-600">Product image</span>
 
-          <div className="w-full h-[220px] gap-4 flex">
-            {/* MAIN IMAGE */}
-            <div className="w-1/2 h-full border rounded-lg flex justify-center items-center relative overflow-hidden group">
-              {image1 ? (
-                <Image
-                  src={image1}
-                  alt="Preview"
-                  fill
-                  className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                />
-              ) : (
-                <UploadImageIcon image={image1} setImage={setImage1} />
-              )}
-            </div>
-
-            {/* SECONDARY IMAGES */}
-            <div className="w-1/2 h-full gap-3 flex flex-col rounded-lg">
-              {/* SECOND IMAGE */}
-              <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                {image2 ? (
+            <div className="w-full h-[220px] gap-4 flex">
+              {/* MAIN IMAGE */}
+              <div className="w-1/2 h-full border rounded-lg flex justify-center items-center relative overflow-hidden group">
+                {image1 ? (
                   <Image
-                    src={image2}
+                    src={image1}
                     alt="Preview"
                     fill
                     className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
-                  <UploadImageIcon image={image2} setImage={setImage2} />
+                  <UploadImageIcon image={image1} setImage={setImage1} />
                 )}
               </div>
 
-              {/* THIRD IMAGE */}
-              <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                {image3 ? (
-                  <Image
-                    src={image3}
-                    alt="Preview"
-                    fill
-                    className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                  />
-                ) : (
-                  <UploadImageIcon image={image3} setImage={setImage3} />
-                )}
+              {/* SECONDARY IMAGES */}
+              <div className="w-1/2 h-full gap-3 flex flex-col rounded-lg">
+                {/* SECOND IMAGE */}
+                <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
+                  {image2 ? (
+                    <Image
+                      src={image2}
+                      alt="Preview"
+                      fill
+                      className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <UploadImageIcon image={image2} setImage={setImage2} />
+                  )}
+                </div>
+
+                {/* THIRD IMAGE */}
+                <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
+                  {image3 ? (
+                    <Image
+                      src={image3}
+                      alt="Preview"
+                      fill
+                      className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <UploadImageIcon image={image3} setImage={setImage3} />
+                  )}
+                </div>
               </div>
             </div>
           </div>
+
+          {/* CAUTION MESSAGE  */}
+          <div className="flex items-start gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 text-sm shadow-sm">
+            {/* Icon */}
+            <div className="flex-shrink-0 mt-[2px] text-blue-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={2}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                />
+              </svg>
+            </div>
+
+            {/* Text */}
+            <span className="leading-relaxed">
+              You need at least <span className="font-semibold text-gray-700">3 images</span>.
+              Pay attention to the quality of the pictures you add
+              <span className="text-red-500 font-medium"> (important)</span>.
+            </span>
+          </div>
+
+        </div>
+        {/* LEFT LOWER SIDE  */}
+        <div className="w-full h-full bg-white rounded-2xl py-4 px-4 shadow-md hover:shadow-lg transition-all duration-300 gap-3 flex flex-col">
+
         </div>
       </div>
     </div>
