@@ -106,6 +106,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
       alert("✅ Adding new product successfully");
     };
 
+    resetAllFields();
     handleWindowToggle();
   }
 
@@ -289,7 +290,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
           </div>
           {/* PRODUCT SUBTITLE + STATUS  */}
           <div className="flex gap-3">
-            <div className="flex flex-col w-1/2 gap-3">
+            <div className="flex flex-col w-1/2 gap-3 text-sm">
               <span className="px-1 text-gray-600">Product subtitle</span>
               <input
                 type="text"
@@ -298,7 +299,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
             </div>
-            <div className="flex flex-col w-1/2 gap-3">
+            <div className="flex flex-col w-1/2 gap-3 text-sm">
               <span className="px-1 text-gray-600">Product subtitle</span>
               <SelectorComponent fontSize={"text-xs"} width={"w-full"} options={productStatusOption} optionSelector={inputProductStatus} setOptionSelector={setInputProductStatus}/>
             </div>

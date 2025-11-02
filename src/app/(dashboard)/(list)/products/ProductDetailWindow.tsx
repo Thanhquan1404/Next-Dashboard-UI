@@ -6,6 +6,7 @@ import UploadImageIcon from "@/components/UploadImageIcon";
 import { Listbox } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import SelectorComponent from "@/components/SelectorComponent";
+import { productInputFormat } from "@/util/productInputFormat";
 
 interface Props {
   productID: string | null;
@@ -18,8 +19,6 @@ interface Props {
   setImage3: React.Dispatch<React.SetStateAction<string | null>>;
   handleWindowToggle: () => void,
 }
-
-
 
 const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, image3, setImage1, setImage2, setImage3, handleWindowToggle }: Props) => {
   // RETRIEVE PRODUCT FROM DETAIL PRODUCT ARRAY
@@ -50,21 +49,25 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
       COLOR: "",
     }
   );
-  // STATE
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [availableColor, setAvailableColor] = useState<string[] | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [discount, setDiscount] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<string>("");
-
+  // UPDATE DATA FIELD STATE
+  const [updateProductName, setUpdateProductName] = useState<string>("");
+  const [updateProductBrand, setUpdateProductBrand] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [updateProductNumber, setUpdateProductNumber] = useState<String>("");
+  const [updateProductDescription, setUpdateProductDescription] = useState<string>("");
+  const [selectedDiscountType, setSelectedDiscountType] = useState<string>("");
+  const [updateProductSubtitle, setUpdateProductSubtitle] = useState<string>("");
+  const [updateProductTag, setUpdateProductTag] = useState<string>("");
+  const [updateProductPrice, setUpdateProductPrice] = useState<string>("");
+  const [updateProductDiscount, setUpdateProductDiscount] = useState<string>("");
   // EFFECT HOOK
   useEffect(() => {
-    if (!retrievedProduct) {
-      // Optional: reset form or show loading
-      return;
-    }
+    if (!retrievedProduct) return;
 
-    // Set main product data
+    // SET MAIN PRODUCT DETAIL
     setSelectedProduct({
       ...retrievedProduct,
       DESCRIPTION: retrievedProduct.DESCRIPTION || "",
@@ -77,24 +80,32 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
       DISCOUNT_TYPE: retrievedProduct.DISCOUNT_TYPE || "",
     });
 
-    // Update selectors
-    setSelectedCategory(retrievedProduct.PRODUCT_CATEGORY);
-    setDiscount(retrievedProduct.DISCOUNT_TYPE || "");
-    setSelectedStatus(retrievedProduct.STATUS);
+    // SYNC INDIVIDUAL UPDATE STATES
+    setUpdateProductName(retrievedProduct.PRODUCT_NAME || "");
+    setUpdateProductBrand(retrievedProduct.PRODUCT_BRAND || "");
+    setSelectedCategory(retrievedProduct.PRODUCT_CATEGORY || "");
+    setUpdateProductDescription(retrievedProduct.DESCRIPTION || "");
+    setUpdateProductSubtitle(retrievedProduct.PRODUCT_SUBTITLE || "");
+    setUpdateProductPrice(retrievedProduct.PURCHASE_UNIT_PRICE ? retrievedProduct.PURCHASE_UNIT_PRICE.toString() : "");
+    setSelectedDiscountType(retrievedProduct.DISCOUNT_TYPE || "");
+    setSelectedStatus(retrievedProduct.STATUS || "");
+    setSelectedColor(retrievedProduct.COLOR || null);
+    setUpdateProductNumber(retrievedProduct.PRODUCTS ? retrievedProduct.PRODUCTS.toString() : "");
+    setUpdateProductTag(retrievedProduct.TAG || "");
+    setUpdateProductDiscount(retrievedProduct.DISCOUNT ? retrievedProduct.DISCOUNT.toString() : "");
 
-    // Fix: Get colors correctly
+    // DETERMINE AVAILABLE COLORS BASED ON CATEGORY
     const categoryKey = productCategory.find(
       (item) => item.label === retrievedProduct.PRODUCT_CATEGORY
     )?.key;
-
 
     const colors = categoryKey
       ? productColor.find((item) => item.key === categoryKey)?.colors || null
       : null;
 
     setAvailableColor(colors);
-    setSelectedColor(retrievedProduct.COLOR || null);
   }, [retrievedProduct]);
+
 
   // FUNCTION TO HANDLE CATEGORY CHANGE EVENT, WE NEED TO UPDATE SOME FIELDS
   const handleCategoryChange = (category: string) => {
@@ -106,6 +117,33 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
       setAvailableColor(colors);
       setSelectedColor(null);
     }
+  }
+
+  // FUNCTION TO HANDLE PRODUCT UPDATE ACTION 
+  const handleProductDetailUpdate = (): void => {
+    if (!retrievedProduct) { return; }
+    const updatedDetailProduct: ProductDetailType = {
+      PRODUCT_ID: retrievedProduct?.PRODUCT_ID,
+      PRODUCT_BRAND: updateProductBrand,
+      PRODUCT_CATEGORY: selectedCategory,
+      PRODUCT_NAME: updateProductName,
+      DESCRIPTION: updateProductDescription,
+      PRODUCT_SUBTITLE: updateProductSubtitle,
+      PURCHASE_UNIT_PRICE: Number(updateProductPrice),
+      PRODUCTS: Number(updateProductNumber),
+      VIEWS: retrievedProduct?.VIEWS,
+      STATUS: selectedStatus,
+      IMAGE1_URL: retrievedProduct?.IMAGE1_URL,
+      IMAGE2_URL: retrievedProduct?.IMAGE2_URL,
+      IMAGE3_URL: retrievedProduct?.IMAGE3_URL,
+      TAG: updateProductTag,
+      DISCOUNT: Number(updateProductDiscount),
+      DISCOUNT_TYPE: selectedDiscountType,
+      COLOR: selectedColor, // Space Gray (from MACBOOK colors)
+    };
+
+    console.log(updatedDetailProduct);
+    handleWindowToggle();
   }
 
   // HANDLE THE UNIDENTIFIED PRODUCT
@@ -134,8 +172,8 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
               <input
                 type="text"
                 placeholder="Product name..."
-                // onChange={(e) => setInputProductsName(e.target.value)}
-                value={selectedProduct.PRODUCT_NAME || ""}
+                value={updateProductName || ""}
+                onChange={(e) => setUpdateProductName(e.target.value)}
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
             </div>
@@ -146,8 +184,8 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
               <input
                 type="text"
                 placeholder="Brand..."
-                // onChange={(e) => setInputBrandName(e.target.value)}
-                value={selectedProduct.PRODUCT_BRAND || ""}
+                value={updateProductBrand || ""}
+                onChange={(e) => setUpdateProductBrand(e.target.value)}
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
             </div>
@@ -185,7 +223,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
               <input
                 type="text"
                 placeholder="Number of products"
-                // onChange={(e) => setInputProductsNumber(e.target.value)}
+                onChange={(e) => setUpdateProductNumber(e.target.value)}
                 value={selectedProduct.PRODUCTS || ""}
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
@@ -197,7 +235,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
             <span className="px-1 text-gray-600">Description</span>
             <textarea
               placeholder="Description..."
-              // onChange={(e) => setInputProductDesccription(e.target.value)}
+              onChange={(e) => setUpdateProductDescription(e.target.value)}
               className="border rounded-lg px-3 py-2 text-xs resize-none h-full focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
             ></textarea>
           </div>
@@ -210,7 +248,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
               <input
                 type="text"
                 placeholder="Sale price"
-                // onChange={(e) => setInputProductPrice(e.target.value)}
+                onChange={(e) => setUpdateProductPrice(e.target.value)}
                 value={selectedProduct.PURCHASE_UNIT_PRICE || ""}
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
@@ -219,27 +257,34 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
             {/* DISCOUNT */}
             <div className="flex flex-col w-1/2 gap-1 text-sm font-normal">
               <span className="px-1 text-gray-600">Discount</span>
-              <Listbox value={discount} onChange={setDiscount}>
-                <div className="relative">
-                  <Listbox.Button className="border rounded-lg px-4 py-2 w-full text-left flex justify-between items-center text-xs text-gray-800 focus:ring-2 focus:ring-blue-400 transition-all duration-200">
-                    <span className={discount ? "text-gray-900" : "text-gray-500"}>
-                      {discount || "No discount"}
-                    </span>
-                    <ChevronDown className="w-4 h-4 text-gray-500" />
-                  </Listbox.Button>
-                  <Listbox.Options className="absolute z-10 mt-2 w-full bg-white rounded-xl shadow-lg ring-1 ring-gray-200 max-h-60 overflow-auto">
-                    {discountOption.map((option) => (
-                      <Listbox.Option
-                        key={option}
-                        value={option}
-                        className="cursor-pointer px-4 py-2 text-xs text-gray-700 hover:bg-gray-100 transition-all duration-200"
-                      >
-                        {option}
-                      </Listbox.Option>
-                    ))}
-                  </Listbox.Options>
-                </div>
-              </Listbox>
+              <div className="flex gap-2 items-center">
+                <input type="text" placeholder="Discount..."  
+                  value={updateProductDiscount}
+                  onChange={(e) => setUpdateProductDiscount(e.target.value)}
+                  className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
+                />
+                <Listbox value={selectedDiscountType} onChange={setSelectedDiscountType}>
+                  <div className="relative">
+                    <Listbox.Button className="border rounded-lg px-4 py-2 w-full text-left flex justify-between items-center text-xs text-gray-800 focus:ring-2 focus:ring-blue-400 transition-all duration-200">
+                      <span className={selectedDiscountType ? "text-gray-900" : "text-gray-500"}>
+                        {selectedDiscountType || "No discount"}
+                      </span>
+                      <ChevronDown className="w-4 h-4 text-gray-500" />
+                    </Listbox.Button>
+                    <Listbox.Options className="absolute z-10 mt-2 w-full bg-white rounded-xl shadow-lg ring-1 ring-gray-200 max-h-60 overflow-auto">
+                      {discountOption.map((option) => (
+                        <Listbox.Option
+                          key={option}
+                          value={option}
+                          className="cursor-pointer px-4 py-2 text-xs text-gray-700 hover:bg-gray-100 transition-all duration-200"
+                        >
+                          {option}
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </div>
+                </Listbox>
+              </div>
             </div>
           </div>
 
@@ -267,7 +312,10 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
           <button className="border-[1px] px-4 py-2 rounded-lg text-xs hover:bg-gray-100 transition-all duration-200" onClick={() => handleWindowToggle()}>
             Cancel
           </button>
-          <button className="px-4 py-2 rounded-lg text-xs bg-blue-500 text-white/90 hover:bg-blue-600 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-sm">
+          <button
+            className="px-4 py-2 rounded-lg text-xs bg-blue-500 text-white/90 hover:bg-blue-600 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-sm"
+            onClick={() => handleProductDetailUpdate()}
+          >
             Confirm
           </button>
         </div>
@@ -283,21 +331,25 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
             <input
               type="text"
               placeholder="Type and enter"
+              value={updateProductTag || ""}
+              onChange={(e) => setUpdateProductTag(e.target.value)}
               className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
             />
           </div>
-          <div className="flex gap-3">
+          {/* PRODUCT SUBTITLE + STATUS  */}
+          <div className="flex gap-3 text-sm">
             <div className="flex flex-col w-1/2 gap-3">
-              <span className="px-1 text-gray-600">Product subtitle</span>
+              <span className="px-1 text-gray-600 ">Product subtitle</span>
               <input
                 type="text"
                 placeholder="Type and enter"
-                // onChange={(e) => setInputProductSubtitle(e.target.value)}
+                value={updateProductSubtitle || ""}
+                onChange={(e) => setUpdateProductSubtitle(e.target.value)}
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
             </div>
-            <div className="flex flex-col w-1/2 gap-3">
-              <span className="px-1 text-gray-600">Product subtitle</span>
+            <div className="flex flex-col w-1/2 gap-3 text-sm">
+              <span className="px-1 text-gray-600">Product status</span>
               <SelectorComponent fontSize={"text-xs"} width={"w-full"} options={productStatusOption} optionSelector={selectedStatus} setOptionSelector={setSelectedStatus} />
             </div>
           </div>
