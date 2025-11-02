@@ -1,11 +1,10 @@
 "use client";
-import { sampleDetailProducts, ProductDetailType, productCategory, productColor, categoryOption, discountOption } from "@/lib/data";
+import { ProductDetailType, productCategory, productColor, categoryOption, discountOption } from "@/lib/data";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import UploadImageIcon from "@/components/UploadImageIcon";
 import { Listbox } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
-import SelectorComponent from "@/components/SelectorComponent";
 
 
 interface Props {
@@ -20,342 +19,358 @@ interface Props {
   handleWindowToggle: () => void,
 }
 
+
+
 const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, image3, setImage1, setImage2, setImage3, handleWindowToggle }: Props) => {
   // RETRIEVE PRODUCT FROM DETAIL PRODUCT ARRAY
-    const retrievedProduct = useMemo(() => {
-      return detailProductArray.find((item) => item.PRODUCT_ID === productID);
-    }, [productID, detailProductArray]);
-    // STATE TO HANDLE ALL DETAIL PRODUCT DATATYPE 
-  const [selectedProduct, setSelectedProduct] = useState<ProductDetailType>({
-    PRODUCT_ID: "",
-    PRODUCT_CATEGORY: "",
-    PRODUCT_NAME: "",
-    PRODUCT_BRAND: "",
-    DESCRIPTION: "",
-    PRODUCT_SUBTITLE: "",
-    PURCHASE_UNIT_PRICE: 0,
-    PRODUCTS: 0,
-    VIEWS: 0,
-    STATUS: "",
-    IMAGE1_URL: "",
-    IMAGE2_URL: "",
-    IMAGE3_URL: "",
-    TAG: "",
-    DISCOUNT: 0,
-    DISCOUNT_TYPE: "",
-    COLOR: "",
-  });
-  // SET UP ALL STATE TO HANDLE ALL SELECTOR 
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [availableColor, setAvailableColor] = useState<string[] | null>(productColor[0].colors);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [discount, setDiscount] = useState<string>("");
-  // EFFECT HOOK TO ASSIGN ALL RETRIEVE INFORMATION TO HOOK
-  useEffect(() => {
-    if (retrievedProduct) {
-      setSelectedProduct({
-        PRODUCT_ID: retrievedProduct.PRODUCT_ID,
-        PRODUCT_CATEGORY: retrievedProduct.PRODUCT_CATEGORY,
-        PRODUCT_NAME: retrievedProduct.PRODUCT_NAME,
-        PRODUCT_BRAND: retrievedProduct.PRODUCT_BRAND,
-        DESCRIPTION: retrievedProduct.DESCRIPTION || "",
-        PRODUCT_SUBTITLE: retrievedProduct.PRODUCT_SUBTITLE,
-        PURCHASE_UNIT_PRICE: retrievedProduct.PURCHASE_UNIT_PRICE,
-        PRODUCTS: retrievedProduct.PRODUCTS,
-        VIEWS: retrievedProduct.VIEWS,
-        STATUS: retrievedProduct.STATUS,
-        IMAGE1_URL: retrievedProduct.IMAGE1_URL || "",
-        IMAGE2_URL: retrievedProduct.IMAGE2_URL || "",
-        IMAGE3_URL: retrievedProduct.IMAGE3_URL || "",
-        TAG: retrievedProduct.TAG || "",
-        DISCOUNT: retrievedProduct.DISCOUNT || 0,
-        DISCOUNT_TYPE: retrievedProduct.DISCOUNT_TYPE || "",
-        COLOR: retrievedProduct.COLOR,
-      });
+  const retrievedProduct = useMemo(() => {
+    if (!productID || !detailProductArray.length) return null;
+    return detailProductArray.find((item) => item.PRODUCT_ID === productID) || null;
+  }, [productID, detailProductArray]);
 
-      setSelectedCategory(retrievedProduct.PRODUCT_CATEGORY);
-      setDiscount(retrievedProduct.DISCOUNT_TYPE || "");
+  // STATE
+  const [selectedProduct, setSelectedProduct] = useState<ProductDetailType>(
+    {
+      PRODUCT_ID: "",
+      PRODUCT_CATEGORY: "",
+      PRODUCT_NAME: "",
+      PRODUCT_BRAND: "",
+      DESCRIPTION: "",
+      PRODUCT_SUBTITLE: "",
+      PURCHASE_UNIT_PRICE: 0,
+      PRODUCTS: 0,
+      VIEWS: 0,
+      STATUS: "",
+      IMAGE1_URL: "",
+      IMAGE2_URL: "",
+      IMAGE3_URL: "",
+      TAG: "",
+      DISCOUNT: 0,
+      DISCOUNT_TYPE: "",
+      COLOR: "",
     }
-  }, [retrievedProduct]);
+  );
+const [selectedColor, setSelectedColor] = useState<string | null>(null);
+const [availableColor, setAvailableColor] = useState<string[] | null>(null);
+const [selectedCategory, setSelectedCategory] = useState<string>("");
+const [discount, setDiscount] = useState<string>("");
 
-
-
-  //
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-    const selectedCategoryKey = productCategory.find(item => item.label === category)?.key;
-
-    if (selectedCategoryKey) {
-      const colors = productColor.find(item => item.key === selectedCategoryKey)?.colors || [];
-      setAvailableColor(colors);
-      setSelectedColor(null);
-    }
-  }
-
-  // HANDLE THE UNIDENTIFIED PRODUCT
+// EFFECT HOOK
+useEffect(() => {
   if (!retrievedProduct) {
-    return (
-      <div className="p-5 text-gray-600">Product not found</div>
-    );
+    // Optional: reset form or show loading
+    return;
   }
 
+  // Set main product data
+  setSelectedProduct({
+    ...retrievedProduct,
+    DESCRIPTION: retrievedProduct.DESCRIPTION || "",
+    PRODUCT_SUBTITLE: retrievedProduct.PRODUCT_SUBTITLE || "",
+    IMAGE1_URL: retrievedProduct.IMAGE1_URL || "",
+    IMAGE2_URL: retrievedProduct.IMAGE2_URL || "",
+    IMAGE3_URL: retrievedProduct.IMAGE3_URL || "",
+    TAG: retrievedProduct.TAG || "",
+    DISCOUNT: retrievedProduct.DISCOUNT || 0,
+    DISCOUNT_TYPE: retrievedProduct.DISCOUNT_TYPE || "",
+  });
+
+  // Update selectors
+  setSelectedCategory(retrievedProduct.PRODUCT_CATEGORY);
+  setDiscount(retrievedProduct.DISCOUNT_TYPE || "");
+
+  // Fix: Get colors correctly
+  const categoryKey = productCategory.find(
+    (item) => item.label === retrievedProduct.PRODUCT_CATEGORY
+  )?.key;
+
+
+  const colors = categoryKey
+    ? productColor.find((item) => item.key === categoryKey)?.colors || null
+    : null;
+
+  setAvailableColor(colors);
+  setSelectedColor(retrievedProduct.COLOR || null);
+
+
+}, [retrievedProduct]);
+// FUNCTION TO HANDLE CATEGORY CHANGE EVENT, WE NEED TO UPDATE SOME FIELDS
+
+const handleCategoryChange = (category: string) => {
+  setSelectedCategory(category);
+  const selectedCategoryKey = productCategory.find(item => item.label === category)?.key;
+
+  if (selectedCategoryKey) {
+    const colors = productColor.find(item => item.key === selectedCategoryKey)?.colors || [];
+    setAvailableColor(colors);
+    setSelectedColor(null);
+  }
+}
+
+// HANDLE THE UNIDENTIFIED PRODUCT
+if (!retrievedProduct) {
   return (
-    <div className="bg-gray-200 w-full h-full flex p-5 gap-3 rounded-t-2xl shadow-2xl transition-all duration-500">
-      {/* RIGHT SIDE */}
-      <div className="bg-white w-2/3 rounded-2xl p-5 flex flex-col gap-4 justify-between shadow-md hover:shadow-lg transition-all duration-300">
-        {/* FORM CONTENT */}
-        <div className="flex flex-col gap-4 h-4/5 overflow-y-auto px-2 py-2">
-          {/* HEADING */}
-          <div className="font-orbitron font-[500] text-gray-800 text-lg mb-2 tracking-wide">
-            General Information
-          </div>
+    <div className="p-5 text-gray-600">Product not found</div>
+  );
+}
 
-          {/* PRODUCT NAME & BRAND */}
-          <div className="flex gap-4">
-            {/* PRODUCT NAME */}
-            <div className="flex flex-col w-1/2 gap-1 text-sm font-normal gap-1">
-              <span className="px-1 text-gray-600">Product Name</span>
-              <input
-                type="text"
-                placeholder="Product name..."
-                // onChange={(e) => setInputProductsName(e.target.value)}
-                value={selectedProduct.PRODUCT_NAME || ""}
-                className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
-              />
-            </div>
-
-            {/* BRAND */}
-            <div className="flex flex-col w-1/2 gap-1 text-sm font-normal gap-1">
-              <span className="px-1 text-gray-600">Brand</span>
-              <input
-                type="text"
-                placeholder="Brand..."
-                // onChange={(e) => setInputBrandName(e.target.value)}
-                value={selectedProduct.PRODUCT_BRAND || ""}
-                className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
-              />
-            </div>
-          </div>
-
-          {/* PRODUCT CATEGORY & PRODUCT NUMBER*/}
-          <div className="flex gap-4">
-            {/* PRODUCT CATEGORY */}
-            <div className="flex flex-col w-full gap-1 text-sm">
-              <span className="px-1 text-gray-600">Product Category</span>
-              <Listbox value={selectedCategory} onChange={handleCategoryChange}>
-                <div className="relative">
-                  <Listbox.Button className="border rounded-lg px-4 py-2 w-full text-left flex justify-between items-center text-xs text-gray-800 focus:ring-2 focus:ring-blue-400">
-                    {selectedCategory}
-                    <ChevronDown className="w-4 h-4 text-gray-500" />
-                  </Listbox.Button>
-                  <Listbox.Options className="absolute z-10 mt-2 w-full bg-white rounded-xl shadow-lg ring-1 ring-gray-200">
-                    {categoryOption.map((option) => (
-                      <Listbox.Option
-                        key={option}
-                        value={option}
-                        className="cursor-pointer px-4 py-2 text-xs text-gray-700 hover:bg-gray-100"
-                      >
-                        {option}
-                      </Listbox.Option>
-                    ))}
-                  </Listbox.Options>
-                </div>
-              </Listbox>
-            </div>
-
-            {/* PRODUCT NUMBER */}
-            <div className="flex flex-col w-1/2 gap-1 text-sm font-normal gap-1">
-              <span className="px-1 text-gray-600">Product number</span>
-              <input
-                type="text"
-                placeholder="Number of products"
-                // onChange={(e) => setInputProductsNumber(e.target.value)}
-                value={selectedProduct.PRODUCTS || ""}
-                className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
-              />
-            </div>
-          </div>
-
-          {/* DESCRIPTION */}
-          <div className="flex flex-col h-[180px] gap-1 text-sm font-normal gap-1">
-            <span className="px-1 text-gray-600">Description</span>
-            <textarea
-              placeholder="Description..."
-              // onChange={(e) => setInputProductDesccription(e.target.value)}
-              className="border rounded-lg px-3 py-2 text-xs resize-none h-full focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
-            ></textarea>
-          </div>
-
-          {/* PRICE & DISCOUNT */}
-          <div className="flex gap-4">
-            {/* SALE PRICE */}
-            <div className="flex flex-col w-1/2 gap-1 text-sm font-normal gap-1">
-              <span className="px-1 text-gray-600">Sale Price</span>
-              <input
-                type="text"
-                placeholder="Sale price"
-                // onChange={(e) => setInputProductPrice(e.target.value)}
-                value={selectedProduct.PURCHASE_UNIT_PRICE || ""}
-                className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
-              />
-            </div>
-
-            {/* DISCOUNT */}
-            <div className="flex flex-col w-1/2 gap-1 text-sm font-normal">
-              <span className="px-1 text-gray-600">Discount</span>
-              <Listbox value={discount} onChange={setDiscount}>
-                <div className="relative">
-                  <Listbox.Button className="border rounded-lg px-4 py-2 w-full text-left flex justify-between items-center text-xs text-gray-800 focus:ring-2 focus:ring-blue-400 transition-all duration-200">
-                    <span className={discount ? "text-gray-900" : "text-gray-500"}>
-                      {discount || "No discount"}
-                    </span>
-                    <ChevronDown className="w-4 h-4 text-gray-500" />
-                  </Listbox.Button>
-                  <Listbox.Options className="absolute z-10 mt-2 w-full bg-white rounded-xl shadow-lg ring-1 ring-gray-200 max-h-60 overflow-auto">
-                    {discountOption.map((option) => (
-                      <Listbox.Option
-                        key={option}
-                        value={option}
-                        className="cursor-pointer px-4 py-2 text-xs text-gray-700 hover:bg-gray-100 transition-all duration-200"
-                      >
-                        {option}
-                      </Listbox.Option>
-                    ))}
-                  </Listbox.Options>
-                </div>
-              </Listbox>
-            </div>
-          </div>
-
-          {/* COLOR SELECTOR */}
-          <div className="flex flex-col gap-2 text-sm font-normal mt-2">
-            <span className="text-gray-700 font-medium px-1">Select Colors</span>
-            <div className="flex flex-wrap gap-2 mt-1 px-2">
-              {availableColor && availableColor.map((color) => (
-                <button
-                  key={color}
-                  onClick={() => setSelectedColor(color)}
-                  className={`w-5 h-5 rounded-full border-2 transition-all duration-300 shadow-sm ${selectedColor === color
-                    ? "scale-110 border-blue-500 ring-2 ring-blue-300"
-                    : "border-gray-300 hover:scale-105 hover:ring-1 hover:ring-gray-300"
-                    }`}
-                  style={{ backgroundColor: color }}
-                ></button>
-              ))}
-            </div>
-          </div>
+return (
+  <div className="bg-gray-200 w-full h-full flex p-5 gap-3 rounded-t-2xl shadow-2xl transition-all duration-500">
+    {/* RIGHT SIDE */}
+    <div className="bg-white w-2/3 rounded-2xl p-5 flex flex-col gap-4 justify-between shadow-md hover:shadow-lg transition-all duration-300">
+      {/* FORM CONTENT */}
+      <div className="flex flex-col gap-4 h-4/5 overflow-y-auto px-2 py-2">
+        {/* HEADING */}
+        <div className="font-orbitron font-[500] text-gray-800 text-lg mb-2 tracking-wide">
+          General Information
         </div>
 
-        {/* ACTION BUTTONS */}
-        <div className="w-full h-fit flex justify-between mt-4">
-          <button className="border-[1px] px-4 py-2 rounded-lg text-xs hover:bg-gray-100 transition-all duration-200" onClick={() => handleWindowToggle()}>
-            Cancel
-          </button>
-          <button className="px-4 py-2 rounded-lg text-xs bg-blue-500 text-white/90 hover:bg-blue-600 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-sm">
-            Confirm
-          </button>
-        </div>
-      </div>
-
-      {/* LEFT SIDE */}
-      <div className="h-full w-1/3 flex flex-col gap-3">
-        {/* LEFT UPPER SIDE  */}
-        <div className="w-full h-fit bg-white rounded-2xl py-4 px-4 shadow-md hover:shadow-lg transition-all duration-300 gap-3 flex flex-col">
-          {/* TAG  */}
-          <div className="flex flex-col wfull gap-1 text-sm font-normal gap-2">
-            <span className="px-1 text-gray-600">Tag</span>
+        {/* PRODUCT NAME & BRAND */}
+        <div className="flex gap-4">
+          {/* PRODUCT NAME */}
+          <div className="flex flex-col w-1/2 gap-1 text-sm font-normal gap-1">
+            <span className="px-1 text-gray-600">Product Name</span>
             <input
               type="text"
-              placeholder="Type and enter"
+              placeholder="Product name..."
+              // onChange={(e) => setInputProductsName(e.target.value)}
+              value={selectedProduct.PRODUCT_NAME || ""}
               className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
             />
           </div>
-          {/* IMAGE UPLOAD FROM USER  */}
-          <div className="flex flex-col w-full gap-1 text-sm font-normal gap-2">
-            <span className="px-1 text-gray-600">Product image</span>
 
-            <div className="w-full h-[220px] gap-4 flex">
-              {/* MAIN IMAGE */}
-              <div className="w-1/2 h-full border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                {selectedProduct.IMAGE1_URL ? (
+          {/* BRAND */}
+          <div className="flex flex-col w-1/2 gap-1 text-sm font-normal gap-1">
+            <span className="px-1 text-gray-600">Brand</span>
+            <input
+              type="text"
+              placeholder="Brand..."
+              // onChange={(e) => setInputBrandName(e.target.value)}
+              value={selectedProduct.PRODUCT_BRAND || ""}
+              className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
+            />
+          </div>
+        </div>
+
+        {/* PRODUCT CATEGORY & PRODUCT NUMBER*/}
+        <div className="flex gap-4">
+          {/* PRODUCT CATEGORY */}
+          <div className="flex flex-col w-full gap-1 text-sm">
+            <span className="px-1 text-gray-600">Product Category</span>
+            <Listbox value={selectedCategory} onChange={handleCategoryChange}>
+              <div className="relative">
+                <Listbox.Button className="border rounded-lg px-4 py-2 w-full text-left flex justify-between items-center text-xs text-gray-800 focus:ring-2 focus:ring-blue-400">
+                  {selectedCategory}
+                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                </Listbox.Button>
+                <Listbox.Options className="absolute z-10 mt-2 w-full bg-white rounded-xl shadow-lg ring-1 ring-gray-200">
+                  {categoryOption.map((option) => (
+                    <Listbox.Option
+                      key={option}
+                      value={option}
+                      className="cursor-pointer px-4 py-2 text-xs text-gray-700 hover:bg-gray-100"
+                    >
+                      {option}
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </div>
+            </Listbox>
+          </div>
+
+          {/* PRODUCT NUMBER */}
+          <div className="flex flex-col w-1/2 gap-1 text-sm font-normal gap-1">
+            <span className="px-1 text-gray-600">Product number</span>
+            <input
+              type="text"
+              placeholder="Number of products"
+              // onChange={(e) => setInputProductsNumber(e.target.value)}
+              value={selectedProduct.PRODUCTS || ""}
+              className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
+            />
+          </div>
+        </div>
+
+        {/* DESCRIPTION */}
+        <div className="flex flex-col h-[180px] gap-1 text-sm font-normal gap-1">
+          <span className="px-1 text-gray-600">Description</span>
+          <textarea
+            placeholder="Description..."
+            // onChange={(e) => setInputProductDesccription(e.target.value)}
+            className="border rounded-lg px-3 py-2 text-xs resize-none h-full focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
+          ></textarea>
+        </div>
+
+        {/* PRICE & DISCOUNT */}
+        <div className="flex gap-4">
+          {/* SALE PRICE */}
+          <div className="flex flex-col w-1/2 gap-1 text-sm font-normal gap-1">
+            <span className="px-1 text-gray-600">Sale Price</span>
+            <input
+              type="text"
+              placeholder="Sale price"
+              // onChange={(e) => setInputProductPrice(e.target.value)}
+              value={selectedProduct.PURCHASE_UNIT_PRICE || ""}
+              className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
+            />
+          </div>
+
+          {/* DISCOUNT */}
+          <div className="flex flex-col w-1/2 gap-1 text-sm font-normal">
+            <span className="px-1 text-gray-600">Discount</span>
+            <Listbox value={discount} onChange={setDiscount}>
+              <div className="relative">
+                <Listbox.Button className="border rounded-lg px-4 py-2 w-full text-left flex justify-between items-center text-xs text-gray-800 focus:ring-2 focus:ring-blue-400 transition-all duration-200">
+                  <span className={discount ? "text-gray-900" : "text-gray-500"}>
+                    {discount || "No discount"}
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                </Listbox.Button>
+                <Listbox.Options className="absolute z-10 mt-2 w-full bg-white rounded-xl shadow-lg ring-1 ring-gray-200 max-h-60 overflow-auto">
+                  {discountOption.map((option) => (
+                    <Listbox.Option
+                      key={option}
+                      value={option}
+                      className="cursor-pointer px-4 py-2 text-xs text-gray-700 hover:bg-gray-100 transition-all duration-200"
+                    >
+                      {option}
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </div>
+            </Listbox>
+          </div>
+        </div>
+
+        {/* COLOR SELECTOR */}
+        <div className="flex flex-col gap-2 text-sm font-normal mt-2">
+          <span className="text-gray-700 font-medium px-1">Select Colors</span>
+          <div className="flex flex-wrap gap-2 mt-1 px-2">
+            {availableColor && availableColor.map((color) => (
+              <button
+                key={color}
+                onClick={() => setSelectedColor(color)}
+                className={`w-5 h-5 rounded-full border-2 transition-all duration-300 shadow-sm ${selectedColor === color
+                  ? "scale-110 border-blue-500 ring-2 ring-blue-300"
+                  : "border-gray-300 hover:scale-105 hover:ring-1 hover:ring-gray-300"
+                  }`}
+                style={{ backgroundColor: color }}
+              ></button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ACTION BUTTONS */}
+      <div className="w-full h-fit flex justify-between mt-4">
+        <button className="border-[1px] px-4 py-2 rounded-lg text-xs hover:bg-gray-100 transition-all duration-200" onClick={() => handleWindowToggle()}>
+          Cancel
+        </button>
+        <button className="px-4 py-2 rounded-lg text-xs bg-blue-500 text-white/90 hover:bg-blue-600 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-sm">
+          Confirm
+        </button>
+      </div>
+    </div>
+
+    {/* LEFT SIDE */}
+    <div className="h-full w-1/3 flex flex-col gap-3">
+      {/* LEFT UPPER SIDE  */}
+      <div className="w-full h-fit bg-white rounded-2xl py-4 px-4 shadow-md hover:shadow-lg transition-all duration-300 gap-3 flex flex-col">
+        {/* TAG  */}
+        <div className="flex flex-col wfull gap-1 text-sm font-normal gap-2">
+          <span className="px-1 text-gray-600">Tag</span>
+          <input
+            type="text"
+            placeholder="Type and enter"
+            className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
+          />
+        </div>
+        {/* IMAGE UPLOAD FROM USER  */}
+        <div className="flex flex-col w-full gap-1 text-sm font-normal gap-2">
+          <span className="px-1 text-gray-600">Product image</span>
+
+          <div className="w-full h-[220px] gap-4 flex">
+            {/* MAIN IMAGE */}
+            <div className="w-1/2 h-full border rounded-lg flex justify-center items-center relative overflow-hidden group">
+              {selectedProduct.IMAGE1_URL ? (
+                <Image
+                  src={selectedProduct.IMAGE1_URL}
+                  alt="Preview"
+                  fill
+                  className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+                />
+              ) : (
+                <UploadImageIcon
+                  image={image1}
+                  setImage={setImage1}
+                />
+              )}
+            </div>
+
+            {/* SECONDARY IMAGES */}
+            <div className="w-1/2 h-full gap-3 flex flex-col rounded-lg">
+              {/* SECOND IMAGE */}
+              <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
+                {selectedProduct.IMAGE2_URL ? (
                   <Image
-                    src={selectedProduct.IMAGE1_URL}
+                    src={selectedProduct.IMAGE2_URL}
                     alt="Preview"
                     fill
                     className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
-                  <UploadImageIcon
-                    image={image1}
-                    setImage={setImage1}
-                  />
+                  <UploadImageIcon image={image2} setImage={setImage2} />
                 )}
               </div>
 
-              {/* SECONDARY IMAGES */}
-              <div className="w-1/2 h-full gap-3 flex flex-col rounded-lg">
-                {/* SECOND IMAGE */}
-                <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                  {selectedProduct.IMAGE2_URL ? (
-                    <Image
-                      src={selectedProduct.IMAGE2_URL}
-                      alt="Preview"
-                      fill
-                      className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <UploadImageIcon image={image2} setImage={setImage2} />
-                  )}
-                </div>
-
-                {/* THIRD IMAGE */}
-                <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                  {selectedProduct.IMAGE3_URL ? (
-                    <Image
-                      src={selectedProduct.IMAGE3_URL}
-                      alt="Preview"
-                      fill
-                      className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <UploadImageIcon image={image3} setImage={setImage3} />
-                  )}
-                </div>
+              {/* THIRD IMAGE */}
+              <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
+                {selectedProduct.IMAGE3_URL ? (
+                  <Image
+                    src={selectedProduct.IMAGE3_URL}
+                    alt="Preview"
+                    fill
+                    className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <UploadImageIcon image={image3} setImage={setImage3} />
+                )}
               </div>
             </div>
           </div>
-          {/* CAUTION MESSAGE  */}
-          <div className="flex items-start gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 text-sm shadow-sm">
-            {/* Icon */}
-            <div className="flex-shrink-0 mt-[2px] text-blue-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={2}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
-                />
-              </svg>
-            </div>
-
-            {/* Text */}
-            <span className="leading-relaxed">
-              You need at least <span className="font-semibold text-gray-700">3 images</span>.
-              Pay attention to the quality of the pictures you add
-              <span className="text-red-500 font-medium"> (important)</span>.
-            </span>
-          </div>
         </div>
+        {/* CAUTION MESSAGE  */}
+        <div className="flex items-start gap-2 p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-500 text-sm shadow-sm">
+          {/* Icon */}
+          <div className="flex-shrink-0 mt-[2px] text-blue-500">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+              />
+            </svg>
+          </div>
 
+          {/* Text */}
+          <span className="leading-relaxed">
+            You need at least <span className="font-semibold text-gray-700">3 images</span>.
+            Pay attention to the quality of the pictures you add
+            <span className="text-red-500 font-medium"> (important)</span>.
+          </span>
+        </div>
       </div>
+
     </div>
-  );
+  </div>
+);
 }
 
 export default ProductDetailWindow;
