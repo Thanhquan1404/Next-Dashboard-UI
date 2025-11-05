@@ -2,6 +2,8 @@
 
 export let role = "student";
 
+export const URL = "https://msis207-q13-cttt-final-backend-2.onrender.com";
+
 export const teachersData = [
   {
     id: 1,
@@ -1144,6 +1146,20 @@ export const lastWeekFinancialComparation = [
     ],
   },
 ];
+
+//************************************************ USER PAGE ****************************************************/
+// DECLARE USER SIGN UP INPUT DATA TYPE 
+export interface UserSignUpType {
+  firstName: string;
+  lastName: string;
+  userName: string;
+  phone: string;
+  email: string;
+  password: string;
+}
+
+
+
 //**** Sales table data structure 
 export type saleRow = {
   NameUser: string;
@@ -1493,7 +1509,7 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCTS: 24,
     VIEWS: 2305,
     STATUS: "Active",
-    IMAGE1_URL: "/productDetailImage/product_2_image_1.webp",
+    IMAGE1_URL: "https://res.cloudinary.com/dojckaves/image/upload/v1762331857/project/images/20251105083732_BMW.svg.png",
     IMAGE2_URL: "/productDetailImage/product_2_image_2.webp",
     IMAGE3_URL: "/productDetailImage/product_2_image_3.webp",
     TAG: "",
