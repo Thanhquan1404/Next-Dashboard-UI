@@ -94,19 +94,21 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
     if (!checkSignUpInput(newSignUpInput)) {
       return;
     }
-    console.log("user input successful");
+
     try {
-      userRegister(newSignUpInput);
-      alert("You have signed up successfully!");
-    } catch (err) {
-      alert("Registration failed. Please try again.");
-    } finally {
-      handleToggle();
-      resetStateField();
+      const response = userRegister(newSignUpInput);
+
+      if (data?.code === 200) {
+        alert("You have signed up successfully!");
+        resetStateField();
+        handleToggle();
+      } else {
+        alert("Registration failed. Please try again.");
+      }
+    } catch (err: any) {
+      alert(`Registration failed: \n ${`Error field: ${err.errorField}, message: ${err.message}` || "Unknown error"}`);
     }
   }
-
-
 
   return (
     <div
@@ -118,20 +120,18 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
           `left 0.8s ease-in-out, transform 0.8s ease-in-out, ${isSignIn ? 'opacity 0.15s ease-in-out' : 'opacity 1.5s ease-in-out'}`,
       }}
     >
-      {/* Title */}
       <h1 className="font-michroma text-[28px] text-center text-white tracking-wide mb-2">
         Sign Up
       </h1>
-
       <p className="text-xs text-gray-300 text-center opacity-80 mb-4">
         or use your email for registration
       </p>
 
-      {/* FIRST NAME / LAST NAME */}
+      {/* FIRST + LAST NAME */}
       <div className="flex flex-row gap-4">
         <div className="w-1/2 h-[40px] bg-white rounded-md px-3 py-2 flex items-center gap-3">
           <input
-            // {isSignUpProcess ? "disabled" : ""}
+            disabled={loading}
             type="text"
             placeholder="First name"
             value={inputFirstName}
@@ -141,7 +141,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
         </div>
         <div className="w-1/2 h-[40px] bg-white rounded-md px-3 py-2 flex items-center gap-3">
           <input
-            // {isSignUpProcess ? "disabled" : ""}
+            disabled={loading}
             type="text"
             placeholder="Last name"
             value={inputLastName}
@@ -151,11 +151,11 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
         </div>
       </div>
 
-      {/* USERNAME  */}
+      {/* USERNAME */}
       <div className="w-full h-[40px] bg-white rounded-md px-3 py-2 flex items-center gap-3">
-        <PersonIcon className="test-gray-500" />
+        <PersonIcon className="text-gray-500" />
         <input
-          // {isSignUpProcess ? "disabled" : ""}
+          disabled={loading}
           type="text"
           placeholder="Username"
           value={inputUserName}
@@ -168,7 +168,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
       <div className="w-full h-[40px] bg-white rounded-md px-3 py-2 flex items-center gap-3">
         <PhoneIphoneIcon className="text-gray-500" />
         <input
-          // {isSignUpProcess ? "disabled" : ""}
+          disabled={loading}
           type="text"
           placeholder="Phone"
           value={inputPhone}
@@ -181,7 +181,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
       <div className="w-full h-[40px] bg-white rounded-md px-3 py-2 flex items-center gap-3">
         <EmailIcon className="text-gray-500" />
         <input
-          // {isSignUpProcess ? "disabled" : ""}
+          disabled={loading}
           type="text"
           placeholder="Email"
           value={inputEmail}
@@ -204,7 +204,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
           />
         )}
         <input
-          // {isSignUpProcess ? "disabled" : ""}
+          disabled={loading}
           type={visible ? "text" : "password"}
           placeholder="Password"
           value={inputPassword}
@@ -213,20 +213,20 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
         />
       </div>
 
-      {/* BUTTON or LOADING STATE */}
+      {/* BUTTON */}
       {loading ? (
         <SignUpFetching loading={loading} />
       ) : (
         <button
-          className="mt-3 bg-white/30 text-white rounded-xl w-[120px] h-[40px]
-                     hover:bg-white hover:text-black mx-auto shadow-md
-                     hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold"
+          disabled={loading}
+          className={`mt-3 bg-white/30 text-white rounded-xl w-[120px] h-[40px]
+                     ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-white hover:text-black"}
+                     mx-auto shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold`}
           onClick={handleSubmitButton}
         >
           Sign Up
         </button>
       )}
-
     </div>
   );
 };
