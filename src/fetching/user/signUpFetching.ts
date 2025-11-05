@@ -1,8 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { URL, UserSignUpType } from "@/lib/data";
-
-interface fetchingDataType {
+// FETCHING DATA TYPE 
+interface FetchingDataType {
   username: string;
   password: string;
   firstName: string;
@@ -11,14 +11,38 @@ interface fetchingDataType {
   phoneNumber: string;
   address: string;
 }
+// API - USER DATA TYPE
+interface ApiUserData {
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  avatarUrl: string | null;
+}
+// API - ERROR DATA TYPE
+interface ApiErrorData {
+  code: number,
+  errorField: string,
+  message: string,
+}
+// RESPONSE FROM SERVER DATA TYPE
+interface ApiResponse {
+  code: number;
+  message?: string;
+  data?: ApiUserData;
+  error?: ApiErrorData[];
+}
 
 export const useSignUpFetching = () => {
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<ApiResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const userRegister = async (newUser: UserSignUpType) => {
-    const payload: fetchingDataType = {
+    const payload: FetchingDataType = {
       username: newUser.userName,
       password: newUser.password,
       firstName: newUser.firstName,
@@ -32,22 +56,24 @@ export const useSignUpFetching = () => {
     setError(null);
 
     try {
-      const response = await axios.post(
+      const response = await axios.post<ApiResponse>(
         `${URL}/crm/users/registration`,
         payload,
         {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          // timeout: 10000, // optional: set timeout for slow server
+          headers: { "Content-Type": "application/json" },
         }
       );
 
+      console.log("✅ API Response:", response);
+
       setData(response.data);
       return response.data;
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-      throw err;
+    } catch (err) {
+      const axiosErr = err as AxiosError<any>;
+      const errData = axiosErr.response?.data?.error;
+      const errMsg = `${errData[0]?.message}`;
+      setError(errMsg);
+      throw new Error(errMsg);
     } finally {
       setLoading(false);
     }

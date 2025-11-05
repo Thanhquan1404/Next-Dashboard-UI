@@ -1,6 +1,6 @@
 import CircularProgress from "@mui/material/CircularProgress";
 
-const SignUpFetching = ({ loading }: { loading: boolean }) => {
+const FetchingLoadingStatus = ({ loading }: { loading: boolean }) => {
   if (!loading) return null;
   return (
     <div className="flex items-center justify-center py-3">
@@ -10,4 +10,4 @@ const SignUpFetching = ({ loading }: { loading: boolean }) => {
   );
 };
 
-export default SignUpFetching;
+export default FetchingLoadingStatus;

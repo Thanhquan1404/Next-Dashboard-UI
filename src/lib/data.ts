@@ -1157,6 +1157,11 @@ export interface UserSignUpType {
   email: string;
   password: string;
 }
+// DECLARE USER SIGN IN INPUT DATA TYPE 
+export interface userLoginType {
+  username: string;
+  password: string;
+}
 
 
 

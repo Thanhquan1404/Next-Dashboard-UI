@@ -6,9 +6,17 @@ import EmailIcon from '@mui/icons-material/Email';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useState } from 'react';
+import { userLoginType } from '@/lib/data';
+import { setToken } from '@/service/localStorageService';
+import FetchingLoadingStatus from '@/components/FetchingLoadingStatus';
 
 const SignIn = ({ isSignIn }: {isSignIn: boolean}) => {
+  // STATE 
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("")
   const [visible, setVisible] = useState(false);
+
+  
 
   const handleVisible = () => {
     setVisible(prev => !prev);
@@ -18,7 +26,6 @@ const SignIn = ({ isSignIn }: {isSignIn: boolean}) => {
       style={{
         left: isSignIn ? "0" : "100%", 
         opacity: isSignIn ? 1 :0,
-        // transform: isSignIn ? "translateX(0%)" : "translateX(-50%)",
         transition:
           `left 0.8s ease-in-out, transform 0.8s ease-in-out, ${ isSignIn ? 'opacity 1.5s ease-in-out' : 'opacity 0.15s ease-in-out'}`,
       }}
@@ -50,6 +57,7 @@ const SignIn = ({ isSignIn }: {isSignIn: boolean}) => {
         <EmailIcon className="text-gray-500" />
         <input
           type="text"
+          onChange={(e) => setUsername(e.target.value)}
           placeholder="Email"
           className="w-full bg-transparent outline-none placeholder-gray-400 text-gray-700"
         />
@@ -61,6 +69,7 @@ const SignIn = ({ isSignIn }: {isSignIn: boolean}) => {
         <input
           type={visible ? 'text' : 'password'}
           placeholder="Password"
+          onChange={(e) => setPassword(e.target.value)}
           className="w-full bg-transparent outline-none placeholder-gray-400 text-gray-700"
         />
       </div>

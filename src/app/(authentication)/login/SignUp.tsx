@@ -6,7 +6,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { useState } from 'react';
 import { UserSignUpType } from '@/lib/data';
 import { useSignUpFetching } from '@/fetching/user/signUpFetching';
-import SignUpFetching from './SignUpFetching';
+import FetchingLoadingStatus from '../../../components/FetchingLoadingStatus';
 interface Props {
   isSignIn: boolean;
   handleToggle: () => void;
@@ -81,7 +81,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
   }
 
   // HANDLE SUBMIT BUTTON 
-  const handleSubmitButton = () => {
+  const handleSubmitButton = async () => {
     const newSignUpInput: UserSignUpType = {
       firstName: inputFirstName,
       lastName: inputLastName,
@@ -93,10 +93,10 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
 
     if (!checkSignUpInput(newSignUpInput)) {
       return;
-    }
+    } 
 
     try {
-      const response = userRegister(newSignUpInput);
+      await userRegister(newSignUpInput);
 
       if (data?.code === 200) {
         alert("You have signed up successfully!");
@@ -106,7 +106,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
         alert("Registration failed. Please try again.");
       }
     } catch (err: any) {
-      alert(`Registration failed: \n ${`Error field: ${err.errorField}, message: ${err.message}` || "Unknown error"}`);
+      alert(`Registration failed \n${`${err}` || "Unknown error"}`);
     }
   }
 
@@ -215,7 +215,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
 
       {/* BUTTON */}
       {loading ? (
-        <SignUpFetching loading={loading} />
+        <FetchingLoadingStatus loading={loading} />
       ) : (
         <button
           disabled={loading}
