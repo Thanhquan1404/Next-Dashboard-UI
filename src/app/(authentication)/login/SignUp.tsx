@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { UserSignUpType } from '@/lib/data';
 import { useSignUpFetching } from '@/fetching/user/signUpFetching';
 import FetchingLoadingStatus from '../../../components/FetchingLoadingStatus';
+
 interface Props {
   isSignIn: boolean;
   handleToggle: () => void;

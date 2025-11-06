@@ -9,14 +9,50 @@ import { useState } from 'react';
 import { userLoginType } from '@/lib/data';
 import { setToken } from '@/service/localStorageService';
 import FetchingLoadingStatus from '@/components/FetchingLoadingStatus';
+import useSignInFetching from '@/fetching/user/signInFetching';
 
-const SignIn = ({ isSignIn }: {isSignIn: boolean}) => {
+const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
+  // INITIALIZE NAVIGATE FUNTION 
+  // const navigate = useNavigate();
+  // INITIALIZE FETCHING FUNCTION 
+  const { loading, data, error, userLogin } = useSignInFetching();
+
   // STATE 
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("")
   const [visible, setVisible] = useState(false);
 
-  
+  // RESET ALL STATE 
+  const resetStateField = () => {
+    setUsername("");
+    setPassword("");
+  }
+
+  // HANDLE LOGIN BUTTON TOGGLE
+  const handleLoginButtonToggle = async () => {
+    const userLoginInput: userLoginType = {
+      username: username,
+      password: password,
+    }
+
+    try {
+      const response = await userLogin(userLoginInput);
+      const resData = response.data;
+
+      if (resData?.code === 200 && resData?.data?.authenticated === true) {
+        const accessToken = resData.data.accessToken;
+        console.log(accessToken);
+        resetStateField();
+        setToken(accessToken);
+        // navigate("/products");
+      } else {
+        const errMessage = resData?.message || "Invalid credentials";
+        alert(`Login failed\n${errMessage}`);
+      }
+    } catch (error) {
+      alert(`Login failed \n ${error}`);
+    }
+  }
 
   const handleVisible = () => {
     setVisible(prev => !prev);
@@ -24,10 +60,10 @@ const SignIn = ({ isSignIn }: {isSignIn: boolean}) => {
   return (
     <div className="w-1/2 h-full px-10 flex flex-col justify-center space-y-5 absolute transition-all duration-700 ease-in-out left-[-50%]"
       style={{
-        left: isSignIn ? "0" : "100%", 
-        opacity: isSignIn ? 1 :0,
+        left: isSignIn ? "0" : "100%",
+        opacity: isSignIn ? 1 : 0,
         transition:
-          `left 0.8s ease-in-out, transform 0.8s ease-in-out, ${ isSignIn ? 'opacity 1.5s ease-in-out' : 'opacity 0.15s ease-in-out'}`,
+          `left 0.8s ease-in-out, transform 0.8s ease-in-out, ${isSignIn ? 'opacity 1.5s ease-in-out' : 'opacity 0.15s ease-in-out'}`,
       }}
     >
       {/* Title */}
@@ -80,12 +116,18 @@ const SignIn = ({ isSignIn }: {isSignIn: boolean}) => {
       </p>
 
       {/* Sign In Button */}
-      <button
-        className="mt-3 bg-white/30 text-white rounded-xl w-[120px] h-[40px] hover:bg-white hover:text-black 
+      {
+        loading ?
+          <FetchingLoadingStatus loading={loading} />
+          :
+          <button
+            className="mt-3 bg-white/30 text-white rounded-xl w-[120px] h-[40px] hover:bg-white hover:text-black 
                mx-auto shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold"
-      >
-        Sign In
-      </button>
+            onClick={handleLoginButtonToggle}
+          >
+            Sign In
+          </button>
+      }
     </div>
   )
 }

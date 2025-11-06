@@ -64,8 +64,6 @@ export const useSignUpFetching = () => {
         }
       );
 
-      console.log("✅ API Response:", response);
-
       setData(response.data);
       return response.data;
     } catch (err) {
