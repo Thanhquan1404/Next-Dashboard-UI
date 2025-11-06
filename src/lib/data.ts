@@ -4,6 +4,7 @@ export let role = "student";
 
 export const URL = "https://msis207-q13-cttt-final-backend-2.onrender.com";
 
+export const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzZXJ2ZXIiLCJzdWIiOiJuZ3V5ZW50aGFuaHF1YW4iLCJleHAiOjE3NjI1MzI1MTYsImlhdCI6MTc2MjQ0NjExNiwianRpIjoiY2ZmOTljOTAtYmI0Yi00ODJiLTk0NmYtNmIzNWM1ZTIwNzgyIn0.al4nGHbJ1rW-0I_AXZqeAjw6pS8vk0FUVdjJM-tPETo'
 export const teachersData = [
   {
     id: 1,
@@ -1461,6 +1462,8 @@ export const sampleProducts: ProductDataType[] = [
     ACTION: "Edit"
   },
 ];
+// --- DETAIL PRODUCT DATATYPE --- 
+
 // --- DETAIL PRODUCT DATATYPE ---
 export type ProductDetailType = {
   PRODUCT_ID: string,

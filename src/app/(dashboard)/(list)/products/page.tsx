@@ -3,11 +3,14 @@ import AddingProductWindow from "./AddingProductWindow";
 import CategoryOptions from "./CategoryOptions";
 import ProductsPageHeader from "./ProductsPageHeader";
 import ProductsTable from "./ProductsTable";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { sampleProducts, ProductDataType, ProductDetailType, sampleDetailProducts } from "@/lib/data";
 import ProductDetailWindow from "./ProductDetailWindow";
+import useGetListProducts from "@/fetching/product/getListProducts";
 
 const Page = () => {
+  // INITIALIZE FETCHING FUNCTION 
+  const { loading, data, error, getListProducts } = useGetListProducts();
   // STATE HOOK TO HANDLE PRODUCTS ARRAY
   const [products, setProducts] = useState<ProductDataType[]>(sampleProducts);
   // STATE HOOK TO HANDLE DETAIL PRODUCT ARRAY
@@ -28,6 +31,24 @@ const Page = () => {
   const handleWindowToggle = (): void => {
     setWindowVisible((prev) => !prev);
   };
+  // FUNCTION TO FETCHING DATA
+  const hasFetched = useRef(false);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!hasFetched.current) {
+        const resData = await getListProducts();
+        
+        if (resData?.content) {
+          // const dataArray: ProductDataType[] = resData.content;
+          // setProducts(dataArray);
+        }
+        hasFetched.current = true;
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   // FUNCTION TO HANDLE 'ADDING PRODUCT' ACTION
   const handleAddingProductEvent = (newProduct: ProductDataType): void => {
     const arr = [...products];
@@ -44,12 +65,12 @@ const Page = () => {
   //  FUNCTION TO HANDLE 'VIEW PRODUCT DETAIL' ACTION
   const handleDetailProductWindowToggle = (product: HTMLElement | null): void => {
     setProductDetailVisible((prev) => !prev);
-    if (product){
+    if (product) {
       const productID = product.getAttribute("id");
       setSelectedProduct(productID);
       console.log("Retrieve product ID successfully");
     }
-    else{
+    else {
       setSelectedProduct(null);
       console.log("clear the set Selected Product");
     }
@@ -72,8 +93,8 @@ const Page = () => {
           {/* --- BACKDROP-PRODUCT DETAIL WINDOW --- */}
           <div
             className={`fixed inset-0 z-[90] transition-all duration-500 ${windowVisible
-                ? "bg-black/40 backdrop-blur-sm visible opacity-100"
-                : "invisible opacity-0"
+              ? "bg-black/40 backdrop-blur-sm visible opacity-100"
+              : "invisible opacity-0"
               }`}
             onClick={() => {
               handleWindowToggle();
@@ -86,8 +107,8 @@ const Page = () => {
             className={`fixed left-0 w-full h-full rounded-t-2xl absolute shadow-lg z-[100] transition-transform duration-500 ${windowVisible ? "bottom-0" : "translate-y-full"
               }`}
           >
-            <ProductDetailWindow 
-              productID={selectedProduct} 
+            <ProductDetailWindow
+              productID={selectedProduct}
               detailProductArray={detailProducts}
               image1={image1}
               image2={image2}
@@ -104,8 +125,8 @@ const Page = () => {
           {/* --- BACKDROP --- */}
           <div
             className={`fixed inset-0 z-[90] transition-all duration-500 ${windowVisible
-                ? "bg-black/40 backdrop-blur-sm visible opacity-100"
-                : "invisible opacity-0"
+              ? "bg-black/40 backdrop-blur-sm visible opacity-100"
+              : "invisible opacity-0"
               }`}
             onClick={handleWindowToggle}
           ></div>
