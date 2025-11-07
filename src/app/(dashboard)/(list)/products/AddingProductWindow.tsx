@@ -57,7 +57,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
       PRODUCT_SUBTITLE: inputProductSubtitle,
       PURCHASE_UNIT_PRICE: Number(inputProductPrice),
       PRODUCTS: Number(inputProductNumber),
-      VIEWS: 1,
+      SKU: "",
       STATUS: inputProductStatus,
       IMAGE1_URL: image1,
       IMAGE2_URL: image2,

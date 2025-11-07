@@ -4,7 +4,7 @@ export let role = "student";
 
 export const URL = "https://msis207-q13-cttt-final-backend-2.onrender.com";
 
-export const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzZXJ2ZXIiLCJzdWIiOiJuZ3V5ZW50aGFuaHF1YW4iLCJleHAiOjE3NjI1MzI1MTYsImlhdCI6MTc2MjQ0NjExNiwianRpIjoiY2ZmOTljOTAtYmI0Yi00ODJiLTk0NmYtNmIzNWM1ZTIwNzgyIn0.al4nGHbJ1rW-0I_AXZqeAjw6pS8vk0FUVdjJM-tPETo'
+export const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzZXJ2ZXIiLCJzdWIiOiJuZ3V5ZW52YW5kYXQiLCJleHAiOjE3NjI2MjA2NDAsImlhdCI6MTc2MjUzNDI0MCwianRpIjoiNzI0ZDgyYmQtMmE5Ny00MzQ0LTk0N2YtN2U3YzVjYWQ1YmI3In0.2O5K8NsIY5Bd-mFWBfcOULFHbwnYKzvHwFtB19X_4Cc'
 export const teachersData = [
   {
     id: 1,
@@ -1476,13 +1476,13 @@ export type ProductDetailType = {
   PRODUCTS: number;
   SKU: string;
   STATUS: string;
-  IMAGE1_URL: string | null;
-  IMAGE2_URL: string | null;
-  IMAGE3_URL: string | null;
+  IMAGE1_URL: string ;
+  IMAGE2_URL: string ;
+  IMAGE3_URL: string ;
   TAG: string | null;
-  DISCOUNT: number | null;
+  DISCOUNT: number ;
   DISCOUNT_TYPE: string;
-  COLOR: string | null;
+  COLOR: string ;
 };
 
 // --- SAMPLE DETAIL PRODUCT DATA ---
@@ -1622,7 +1622,7 @@ export const sampleDetailProducts: ProductDetailType[] = [
   },
 ];
 
-export const discountOption = ["percentage", "currency"];
+export const discountOption = ["PERCENTAGE", "AMOUNT"];
 
 // DECLEAR PRODUCT CATEGORY 
 export type productCategoryType = {

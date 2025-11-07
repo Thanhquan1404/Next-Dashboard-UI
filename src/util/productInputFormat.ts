@@ -61,7 +61,7 @@ export const productInputFormat = (detailProduct: ProductDetailType): ProductDat
 
   // Compute public (final) price after discount
   const publicProductPrice = (): number => {
-    if (discountType === "percentage") {
+    if (discountType === "PERCENT") {
       return productPrice * (1 - discountValue / 100);
     } else if (discountType === "fixed") {
       return productPrice - discountValue;
@@ -78,7 +78,7 @@ export const productInputFormat = (detailProduct: ProductDetailType): ProductDat
     PRODUCT_SUBTITLE: detailProduct.PRODUCT_SUBTITLE,
     PURCHASE_UNIT_PRICE: publicProductPrice(),
     PRODUCTS: detailProduct.PRODUCTS,
-    VIEWS: 1,
+    SKU: "",
     STATUS: detailProduct.STATUS,
     ACTION: "Edit",
   };

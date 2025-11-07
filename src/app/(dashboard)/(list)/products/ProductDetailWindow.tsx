@@ -38,7 +38,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
       PRODUCT_SUBTITLE: "",
       PURCHASE_UNIT_PRICE: 0,
       PRODUCTS: 0,
-      VIEWS: 0,
+      SKU: "",
       STATUS: "",
       IMAGE1_URL: "",
       IMAGE2_URL: "",
@@ -131,7 +131,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
       PRODUCT_SUBTITLE: updateProductSubtitle,
       PURCHASE_UNIT_PRICE: Number(updateProductPrice),
       PRODUCTS: Number(updateProductNumber),
-      VIEWS: retrievedProduct?.VIEWS,
+      SKU: retrievedProduct?.SKU,
       STATUS: selectedStatus,
       IMAGE1_URL: retrievedProduct?.IMAGE1_URL,
       IMAGE2_URL: retrievedProduct?.IMAGE2_URL,
@@ -139,7 +139,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
       TAG: updateProductTag,
       DISCOUNT: Number(updateProductDiscount),
       DISCOUNT_TYPE: selectedDiscountType,
-      COLOR: selectedColor, // Space Gray (from MACBOOK colors)
+      COLOR: selectedColor || "", // Space Gray (from MACBOOK colors)
     };
 
     console.log(updatedDetailProduct);
@@ -235,6 +235,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
             <span className="px-1 text-gray-600">Description</span>
             <textarea
               placeholder="Description..."
+              value={selectedProduct.DESCRIPTION || ""}
               onChange={(e) => setUpdateProductDescription(e.target.value)}
               className="border rounded-lg px-3 py-2 text-xs resize-none h-full focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
             ></textarea>

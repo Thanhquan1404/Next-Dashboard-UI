@@ -10,12 +10,24 @@ import useGetListProducts from "@/fetching/product/getListProducts";
 
 // FUNCTION TO ASSIGN PRODUCT DETAIL INTO PRODUCT IN TABLE
 const productTableData = (listProductDetail: ProductDetailType[]): ProductDataType[] => {
+  // Compute public (final) price after discount
+  const publicProductPrice = (discountType: string, productPrice: number, discountValue: number): number => {
+    if (discountType === "PERCENT") {
+      return productPrice * (1 - discountValue / 100);
+    } else if (discountType === "fixed") {
+      return productPrice - discountValue;
+    } else {
+      // no valid discount type
+      return productPrice;
+    }
+  };
+
   const result: ProductDataType[] = listProductDetail.map((item) => {
     const product: ProductDataType = {
       PRODUCT_ID: item.PRODUCT_ID,
       PRODUCT_NAME: item.PRODUCT_NAME,
-      PRODUCT_SUBTITLE: item.PRODUCT_SUBTITLE,   // Added subtitle field
-      PURCHASE_UNIT_PRICE: item.PURCHASE_UNIT_PRICE,
+      PRODUCT_SUBTITLE: item.PRODUCT_SUBTITLE,  
+      PURCHASE_UNIT_PRICE: publicProductPrice(item.DISCOUNT_TYPE, item.PURCHASE_UNIT_PRICE, item.DISCOUNT),
       PRODUCTS: item.PRODUCTS,
       SKU: item.SKU,
       STATUS: item.STATUS,
@@ -29,7 +41,7 @@ const Page = () => {
   // INITIALIZE FETCHING FUNCTION 
   const { loading, data, error, getListProducts } = useGetListProducts();
   // STATE HOOK TO HANDLE PRODUCTS ARRAY
-  const [products, setProducts] = useState<ProductDataType[]>(sampleProducts);
+  const [products, setProducts] = useState<ProductDataType[]>([]);
   // STATE HOOK TO HANDLE DETAIL PRODUCT ARRAY
   const [detailProducts, setDetailProducts] = useState<ProductDetailType[]>([]);
   // STATE HOOK TO MAKE ADDING WINDOW APPEAR

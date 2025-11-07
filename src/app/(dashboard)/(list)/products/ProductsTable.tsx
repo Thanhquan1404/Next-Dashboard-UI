@@ -192,7 +192,7 @@ const ProductsTable = ({ sampleProducts, handleWindowToggle, handleDetailProduct
                 if (column.key === "PURCHASE_UNIT_PRICE") {
                   return (
                     <td key={idx} className="py-2">
-                      <div className={`flex ${column.justifyItems}`}>{ moneyFormat(row["PURCHASE_UNIT_PRICE"])}$</div>
+                      <div className={`flex ${column.justifyItems}`}>{ moneyFormat(row["PURCHASE_UNIT_PRICE"])}đ</div>
                     </td>
                   );
                 }
