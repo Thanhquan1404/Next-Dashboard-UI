@@ -1394,7 +1394,7 @@ export type ProductDataType = {
   PRODUCT_SUBTITLE: string;   // Added subtitle field
   PURCHASE_UNIT_PRICE: number;
   PRODUCTS: number;
-  VIEWS: number;
+  SKU: string;
   STATUS: string;
   ACTION: string;
 };
@@ -1407,7 +1407,7 @@ export const sampleProducts: ProductDataType[] = [
     PRODUCT_SUBTITLE: "16-inch - 16GB - 512GB - Space Gray",
     PURCHASE_UNIT_PRICE: 3499,
     PRODUCTS: 12,
-    VIEWS: 1820,
+    SKU: "1820",
     STATUS: "Active",
     ACTION: "Edit"
   },
@@ -1417,7 +1417,7 @@ export const sampleProducts: ProductDataType[] = [
     PRODUCT_SUBTITLE: "13-inch - 8GB - 256GB - Midnight",
     PURCHASE_UNIT_PRICE: 1299,
     PRODUCTS: 24,
-    VIEWS: 2305,
+    SKU: "2305",
     STATUS: "Active",
     ACTION: "Edit"
   },
@@ -1427,7 +1427,7 @@ export const sampleProducts: ProductDataType[] = [
     PRODUCT_SUBTITLE: "6.7-inch - 256GB - Natural Titanium",
     PURCHASE_UNIT_PRICE: 1199,
     PRODUCTS: 38,
-    VIEWS: 5120,
+    SKU: "5120",
     STATUS: "Active",
     ACTION: "Edit"
   },
@@ -1437,7 +1437,7 @@ export const sampleProducts: ProductDataType[] = [
     PRODUCT_SUBTITLE: "4.7-inch - 64GB - (Product) Red",
     PURCHASE_UNIT_PRICE: 429,
     PRODUCTS: 45,
-    VIEWS: 870,
+    SKU: "870",
     STATUS: "Low Stock",
     ACTION: "Edit"
   },
@@ -1447,7 +1447,7 @@ export const sampleProducts: ProductDataType[] = [
     PRODUCT_SUBTITLE: "12.9-inch - 8GB - 256GB - Silver",
     PURCHASE_UNIT_PRICE: 1099,
     PRODUCTS: 18,
-    VIEWS: 1940,
+    SKU: "1940",
     STATUS: "Active",
     ACTION: "Edit"
   },
@@ -1457,7 +1457,7 @@ export const sampleProducts: ProductDataType[] = [
     PRODUCT_SUBTITLE: "49mm - Titanium - Ocean Band",
     PURCHASE_UNIT_PRICE: 799,
     PRODUCTS: 25,
-    VIEWS: 1440,
+    SKU: "1440",
     STATUS: "Active",
     ACTION: "Edit"
   },
@@ -1474,7 +1474,7 @@ export type ProductDetailType = {
   PRODUCT_SUBTITLE: string;
   PURCHASE_UNIT_PRICE: number;
   PRODUCTS: number;
-  VIEWS: number;
+  SKU: string;
   STATUS: string;
   IMAGE1_URL: string | null;
   IMAGE2_URL: string | null;
@@ -1496,7 +1496,7 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCT_SUBTITLE: "16-inch - 16GB - 512GB - Space Gray",
     PURCHASE_UNIT_PRICE: 3499,
     PRODUCTS: 12,
-    VIEWS: 1820,
+    SKU: "1820",
     STATUS: "Active",
     IMAGE1_URL: "/productDetailImage/product_1_image_1.webp",
     IMAGE2_URL: "/productDetailImage/product_1_image_2.webp",
@@ -1515,7 +1515,7 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCT_SUBTITLE: "13-inch - 8GB - 256GB - Midnight",
     PURCHASE_UNIT_PRICE: 1299,
     PRODUCTS: 24,
-    VIEWS: 2305,
+    SKU: "2305",
     STATUS: "Active",
     IMAGE1_URL: "https://res.cloudinary.com/dojckaves/image/upload/v1762331857/project/images/20251105083732_BMW.svg.png",
     IMAGE2_URL: "/productDetailImage/product_2_image_2.webp",
@@ -1534,7 +1534,7 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCT_SUBTITLE: "6.7-inch - 256GB - Natural Titanium",
     PURCHASE_UNIT_PRICE: 1199,
     PRODUCTS: 38,
-    VIEWS: 5120,
+    SKU: "5120",
     STATUS: "Active",
     IMAGE1_URL: "/productDetailImage/product_3_image_1.webp",
     IMAGE2_URL: "/productDetailImage/product_3_image_2.webp",
@@ -1553,7 +1553,7 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCT_SUBTITLE: "4.7-inch - 64GB - (Product) Red",
     PURCHASE_UNIT_PRICE: 429,
     PRODUCTS: 45,
-    VIEWS: 870,
+    SKU: "870",
     STATUS: "Low Stock",
     IMAGE1_URL: "/productDetailImage/product_4_image_1.webp",
     IMAGE2_URL: "/productDetailImage/product_4_image_2.webp",
@@ -1572,7 +1572,7 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCT_SUBTITLE: "12.9-inch - 8GB - 256GB - Silver",
     PURCHASE_UNIT_PRICE: 1099,
     PRODUCTS: 18,
-    VIEWS: 1940,
+    SKU: "1940",
     STATUS: "Active",
     IMAGE1_URL: "/productDetailImage/product_5_image_1.webp",
     IMAGE2_URL: "/productDetailImage/product_5_image_2.webp",
@@ -1591,7 +1591,7 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCT_SUBTITLE: "49mm - Titanium - Ocean Band",
     PURCHASE_UNIT_PRICE: 799,
     PRODUCTS: 25,
-    VIEWS: 1440,
+    SKU: "1440",
     STATUS: "Active",
     IMAGE1_URL: "/productDetailImage/product_6_image_1.webp",
     IMAGE2_URL: "/productDetailImage/product_6_image_2.webp",
@@ -1610,7 +1610,7 @@ export const sampleDetailProducts: ProductDetailType[] = [
     PRODUCT_SUBTITLE: "45mm - Starlight Aluminum Case - Sport Band",
     PURCHASE_UNIT_PRICE: 399,
     PRODUCTS: 32,
-    VIEWS: 1650,
+    SKU: "1650",
     STATUS: "Active",
     IMAGE1_URL: "/productDetailImage/product_7_image_1.webp",
     IMAGE2_URL: "/productDetailImage/product_7_image_2.webp",

@@ -4,17 +4,34 @@ import CategoryOptions from "./CategoryOptions";
 import ProductsPageHeader from "./ProductsPageHeader";
 import ProductsTable from "./ProductsTable";
 import { useEffect, useState, useRef } from "react";
-import { sampleProducts, ProductDataType, ProductDetailType, sampleDetailProducts } from "@/lib/data";
+import { sampleProducts, ProductDataType, ProductDetailType} from "@/lib/data";
 import ProductDetailWindow from "./ProductDetailWindow";
 import useGetListProducts from "@/fetching/product/getListProducts";
 
+// FUNCTION TO ASSIGN PRODUCT DETAIL INTO PRODUCT IN TABLE
+const productTableData = (listProductDetail: ProductDetailType[]): ProductDataType[] => {
+  const result: ProductDataType[] = listProductDetail.map((item) => {
+    const product: ProductDataType = {
+      PRODUCT_ID: item.PRODUCT_ID,
+      PRODUCT_NAME: item.PRODUCT_NAME,
+      PRODUCT_SUBTITLE: item.PRODUCT_SUBTITLE,   // Added subtitle field
+      PURCHASE_UNIT_PRICE: item.PURCHASE_UNIT_PRICE,
+      PRODUCTS: item.PRODUCTS,
+      SKU: item.SKU,
+      STATUS: item.STATUS,
+      ACTION: "",
+    }
+    return product;
+  })
+  return result;
+}
 const Page = () => {
   // INITIALIZE FETCHING FUNCTION 
   const { loading, data, error, getListProducts } = useGetListProducts();
   // STATE HOOK TO HANDLE PRODUCTS ARRAY
   const [products, setProducts] = useState<ProductDataType[]>(sampleProducts);
   // STATE HOOK TO HANDLE DETAIL PRODUCT ARRAY
-  const [detailProducts, setDetailProducts] = useState<ProductDetailType[]>(sampleDetailProducts);
+  const [detailProducts, setDetailProducts] = useState<ProductDetailType[]>([]);
   // STATE HOOK TO MAKE ADDING WINDOW APPEAR
   const [windowVisible, setWindowVisible] = useState<boolean>(false);
   // STATE HOOK TO MAKE DETAIL PRODUCT WINDOW APPEAR 
@@ -37,10 +54,31 @@ const Page = () => {
     const fetchProducts = async () => {
       if (!hasFetched.current) {
         const resData = await getListProducts();
-        
-        if (resData?.content) {
-          // const dataArray: ProductDataType[] = resData.content;
-          // setProducts(dataArray);
+
+        if (resData) {
+          const listDetailProduct: ProductDetailType[] = resData.map((item) => {
+            const result: ProductDetailType = {
+              PRODUCT_ID: item.productId,
+              PRODUCT_BRAND: item.productBrand,
+              PRODUCT_CATEGORY: item.productCategory,
+              PRODUCT_NAME: item.productName,
+              DESCRIPTION: item.description,
+              PRODUCT_SUBTITLE: item.productSubtitle,
+              PURCHASE_UNIT_PRICE: item.purchaseUnitPrice,
+              PRODUCTS: item.quantity,
+              SKU: item.sku,
+              STATUS: item.status,
+              IMAGE1_URL: item.imageUrl,
+              IMAGE2_URL: "",
+              IMAGE3_URL: "",
+              TAG: "",
+              DISCOUNT: item.discount,
+              DISCOUNT_TYPE: item.discountType,
+              COLOR: "",
+            };
+            return result;
+          });
+          setDetailProducts(listDetailProduct);
         }
         hasFetched.current = true;
       }
@@ -48,6 +86,12 @@ const Page = () => {
 
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    console.log(detailProducts);
+    const data: ProductDataType[] = productTableData(detailProducts);
+    setProducts(data);
+  }, [detailProducts]);
 
   // FUNCTION TO HANDLE 'ADDING PRODUCT' ACTION
   const handleAddingProductEvent = (newProduct: ProductDataType): void => {

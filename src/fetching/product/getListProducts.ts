@@ -6,6 +6,46 @@ import axios from 'axios';
 // INITIALIZE THE URL PATH 
 const path = `${URL}/crm/products`;
 
+// API CONTENT TYPE
+interface ApiContentResponseType {
+  productId: string;
+  sku: string;
+  productName: string;
+  description: string;
+  productSubtitle: string;
+  productBrand: string;
+  productCategory: string;
+  quantity: number;
+  status: string;
+  purchaseUnitPrice: number;
+  discount: number;
+  discountType: string;
+  imageUrl: string;
+}
+// API DATA TYPE
+interface ApiDataResponseType {
+  content: any;
+  hasPre: boolean;
+  hasNext: boolean;
+  pageNumber: number;
+  totalPages: number;
+}
+
+// API ERROR TYPE
+
+interface ApiErrorResponseType {
+  code: number;
+  message: string;
+}
+
+// API RESPONSE TYPE 
+interface ApiResponse {
+  code: string;
+  message: string;
+  data?: ApiDataResponseType;
+  error?: ApiErrorResponseType;
+}
+
 const useGetListProducts = () => {
   // STATE 
   const [data, setData] = useState<any | null>();
@@ -18,7 +58,7 @@ const useGetListProducts = () => {
     setLoading(true);
 
     try {
-      const response = await axios.get(path, {
+      const response = await axios.get<ApiResponse>(path, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${accessToken}`,
@@ -26,7 +66,7 @@ const useGetListProducts = () => {
       });
 
       const resData = response.data;
-      const resContent = resData.data.content; 
+      const resContent:  ApiContentResponseType[] = resData.data?.content; 
 
       setData(resData);
       return resContent;

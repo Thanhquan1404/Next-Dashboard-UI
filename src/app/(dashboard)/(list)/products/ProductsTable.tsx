@@ -45,8 +45,8 @@ const tableHeaders: HeaderDataType[] = [
   },
   {
     id: 4,
-    key: "VIEWS",
-    label: "Views",
+    key: "SKU",
+    label: "Internal Product ID",
     width: "w-[10%]",
     justifyItems: "justify-center",
   },
