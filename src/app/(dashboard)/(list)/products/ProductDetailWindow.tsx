@@ -259,7 +259,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
             <div className="flex flex-col w-1/2 gap-1 text-sm font-normal">
               <span className="px-1 text-gray-600">Discount</span>
               <div className="flex gap-2 items-center">
-                <input type="text" placeholder="Discount..."  
+                <input type="text" placeholder="Discount..."
                   value={updateProductDiscount}
                   onChange={(e) => setUpdateProductDiscount(e.target.value)}
                   className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"

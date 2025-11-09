@@ -1,6 +1,6 @@
 import { URL, accessToken } from '@/lib/data';
 import { useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 // import { getToken } from '@/service/localStorageService';
 
 // INITIALIZE THE URL PATH 
@@ -70,8 +70,13 @@ const useGetListProducts = () => {
 
       setData(resData);
       return resContent;
-    } catch (err: any) {
-      console.log(err);
+    } catch (err) {
+      const axiosErr = err as AxiosError<any>;
+      const errData: ApiErrorResponseType = axiosErr.response?.data.error;
+      const errMess: string = errData.message;
+
+      throw new Error(errMess);
+      console.log
     } finally {
       setLoading(false);
     }

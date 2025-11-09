@@ -4,7 +4,7 @@ import CategoryOptions from "./CategoryOptions";
 import ProductsPageHeader from "./ProductsPageHeader";
 import ProductsTable from "./ProductsTable";
 import { useEffect, useState, useRef } from "react";
-import { sampleProducts, ProductDataType, ProductDetailType} from "@/lib/data";
+import { sampleProducts, ProductDataType, ProductDetailType } from "@/lib/data";
 import ProductDetailWindow from "./ProductDetailWindow";
 import useGetListProducts from "@/fetching/product/getListProducts";
 
@@ -26,7 +26,7 @@ const productTableData = (listProductDetail: ProductDetailType[]): ProductDataTy
     const product: ProductDataType = {
       PRODUCT_ID: item.PRODUCT_ID,
       PRODUCT_NAME: item.PRODUCT_NAME,
-      PRODUCT_SUBTITLE: item.PRODUCT_SUBTITLE,  
+      PRODUCT_SUBTITLE: item.PRODUCT_SUBTITLE,
       PURCHASE_UNIT_PRICE: publicProductPrice(item.DISCOUNT_TYPE, item.PURCHASE_UNIT_PRICE, item.DISCOUNT),
       PRODUCTS: item.PRODUCTS,
       SKU: item.SKU,
@@ -65,42 +65,50 @@ const Page = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       if (!hasFetched.current) {
-        const resData = await getListProducts();
+        try {
+          const resData = await getListProducts();
 
-        if (resData) {
-          const listDetailProduct: ProductDetailType[] = resData.map((item) => {
-            const result: ProductDetailType = {
-              PRODUCT_ID: item.productId,
-              PRODUCT_BRAND: item.productBrand,
-              PRODUCT_CATEGORY: item.productCategory,
-              PRODUCT_NAME: item.productName,
-              DESCRIPTION: item.description,
-              PRODUCT_SUBTITLE: item.productSubtitle,
-              PURCHASE_UNIT_PRICE: item.purchaseUnitPrice,
-              PRODUCTS: item.quantity,
-              SKU: item.sku,
-              STATUS: item.status,
-              IMAGE1_URL: item.imageUrl,
-              IMAGE2_URL: "",
-              IMAGE3_URL: "",
-              TAG: "",
-              DISCOUNT: item.discount,
-              DISCOUNT_TYPE: item.discountType,
-              COLOR: "",
-            };
-            return result;
-          });
-          setDetailProducts(listDetailProduct);
+          if (resData) {
+            const listDetailProduct: ProductDetailType[] = resData.map((item) => {
+              const result: ProductDetailType = {
+                PRODUCT_ID: item.productId,
+                PRODUCT_BRAND: item.productBrand,
+                PRODUCT_CATEGORY: item.productCategory,
+                PRODUCT_NAME: item.productName,
+                DESCRIPTION: item.description,
+                PRODUCT_SUBTITLE: item.productSubtitle,
+                PURCHASE_UNIT_PRICE: item.purchaseUnitPrice,
+                PRODUCTS: item.quantity,
+                SKU: item.sku,
+                STATUS: item.status,
+                IMAGE1_URL: item.imageUrl,
+                IMAGE2_URL: "",
+                IMAGE3_URL: "",
+                TAG: "",
+                DISCOUNT: item.discount,
+                DISCOUNT_TYPE: item.discountType,
+                COLOR: "",
+              };
+              return result;
+            });
+            setDetailProducts(listDetailProduct);
+          }
+          else{
+            alert("Fail to get list of products");
+          }
+        } catch (error) {
+          alert(`List product fetching data error \n${error}`);
+        } finally{
+          hasFetched.current = true;
         }
-        hasFetched.current = true;
       }
     };
 
     fetchProducts();
   }, []);
-
+  // FUNCTION TO HANDLE EVEN IF THE PRODUCT DETAILS ARRAY CHANGED
   useEffect(() => {
-    console.log(detailProducts);
+
     const data: ProductDataType[] = productTableData(detailProducts);
     setProducts(data);
   }, [detailProducts]);
@@ -114,9 +122,10 @@ const Page = () => {
   }
   // FUNCTION TO HANDLE 'ADDING PRODUCT DETAIL' ACTION
   const handleAddingDetailProductEvent = (newProductDetail: ProductDetailType): void => {
-    const arr = [...detailProducts];
-    arr.push(newProductDetail);
-    setDetailProducts(arr);
+    console.log(newProductDetail);
+    // const arr = [...detailProducts];
+    // arr.push(newProductDetail);
+    // setDetailProducts(arr);
   }
   //  FUNCTION TO HANDLE 'VIEW PRODUCT DETAIL' ACTION
   const handleDetailProductWindowToggle = (product: HTMLElement | null): void => {
@@ -138,7 +147,7 @@ const Page = () => {
         {/* PAGE HEADER */}
         <ProductsPageHeader handleWindowToggle={handleWindowToggle} />
         {/* CATEGORY FILTER */}
-        <CategoryOptions />
+        <CategoryOptions detailProducts={detailProducts} setDetailProducts={setDetailProducts}/>
         {/* PRODUCT TABLE */}
         <ProductsTable sampleProducts={products} handleWindowToggle={handleWindowToggle} handleDetailProductWindowToggle={handleDetailProductWindowToggle} />
       </div>
