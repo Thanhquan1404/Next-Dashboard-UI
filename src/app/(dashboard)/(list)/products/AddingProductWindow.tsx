@@ -4,26 +4,31 @@ import Image from "next/image";
 import { Listbox } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { discountOption, productCategory, productColor, categoryOption, ProductDataType, ProductDetailType, productStatusOption } from "@/lib/data";
+import {
+  discountOption, productCategory, productColor, ProductDetailRequestType,
+  categoryOption, ProductDataType, ProductDetailType, productStatusOption
+} from "@/lib/data";
 import UploadImageIcon from "@/components/UploadImageIcon";
-import { randomUUID } from "crypto";
-import { moneyFormat } from "@/util/moneyFormat";
 import { productInputFormat } from "@/util/productInputFormat";
+import useAddProduct from "@/fetching/product/addProduct";
+import { randomUUID } from "crypto";
 
 interface Props {
   handleWindowToggle: () => void,
-  image1: string | null,
-  setImage1: React.Dispatch<React.SetStateAction<string | null>>,
-  image2: string | null,
-  setImage2: React.Dispatch<React.SetStateAction<string | null>>,
-  image3: string | null,
-  setImage3: React.Dispatch<React.SetStateAction<string | null>>,
   handleAddingProductEvent: (newProduct: ProductDataType) => void,
   handleAddingDetailProductEvent: (newProductDetail: ProductDetailType) => void,
 }
 
-
-const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setImage1, setImage2, setImage3, handleAddingProductEvent, handleAddingDetailProductEvent }: Props) => {
+const AddingProductWindow = ({ handleWindowToggle, handleAddingProductEvent, handleAddingDetailProductEvent }: Props) => {
+  //MAKE REQUEST TO DATABASE
+  const {loading, data, error, requestAddingProduct} = useAddProduct();
+  //IMAGE CATEGORY 
+  const [image1, setImage1] = useState<string>("");
+  const [image2, setImage2] = useState<string>("");
+  const [image3, setImage3] = useState<string>("");
+  const [imageFile1, setImageFile1] = useState<File | null>(null);
+  const [imageFile2, setImageFile2] = useState<File | null>(null);
+  const [imageFile3, setImageFile3] = useState<File | null>(null);
   // DISCOUNT STATE
   const [discountType, setDiscountType] = useState<string>(discountOption[0]);
   // CREATED DATE STATE
@@ -33,10 +38,11 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
 
   // CATEGORY + COLOR STATE
   const [selectedCategory, setSelectedCategory] = useState<string>(categoryOption[0]);
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string>("");
   const [availableColor, setAvailableColor] = useState<string[] | null>(productColor[0].colors);
 
   // INPUT ELEMENT STATE
+  const [inputProductDiscount, setInputProductDiscount] = useState<string>("");
   const [inputProductName, setInputProductsName] = useState<string>("");
   const [inputProductNumber, setInputProductsNumber] = useState<string>("");
   const [inputProductDescription, setInputProductDesccription] = useState<string>("");
@@ -46,8 +52,8 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
   const [inputProductSubtitle, setInputProductSubtitle] = useState<string>("");
 
   // HANDLE 'PUBLISH' ICON BUTTON
-  const handlePublishButtonToggle = () => {
-    // SET UP THE PRODUCT DETAIL DATA FIELDS
+  const handlePublishButtonToggle = async () => {
+    // SET UP THE PRODUCT DETAIL DATA FIELDS (FOR INITIALIZE A FORM OF DETAIL DATA)
     const newDetailProduct: ProductDetailType = {
       PRODUCT_ID: crypto.randomUUID(),
       PRODUCT_BRAND: inputProductBrand,
@@ -63,51 +69,63 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
       IMAGE2_URL: image2,
       IMAGE3_URL: image3,
       TAG: inputProductTag,
-      DISCOUNT: 10,
+      DISCOUNT: inputProductDiscount ? Number(inputProductDiscount) : 0,
       DISCOUNT_TYPE: discountType,
       COLOR: selectedColor,
     };
-    console.log(newDetailProduct);
-    // DATA FORMATTING BEFORE DISPLAYING ON TABLE (INCLUDE: CALCULATE PUBLIC PRICE)
-    const newProductLine = productInputFormat(newDetailProduct);
-    console.log(newProductLine);
-
-    if (newProductLine !== null) {
-      handleAddingProductEvent(newProductLine);
-      handleAddingDetailProductEvent(newDetailProduct);
+    // SEND REQUEST TO DATABASE TO ADD NEW PRODUCT DETAIL
+    try {
+      const response = await requestAddingProduct({newDetailProduct, imageFile1, imageFile2, imageFile3});
+    } catch (error) {
+      
     }
 
-    // RESET ALL INPUT FIELDS TO DEFAULT STATE
-    const resetAllFields = () => {
-      // RESET TEXT INPUTS
-      setInputProductsName("");
-      setInputProductsNumber("");
-      setInputProductDesccription("");
-      setInputProductPrice("");
-      setInputProductBrand("");
-      setInputProductTag("");
 
-      // RESET DROPDOWNS
-      setSelectedCategory(categoryOption[0]);
-      setDiscountType(discountOption[0]);
 
-      // RESET COLOR OPTIONS
-      setAvailableColor(productColor[0].colors);
-      setSelectedColor(productColor[0].colors ? productColor[0].colors[0] : null);
+    // console.log(newDetailProduct);
+    // // DATA FORMATTING BEFORE DISPLAYING ON TABLE (INCLUDE: CALCULATE PUBLIC PRICE)
+    // const newProductLine = productInputFormat(newDetailProduct);
+    // console.log(newProductLine);
 
-      // RESET IMAGES
-      setImage1(null);
-      setImage2(null);
-      setImage3(null);
+    
 
-      // RESET DATE (IF ANY)
-      setCreatedDate("");
+    // // Adding product to current hook to reduce the activate time
+    // if (newProductLine !== null) {
+    //   handleAddingProductEvent(newProductLine);
+    //   handleAddingDetailProductEvent(newDetailProduct);
+    // }
 
-      alert("✅ Adding new product successfully");
-    };
+    // // RESET ALL INPUT FIELDS TO DEFAULT STATE
+    // const resetAllFields = () => {
+    //   // RESET TEXT INPUTS
+    //   setInputProductsName("");
+    //   setInputProductsNumber("");
+    //   setInputProductDesccription("");
+    //   setInputProductPrice("");
+    //   setInputProductBrand("");
+    //   setInputProductTag("");
 
-    resetAllFields();
-    handleWindowToggle();
+    //   // RESET DROPDOWNS
+    //   setSelectedCategory(categoryOption[0]);
+    //   setDiscountType(discountOption[0]);
+
+    //   // RESET COLOR OPTIONS
+    //   setAvailableColor(productColor[0].colors);
+    //   setSelectedColor(productColor[0].colors ? productColor[0].colors[0] : "");
+
+    //   // RESET IMAGES
+    //   setImage1("");
+    //   setImage2("");
+    //   setImage3("");
+
+    //   // RESET DATE (IF ANY)
+    //   setCreatedDate("");
+
+    //   alert("✅ Adding new product successfully");
+    // };
+
+    // resetAllFields();
+    // handleWindowToggle();
   }
 
   const handleCategoryChange = (category: string) => {
@@ -229,6 +247,8 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
                 <input
                   type="text"
                   placeholder="Discount"
+                  value={inputProductDiscount}
+                  onChange={(e) => setInputProductDiscount(e.target.value)}
                   className="border rounded-lg w-3/4 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
                 />
                 <SelectorComponent
@@ -301,7 +321,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
             </div>
             <div className="flex flex-col w-1/2 gap-3 text-sm">
               <span className="px-1 text-gray-600">Product subtitle</span>
-              <SelectorComponent fontSize={"text-xs"} width={"w-full"} options={productStatusOption} optionSelector={inputProductStatus} setOptionSelector={setInputProductStatus}/>
+              <SelectorComponent fontSize={"text-xs"} width={"w-full"} options={productStatusOption} optionSelector={inputProductStatus} setOptionSelector={setInputProductStatus} />
             </div>
           </div>
 
@@ -320,7 +340,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
                     className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
-                  <UploadImageIcon image={image1} setImage={setImage1} />
+                  <UploadImageIcon image={image1} setImage={setImage1} setImageFile={setImageFile1} />
                 )}
               </div>
 
@@ -336,7 +356,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
                       className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <UploadImageIcon image={image2} setImage={setImage2} />
+                    <UploadImageIcon image={image2} setImage={setImage2} setImageFile={setImageFile2} />
                   )}
                 </div>
 
@@ -350,7 +370,7 @@ const AddingProductWindow = ({ handleWindowToggle, image1, image2, image3, setIm
                       className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <UploadImageIcon image={image3} setImage={setImage3} />
+                    <UploadImageIcon image={image3} setImage={setImage3} setImageFile={setImageFile3} />
                   )}
                 </div>
               </div>

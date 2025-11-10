@@ -11,16 +11,10 @@ import { productInputFormat } from "@/util/productInputFormat";
 interface Props {
   productID: string | null;
   detailProductArray: ProductDetailType[];
-  image1: string | null;
-  image2: string | null;
-  image3: string | null;
-  setImage1: React.Dispatch<React.SetStateAction<string | null>>;
-  setImage2: React.Dispatch<React.SetStateAction<string | null>>;
-  setImage3: React.Dispatch<React.SetStateAction<string | null>>;
   handleWindowToggle: () => void,
 }
 
-const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, image3, setImage1, setImage2, setImage3, handleWindowToggle }: Props) => {
+const ProductDetailWindow = ({ productID, detailProductArray, handleWindowToggle }: Props) => {
   // RETRIEVE PRODUCT FROM DETAIL PRODUCT ARRAY
   const retrievedProduct = useMemo(() => {
     if (!productID || !detailProductArray.length) return null;
@@ -52,6 +46,13 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [availableColor, setAvailableColor] = useState<string[] | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [image1, setImage1] = useState<string >("");
+  const [image2, setImage2] = useState<string >("");
+  const [image3, setImage3] = useState<string >("");
+  const [imageFile1, setImageFile1] = useState<File | null>(null);
+  const [imageFile2, setImageFile2] = useState<File | null>(null);
+  const [imageFile3, setImageFile3] = useState<File | null>(null);
+  
   // UPDATE DATA FIELD STATE
   const [updateProductName, setUpdateProductName] = useState<string>("");
   const [updateProductBrand, setUpdateProductBrand] = useState<string>("");
@@ -369,9 +370,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
                     className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
-                  <UploadImageIcon
-                    image={image1}
-                    setImage={setImage1}
+                  <UploadImageIcon image={image1} setImageFile={setImageFile1} setImage={setImage1}
                   />
                 )}
               </div>
@@ -388,7 +387,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
                       className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <UploadImageIcon image={image2} setImage={setImage2} />
+                    <UploadImageIcon image={image2} setImageFile={setImageFile2} setImage={setImage2} />
                   )}
                 </div>
 
@@ -402,7 +401,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, image1, image2, im
                       className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <UploadImageIcon image={image3} setImage={setImage3} />
+                    <UploadImageIcon image={image3} setImageFile={setImageFile3} setImage={setImage3} />
                   )}
                 </div>
               </div>

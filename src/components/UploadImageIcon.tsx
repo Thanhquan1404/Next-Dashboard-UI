@@ -1,12 +1,14 @@
 interface uploadImageProps {
-  image: string | null,
-  setImage: React.Dispatch<React.SetStateAction<string | null>>,
+  image: string ,
+  setImage: React.Dispatch<React.SetStateAction<string>>,
+  setImageFile: React.Dispatch<React.SetStateAction<File | null>>,
 }
 
-const UploadImageIcon = ({ image, setImage }: uploadImageProps) => {
+const UploadImageIcon = ({ image, setImage, setImageFile }: uploadImageProps) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => setImage(reader.result as string);
       reader.readAsDataURL(file); // convert to base64 URL for preview

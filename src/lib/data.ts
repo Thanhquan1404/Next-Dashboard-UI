@@ -4,7 +4,7 @@ export let role = "student";
 
 export const URL = "https://msis207-q13-cttt-final-backend-2.onrender.com";
 
-export const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzZXJ2ZXIiLCJzdWIiOiJuZ3V5ZW52YW5kYXQiLCJleHAiOjE3NjI3NTQzNzUsImlhdCI6MTc2MjY2Nzk3NSwianRpIjoiYzU5YWEyYzYtYWM2Zi00N2M2LTgzYzgtZTlkM2EyMGYzNTRmIn0.gsCCfEFWIKev8UWnifrn_FIsiF2CNWVhBCqIGMI2RhQ'
+export const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzZXJ2ZXIiLCJzdWIiOiJuZ3V5ZW52YW5kYXQiLCJleHAiOjE3NjI4NDUyNzksImlhdCI6MTc2Mjc1ODg3OSwianRpIjoiM2E4YjZhYmItOWM1OS00NGFiLTgwZGEtMTI1NzhlMTEyY2YxIn0.eueArSal3phdJwS-l66lWwXDM5rcF4wYIPxtODPP0cU';
 export const teachersData = [
   {
     id: 1,
@@ -1476,13 +1476,13 @@ export type ProductDetailType = {
   PRODUCTS: number;
   SKU: string;
   STATUS: string;
-  IMAGE1_URL: string ;
-  IMAGE2_URL: string ;
-  IMAGE3_URL: string ;
+  IMAGE1_URL: string;
+  IMAGE2_URL: string;
+  IMAGE3_URL: string;
   TAG: string | null;
-  DISCOUNT: number ;
+  DISCOUNT: number;
   DISCOUNT_TYPE: string;
-  COLOR: string ;
+  COLOR: string;
 };
 
 // --- SAMPLE DETAIL PRODUCT DATA ---
@@ -1751,3 +1751,18 @@ export const productColor: productColorType[] = [
 export const categoryOption = productCategory.map(item => item.label);
 // PRODUCT STATUS OPTION 
 export const productStatusOption = ["Active", "Low Stock", "Preorder", "Out of Stock"];
+
+// ---------- PRODUCT FETCHING DATA TYPE
+export interface ProductDetailRequestType {
+  sku: string;
+  name: string;
+  description: string;
+  subtitle: string;
+  brand: string;
+  category: string;
+  quantity: number;
+  status: "AVAILABLE" | "OUT_OF_STOCK" | "INACTIVE" | string; // extendable
+  price: number;
+  discount: number;
+  discountType: "PERCENT" | "AMOUNT" | string;
+}

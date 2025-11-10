@@ -70,7 +70,7 @@ const CategoryOptions = ({detailProducts, setDetailProducts}: Props) => {
       selectedStoreOption, 
       detailProducts: originalDetailProductData,
     });
-    setDetailProducts(filteredProducts);
+    // setDetailProducts(filteredProducts);
     console.log("filtered actions");
   }, [selectedCategoryOption, selectedStatusOption, selectedPriceOption, selectedStoreOption]);
 

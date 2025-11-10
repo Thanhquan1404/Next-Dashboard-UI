@@ -4,7 +4,7 @@ import CategoryOptions from "./CategoryOptions";
 import ProductsPageHeader from "./ProductsPageHeader";
 import ProductsTable from "./ProductsTable";
 import { useEffect, useState, useRef } from "react";
-import { sampleProducts, ProductDataType, ProductDetailType } from "@/lib/data";
+import { ProductDataType, ProductDetailType } from "@/lib/data";
 import ProductDetailWindow from "./ProductDetailWindow";
 import useGetListProducts from "@/fetching/product/getListProducts";
 
@@ -50,12 +50,7 @@ const Page = () => {
   const [productDetailVisible, setProductDetailVisible] = useState<boolean>(false);
   // STATE HOOK TO TAKE CHOOSEN PRODUCT 
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-  // upload image 1 state 
-  const [image1, setImage1] = useState<string | null>(null);
-  // upload image 2 state 
-  const [image2, setImage2] = useState<string | null>(null);
-  // upload image 3 state 
-  const [image3, setImage3] = useState<string | null>(null);
+  
   // FUNCTION TO HANDLE 'ADDING' WINDOW TOGGLE
   const handleWindowToggle = (): void => {
     setWindowVisible((prev) => !prev);
@@ -115,14 +110,14 @@ const Page = () => {
 
   // FUNCTION TO HANDLE 'ADDING PRODUCT' ACTION
   const handleAddingProductEvent = (newProduct: ProductDataType): void => {
-    const arr = [...products];
-    arr.push(newProduct);
-    setProducts(arr);
-    console.log(arr);
+    // const arr = [...products];
+    // arr.push(newProduct);
+    // setProducts(arr);
+    // console.log(arr);
   }
   // FUNCTION TO HANDLE 'ADDING PRODUCT DETAIL' ACTION
   const handleAddingDetailProductEvent = (newProductDetail: ProductDetailType): void => {
-    console.log(newProductDetail);
+    // console.log(newProductDetail);
     // const arr = [...detailProducts];
     // arr.push(newProductDetail);
     // setDetailProducts(arr);
@@ -175,12 +170,6 @@ const Page = () => {
             <ProductDetailWindow
               productID={selectedProduct}
               detailProductArray={detailProducts}
-              image1={image1}
-              image2={image2}
-              image3={image3}
-              setImage1={setImage1}
-              setImage2={setImage2}
-              setImage3={setImage3}
               handleWindowToggle={handleWindowToggle}
             />
           </div>
@@ -204,12 +193,6 @@ const Page = () => {
             <AddingProductWindow
               handleWindowToggle={handleWindowToggle}
               handleAddingDetailProductEvent={handleAddingDetailProductEvent}
-              image1={image1}
-              image2={image2}
-              image3={image3}
-              setImage1={setImage1}
-              setImage2={setImage2}
-              setImage3={setImage3}
               handleAddingProductEvent={handleAddingProductEvent}
             />
           </div>
