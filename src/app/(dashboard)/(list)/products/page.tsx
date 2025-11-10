@@ -110,17 +110,17 @@ const Page = () => {
 
   // FUNCTION TO HANDLE 'ADDING PRODUCT' ACTION
   const handleAddingProductEvent = (newProduct: ProductDataType): void => {
-    // const arr = [...products];
-    // arr.push(newProduct);
-    // setProducts(arr);
-    // console.log(arr);
+    const arr = [...products];
+    arr.push(newProduct);
+    setProducts(arr);
+    console.log(arr);
   }
   // FUNCTION TO HANDLE 'ADDING PRODUCT DETAIL' ACTION
   const handleAddingDetailProductEvent = (newProductDetail: ProductDetailType): void => {
-    // console.log(newProductDetail);
-    // const arr = [...detailProducts];
-    // arr.push(newProductDetail);
-    // setDetailProducts(arr);
+    console.log(newProductDetail);
+    const arr = [...detailProducts];
+    arr.push(newProductDetail);
+    setDetailProducts(arr);
   }
   //  FUNCTION TO HANDLE 'VIEW PRODUCT DETAIL' ACTION
   const handleDetailProductWindowToggle = (product: HTMLElement | null): void => {

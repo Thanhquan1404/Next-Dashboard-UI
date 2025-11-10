@@ -104,8 +104,8 @@ const ProductsTable = ({ sampleProducts, handleWindowToggle, handleDetailProduct
 
 
   return (
-    <div className="w-full h-full bg-white shadow-sm px-4 rounded-xl">
-      <table className="w-full border-separate border-spacing-y-1">
+    <div className="w-full h-full bg-white shadow-sm px-4 rounded-xl overflow-y-auto max-h-screen">
+      <table className="w-full border-separate border-spacing-y-1 ">
         {/* --- TABLE HEADER --- */}
         <thead>
           <tr className="text-gray-400 font-semibold text-sm">

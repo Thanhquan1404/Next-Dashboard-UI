@@ -5,23 +5,46 @@ import { Listbox } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import {
-  discountOption, productCategory, productColor, ProductDetailRequestType,
+  discountOption, productCategory, productColor,
   categoryOption, ProductDataType, ProductDetailType, productStatusOption
 } from "@/lib/data";
 import UploadImageIcon from "@/components/UploadImageIcon";
 import { productInputFormat } from "@/util/productInputFormat";
-import useAddProduct from "@/fetching/product/addProduct";
-import { randomUUID } from "crypto";
+import useAddProduct, { ResponseDataType } from "@/fetching/product/addProduct";
 
 interface Props {
   handleWindowToggle: () => void,
   handleAddingProductEvent: (newProduct: ProductDataType) => void,
   handleAddingDetailProductEvent: (newProductDetail: ProductDetailType) => void,
 }
+// FUNCTION TO CONVERT RETRIEVED DATA INTO DETAIL PRODUCT DATA TYPE
+const convertData = (responseProductData: ResponseDataType): ProductDetailType => {
+  const data: ProductDetailType = {
+    PRODUCT_ID: responseProductData.productId,
+    PRODUCT_BRAND: responseProductData.productBrand,
+    PRODUCT_CATEGORY: responseProductData.productCategory,
+    PRODUCT_NAME: responseProductData.productName,
+    DESCRIPTION: responseProductData.description,
+    PRODUCT_SUBTITLE: responseProductData.productSubtitle,
+    PURCHASE_UNIT_PRICE: responseProductData.purchaseUnitPrice,
+    PRODUCTS: responseProductData.quantity,
+    SKU: responseProductData.sku,
+    STATUS: responseProductData.status,
+    IMAGE1_URL: responseProductData.imageUrl,
+    IMAGE2_URL: "",
+    IMAGE3_URL: "",
+    TAG: "",
+    DISCOUNT: responseProductData.discount,
+    DISCOUNT_TYPE: responseProductData.discountType,
+    COLOR: "",
+  };
+
+  return data;
+}
 
 const AddingProductWindow = ({ handleWindowToggle, handleAddingProductEvent, handleAddingDetailProductEvent }: Props) => {
   //MAKE REQUEST TO DATABASE
-  const {loading, data, error, requestAddingProduct} = useAddProduct();
+  const { loading, data, error, requestAddingProduct } = useAddProduct();
   //IMAGE CATEGORY 
   const [image1, setImage1] = useState<string>("");
   const [image2, setImage2] = useState<string>("");
@@ -51,11 +74,40 @@ const AddingProductWindow = ({ handleWindowToggle, handleAddingProductEvent, han
   const [inputProductTag, setInputProductTag] = useState<string>("");
   const [inputProductSubtitle, setInputProductSubtitle] = useState<string>("");
 
+  // RESET ALL INPUT FIELDS TO DEFAULT STATE
+  const resetAllFields = () => {
+    // RESET TEXT INPUTS
+    setInputProductsName("");
+    setInputProductsNumber("");
+    setInputProductDesccription("");
+    setInputProductPrice("");
+    setInputProductBrand("");
+    setInputProductTag("");
+
+    // RESET DROPDOWNS
+    setSelectedCategory(categoryOption[0]);
+    setDiscountType(discountOption[0]);
+
+    // RESET COLOR OPTIONS
+    setAvailableColor(productColor[0].colors);
+    setSelectedColor(productColor[0].colors ? productColor[0].colors[0] : "");
+
+    // RESET IMAGES
+    setImage1("");
+    setImage2("");
+    setImage3("");
+
+    // RESET DATE (IF ANY)
+    setCreatedDate("");
+
+    alert("✅ Adding new product successfully");
+  };
+
   // HANDLE 'PUBLISH' ICON BUTTON
   const handlePublishButtonToggle = async () => {
     // SET UP THE PRODUCT DETAIL DATA FIELDS (FOR INITIALIZE A FORM OF DETAIL DATA)
-    const newDetailProduct: ProductDetailType = {
-      PRODUCT_ID: crypto.randomUUID(),
+    let newDetailProduct: ProductDetailType = {
+      PRODUCT_ID: "",
       PRODUCT_BRAND: inputProductBrand,
       PRODUCT_CATEGORY: selectedCategory,
       PRODUCT_NAME: inputProductName,
@@ -75,57 +127,30 @@ const AddingProductWindow = ({ handleWindowToggle, handleAddingProductEvent, han
     };
     // SEND REQUEST TO DATABASE TO ADD NEW PRODUCT DETAIL
     try {
-      const response = await requestAddingProduct({newDetailProduct, imageFile1, imageFile2, imageFile3});
+      const response = await requestAddingProduct({ newDetailProduct, imageFile1, imageFile2, imageFile3 });
+
+      if (response?.code === 200 && response.data) {
+        const resData: ResponseDataType = response.data;
+        newDetailProduct = convertData(resData);
+        console.log(newDetailProduct);
+        // DATA FORMATTING BEFORE DISPLAYING ON TABLE (INCLUDE: CALCULATE PUBLIC PRICE)
+        const newProductLine = productInputFormat(newDetailProduct);
+        console.log(newProductLine);
+
+        // Adding product to current hook to reduce the activate time
+        if (newProductLine !== null) {
+          handleAddingProductEvent(newProductLine);
+          handleAddingDetailProductEvent(newDetailProduct);
+        }
+
+        resetAllFields();
+        handleWindowToggle();
+      } else {
+        console.log("Failed to add a new product");
+      }
     } catch (error) {
-      
+      console.log(`Adding new product failed: \n${error}`);
     }
-
-
-
-    // console.log(newDetailProduct);
-    // // DATA FORMATTING BEFORE DISPLAYING ON TABLE (INCLUDE: CALCULATE PUBLIC PRICE)
-    // const newProductLine = productInputFormat(newDetailProduct);
-    // console.log(newProductLine);
-
-    
-
-    // // Adding product to current hook to reduce the activate time
-    // if (newProductLine !== null) {
-    //   handleAddingProductEvent(newProductLine);
-    //   handleAddingDetailProductEvent(newDetailProduct);
-    // }
-
-    // // RESET ALL INPUT FIELDS TO DEFAULT STATE
-    // const resetAllFields = () => {
-    //   // RESET TEXT INPUTS
-    //   setInputProductsName("");
-    //   setInputProductsNumber("");
-    //   setInputProductDesccription("");
-    //   setInputProductPrice("");
-    //   setInputProductBrand("");
-    //   setInputProductTag("");
-
-    //   // RESET DROPDOWNS
-    //   setSelectedCategory(categoryOption[0]);
-    //   setDiscountType(discountOption[0]);
-
-    //   // RESET COLOR OPTIONS
-    //   setAvailableColor(productColor[0].colors);
-    //   setSelectedColor(productColor[0].colors ? productColor[0].colors[0] : "");
-
-    //   // RESET IMAGES
-    //   setImage1("");
-    //   setImage2("");
-    //   setImage3("");
-
-    //   // RESET DATE (IF ANY)
-    //   setCreatedDate("");
-
-    //   alert("✅ Adding new product successfully");
-    // };
-
-    // resetAllFields();
-    // handleWindowToggle();
   }
 
   const handleCategoryChange = (category: string) => {
