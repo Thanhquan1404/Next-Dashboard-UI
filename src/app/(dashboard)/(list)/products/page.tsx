@@ -7,17 +7,17 @@ import { useEffect, useState, useRef } from "react";
 import { ProductDataType, ProductDetailType } from "@/lib/data.product";
 import ProductDetailWindow from "./ProductDetailWindow";
 import useGetListProducts from "@/fetching/product/getListProducts";
+import useDeleteProduct from "@/fetching/product/deleteProduct";
 
 // FUNCTION TO ASSIGN PRODUCT DETAIL INTO PRODUCT IN TABLE
 const productTableData = (listProductDetail: ProductDetailType[]): ProductDataType[] => {
-  // Compute public (final) price after discount
+  // COMPUTE FINAL PUBLIC PRICE
   const publicProductPrice = (discountType: string, productPrice: number, discountValue: number): number => {
     if (discountType === "PERCENT") {
       return productPrice * (1 - discountValue / 100);
-    } else if (discountType === "fixed") {
+    } else if (discountType === "AMOUNT") {
       return productPrice - discountValue;
     } else {
-      // no valid discount type
       return productPrice;
     }
   };
@@ -37,9 +37,21 @@ const productTableData = (listProductDetail: ProductDetailType[]): ProductDataTy
   })
   return result;
 }
+
 const Page = () => {
-  // INITIALIZE FETCHING FUNCTION 
-  const { loading, data, error, getListProducts } = useGetListProducts();
+  // INITIALIZE GET PRODUCT FETCHING FUNCTION 
+  const {
+    loading: loadingGetListProducts,
+    data: dataGetListProducts,
+    error: errorGetListProducts,
+    getListProducts
+  } = useGetListProducts();
+  // INITIALIZE DELETE PRODUCT FETCHING FUNCTION
+  const {
+    loading: loadingDeleteProduct,
+    error: errorDeleteProduct,
+    deleteProduct
+  } = useDeleteProduct();
   // STATE HOOK TO HANDLE PRODUCTS ARRAY
   const [products, setProducts] = useState<ProductDataType[]>([]);
   // STATE HOOK TO HANDLE DETAIL PRODUCT ARRAY
@@ -50,7 +62,7 @@ const Page = () => {
   const [productDetailVisible, setProductDetailVisible] = useState<boolean>(false);
   // STATE HOOK TO TAKE CHOOSEN PRODUCT 
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-  
+
   // FUNCTION TO HANDLE 'ADDING' WINDOW TOGGLE
   const handleWindowToggle = (): void => {
     setWindowVisible((prev) => !prev);
@@ -88,12 +100,12 @@ const Page = () => {
             });
             setDetailProducts(listDetailProduct);
           }
-          else{
+          else {
             alert("Fail to get list of products");
           }
         } catch (error) {
           alert(`List product fetching data error \n${error}`);
-        } finally{
+        } finally {
           hasFetched.current = true;
         }
       }
@@ -135,6 +147,27 @@ const Page = () => {
       console.log("clear the set Selected Product");
     }
   }
+  // FUNCTION TO HANDLE 'DELETE SPECIFIC PRODUCT' ACTION
+  const handleDeleteProductButtonToggle = async (product: HTMLElement | null): Promise<void> => {
+    const productId = product?.getAttribute("id");
+
+    if (productId) {
+      try {
+        const response = await deleteProduct(productId);
+
+        if (response && response.code === 200) {
+          alert(response.message || "Product deleted successfully!");
+        } else {
+          alert("Delete failed!");
+        }
+      } catch (error) {
+        alert(`Delete failed ${error}`);
+      }
+    } else {
+      alert("Invalid product ID!");
+    }
+  };
+
 
   return (
     <div className="w-full h-full relative overflow-hidden">
@@ -142,9 +175,9 @@ const Page = () => {
         {/* PAGE HEADER */}
         <ProductsPageHeader handleWindowToggle={handleWindowToggle} />
         {/* CATEGORY FILTER */}
-        <CategoryOptions detailProducts={detailProducts} setDetailProducts={setDetailProducts}/>
+        <CategoryOptions detailProducts={detailProducts} setDetailProducts={setDetailProducts} />
         {/* PRODUCT TABLE */}
-        <ProductsTable sampleProducts={products} handleWindowToggle={handleWindowToggle} handleDetailProductWindowToggle={handleDetailProductWindowToggle} />
+        <ProductsTable handleDeleteProductButtonToggle={handleDeleteProductButtonToggle} sampleProducts={products} handleWindowToggle={handleWindowToggle} handleDetailProductWindowToggle={handleDetailProductWindowToggle} />
       </div>
 
       {/* --- ADDING PRODUCT WINDOW OR PRODUCT DETAIL WINDOW */}

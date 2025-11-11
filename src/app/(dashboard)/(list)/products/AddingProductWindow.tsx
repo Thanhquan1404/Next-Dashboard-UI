@@ -83,6 +83,8 @@ const AddingProductWindow = ({ handleWindowToggle, handleAddingProductEvent, han
     setInputProductPrice("");
     setInputProductBrand("");
     setInputProductTag("");
+    setInputProductDiscount("");
+    setInputProductSubtitle("");
 
     // RESET DROPDOWNS
     setSelectedCategory(categoryOption[0]);

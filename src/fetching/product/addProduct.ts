@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { useState } from "react";
-import { URL, accessToken, ProductDetailType, ProductDetailRequestType } from "@/lib/data";
+import { ProductDetailType, ProductDetailRequestType } from "@/lib/data.product";
+import {URL, accessToken} from "@/lib/data";
 
 const path = `${URL}/crm/products`;
 // DATA TYPE 
