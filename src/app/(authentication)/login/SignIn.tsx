@@ -6,7 +6,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useState } from 'react';
-import { userLoginType } from '@/lib/data';
+import { userLoginType } from '@/lib/data.user';
 import { setToken } from '@/service/localStorageService';
 import FetchingLoadingStatus from '@/components/FetchingLoadingStatus';
 import useSignInFetching from '@/fetching/user/signInFetching';

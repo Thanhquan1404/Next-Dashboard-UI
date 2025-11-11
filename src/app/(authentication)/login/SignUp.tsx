@@ -4,7 +4,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
 import { useState } from 'react';
-import { UserSignUpType } from '@/lib/data';
+import { UserSignUpType } from '@/lib/data.user';
 import { useSignUpFetching } from '@/fetching/user/signUpFetching';
 import FetchingLoadingStatus from '../../../components/FetchingLoadingStatus';
 
