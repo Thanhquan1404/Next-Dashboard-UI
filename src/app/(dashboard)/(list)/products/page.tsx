@@ -38,6 +38,14 @@ const productTableData = (listProductDetail: ProductDetailType[]): ProductDataTy
   return result;
 }
 
+// FUNCTION TO DELETE A PRODUCT IN PRODUCT DETAIL ARRAY 
+const deleteProductDetailArray = (
+  productID: string,
+  productDetails: ProductDetailType[]
+): ProductDetailType[] => {
+  return productDetails.filter(item => item.PRODUCT_ID !== productID);
+};
+
 const Page = () => {
   // INITIALIZE GET PRODUCT FETCHING FUNCTION 
   const {
@@ -115,9 +123,11 @@ const Page = () => {
   }, []);
   // FUNCTION TO HANDLE EVEN IF THE PRODUCT DETAILS ARRAY CHANGED
   useEffect(() => {
-
-    const data: ProductDataType[] = productTableData(detailProducts);
-    setProducts(data);
+    const data = productTableData(detailProducts);
+    setProducts(prev => {
+      const same = JSON.stringify(prev) === JSON.stringify(data);
+      return same ? prev : data;
+    });
   }, [detailProducts]);
 
   // FUNCTION TO HANDLE 'ADDING PRODUCT' ACTION
@@ -156,6 +166,8 @@ const Page = () => {
         const response = await deleteProduct(productId);
 
         if (response && response.code === 200) {
+          const newDetailProductArray = deleteProductDetailArray(productId, detailProducts);
+          setDetailProducts(newDetailProductArray);
           alert(response.message || "Product deleted successfully!");
         } else {
           alert("Delete failed!");
@@ -167,7 +179,6 @@ const Page = () => {
       alert("Invalid product ID!");
     }
   };
-
 
   return (
     <div className="w-full h-full relative overflow-hidden">
