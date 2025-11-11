@@ -7,7 +7,7 @@ import { useState } from "react";
 import {
   discountOption, productCategory, productColor,
   categoryOption, ProductDataType, ProductDetailType, productStatusOption
-} from "@/lib/data";
+} from "@/lib/data.product";
 import UploadImageIcon from "@/components/UploadImageIcon";
 import { productInputFormat } from "@/util/productInputFormat";
 import useAddProduct, { ResponseDataType } from "@/fetching/product/addProduct";

@@ -4,7 +4,7 @@ import CategoryOptions from "./CategoryOptions";
 import ProductsPageHeader from "./ProductsPageHeader";
 import ProductsTable from "./ProductsTable";
 import { useEffect, useState, useRef } from "react";
-import { ProductDataType, ProductDetailType } from "@/lib/data";
+import { ProductDataType, ProductDetailType } from "@/lib/data.product";
 import ProductDetailWindow from "./ProductDetailWindow";
 import useGetListProducts from "@/fetching/product/getListProducts";
 

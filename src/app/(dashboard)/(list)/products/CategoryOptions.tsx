@@ -1,7 +1,7 @@
 "use client";
 
 import SelectorComponent from "@/components/SelectorComponent";
-import { ProductDetailType } from "@/lib/data";
+import { ProductDetailType } from "@/lib/data.product";
 import { useState, useEffect } from "react";
 const categoryOptions = ["All category", "Jacket", "Paint", "Jeans"];
 const statusOptions = ["All status", "ACTIVE", "Out of Stock"];

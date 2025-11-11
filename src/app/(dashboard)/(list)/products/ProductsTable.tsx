@@ -9,7 +9,7 @@
 import StatusComponent from "./StatusComponent";
 import { useState, useMemo } from "react";
 import SortIcon from "@/components/SortIcon";
-import { ProductDataType } from "@/lib/data"
+import { ProductDataType } from "@/lib/data.product"
 import { moneyFormat } from "@/util/moneyFormat";
 // --- HEADER DATATYPE ---
 type HeaderDataType = {

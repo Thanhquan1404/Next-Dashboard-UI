@@ -1,12 +1,11 @@
 "use client";
-import { ProductDetailType, productCategory, productColor, categoryOption, discountOption, productStatusOption } from "@/lib/data";
+import { ProductDetailType, productCategory, productColor, categoryOption, discountOption, productStatusOption } from "@/lib/data.product";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import UploadImageIcon from "@/components/UploadImageIcon";
 import { Listbox } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import SelectorComponent from "@/components/SelectorComponent";
-import { productInputFormat } from "@/util/productInputFormat";
 
 interface Props {
   productID: string | null;
