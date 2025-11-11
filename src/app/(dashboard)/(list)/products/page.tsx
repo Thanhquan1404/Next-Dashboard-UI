@@ -188,7 +188,13 @@ const Page = () => {
         {/* CATEGORY FILTER */}
         <CategoryOptions detailProducts={detailProducts} setDetailProducts={setDetailProducts} />
         {/* PRODUCT TABLE */}
-        <ProductsTable handleDeleteProductButtonToggle={handleDeleteProductButtonToggle} sampleProducts={products} handleWindowToggle={handleWindowToggle} handleDetailProductWindowToggle={handleDetailProductWindowToggle} />
+        <ProductsTable 
+          loadingDeleteProduct={loadingDeleteProduct}
+          handleDeleteProductButtonToggle={handleDeleteProductButtonToggle} 
+          sampleProducts={products} 
+          handleWindowToggle={handleWindowToggle} 
+          handleDetailProductWindowToggle={handleDetailProductWindowToggle} 
+        />
       </div>
 
       {/* --- ADDING PRODUCT WINDOW OR PRODUCT DETAIL WINDOW */}

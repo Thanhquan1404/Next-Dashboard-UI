@@ -37,6 +37,8 @@ const useDeleteProduct = () => {
       const errMess = errData.message;
       setError(errData);
       throw new Error(errMess);
+    } finally{
+      setLoading(false);
     }
   }
   return {loading, error, deleteProduct};

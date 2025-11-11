@@ -33,7 +33,7 @@ export type ProductDetailType = {
 };
 
 // PRODUCT DISCOUNT OPTIONS
-export const discountOption = ["PERCENTAGE", "AMOUNT"];
+export const discountOption = ["PERCENT", "AMOUNT"];
 
 // ----- PRODUCT CATEGORY DATA TYPE
 export type productCategoryType = {

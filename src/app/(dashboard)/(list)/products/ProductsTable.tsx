@@ -11,6 +11,7 @@ import { useState, useMemo } from "react";
 import SortIcon from "@/components/SortIcon";
 import { ProductDataType } from "@/lib/data.product"
 import { moneyFormat } from "@/util/moneyFormat";
+import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 // --- HEADER DATATYPE ---
 type HeaderDataType = {
   id: number;
@@ -71,13 +72,16 @@ interface Props {
   handleWindowToggle: () => void,
   handleDetailProductWindowToggle: (product: HTMLElement) => void,
   handleDeleteProductButtonToggle: (product: HTMLElement) => void,
+  loadingDeleteProduct: boolean,
 }
 
-const ProductsTable = ({ handleDeleteProductButtonToggle, sampleProducts, handleWindowToggle, handleDetailProductWindowToggle }: Props) => {
+const ProductsTable = ({ loadingDeleteProduct, handleDeleteProductButtonToggle, sampleProducts, handleWindowToggle, handleDetailProductWindowToggle }: Props) => {
   const [sort, setSort] = useState<{ columnName: keyof ProductDataType; direction: "asc" | "desc" }>({
     columnName: "PRODUCT_NAME" as keyof ProductDataType,
     direction: "desc",
   });
+  // STATE 
+  const [selectedProductId, setSelectedProductId] = useState<string>("");
 
   // SET UP THE COLUMN TO SORT AND SORT DIRECTION 
   const sortFunction = (header: HeaderDataType) => {
@@ -130,7 +134,7 @@ const ProductsTable = ({ handleDeleteProductButtonToggle, sampleProducts, handle
         {/* --- TABLE BODY --- */}
         <tbody>
           {sortedData.map((row, index) => (
-            <tr key={index} className="text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200 rounded-lg">
+            <tr key={index} className="h-[40px] text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200 rounded-lg">
               {tableHeaders.map((column, idx) => {
                 // STATUS COLUMN
                 if (column.key === "STATUS") {
@@ -146,8 +150,8 @@ const ProductsTable = ({ handleDeleteProductButtonToggle, sampleProducts, handle
                 // ACTION COLUMN
                 if (column.key === "ACTION") {
                   return (
-                    <td key={idx} className="py-2" id={row["PRODUCT_ID"]}>
-                      <div className="flex justify-end gap-2 text-xs">
+                    <td key={idx} className="" id={row["PRODUCT_ID"]}>
+                      <div className="flex justify-end gap-2 text-xs h-[35px]">
                         {/* EDIT BUTTON */}
                         <button
                           className="
@@ -172,24 +176,40 @@ const ProductsTable = ({ handleDeleteProductButtonToggle, sampleProducts, handle
                         </button>
 
                         {/* DELETE BUTTON */}
-                        <button
-                          className="
+                        {loadingDeleteProduct && selectedProductId === row.PRODUCT_ID
+                        ?
+                          <FetchingLoadingStatus
+                            loading={loadingDeleteProduct}
+                            width="30%"
+                            height="100%"
+                            text=""
+                            size={22}
+                            color="#0077B6"
+                            iconSx={{
+                              px: "2px"
+                            }}
+                          /> :
+                          <button
+                            className="
                             flex items-center justify-center
                             text-gray-500 border rounded-lg py-1 px-2
                             transition-all duration-300 ease-in-out
                             hover:text-red-500 hover:border-red-400 hover:scale-110 hover:shadow-sm
                           "
-                          onClick={(e) => {
-                            const element = e.currentTarget.closest("td");
-                            if (element){
-                              handleDeleteProductButtonToggle(element);
-                            }
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                          </svg>
-                        </button>
+                            onClick={(e) => {
+                              const element = e.currentTarget.closest("td");
+                              const id = element?.id;
+                              if (id) { setSelectedProductId(id); }
+                              if (element) {
+                                handleDeleteProductButtonToggle(element);
+                              }
+                            }}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                            </svg>
+                          </button>
+                        }
                       </div>
                     </td>
                   );
@@ -199,7 +219,7 @@ const ProductsTable = ({ handleDeleteProductButtonToggle, sampleProducts, handle
                 if (column.key === "PURCHASE_UNIT_PRICE") {
                   return (
                     <td key={idx} className="py-2">
-                      <div className={`flex ${column.justifyItems}`}>{ moneyFormat(row["PURCHASE_UNIT_PRICE"])}đ</div>
+                      <div className={`flex ${column.justifyItems}`}>{moneyFormat(row["PURCHASE_UNIT_PRICE"])}đ</div>
                     </td>
                   );
                 }

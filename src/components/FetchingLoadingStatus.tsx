@@ -1,12 +1,57 @@
 import CircularProgress from "@mui/material/CircularProgress";
+import Box from "@mui/material/Box";
+import { SxProps, Theme } from "@mui/system";
 
-const FetchingLoadingStatus = ({ loading }: { loading: boolean }) => {
+interface FetchingLoadingStatusProps {
+  width?: string,
+  height?: string,
+  loading: boolean;
+  text?: string;
+  size?: number | string;
+  color?: string;
+  textOpacity?: number;
+  className?: string;
+  iconSx?: SxProps<Theme>;
+  containerSx?: SxProps<Theme>;
+}
+
+const FetchingLoadingStatus = ({
+  width = "auto",
+  height = "auto",
+  loading,
+  text = "Processing...",
+  size = 28,
+  color = "white",
+  textOpacity = 0.7,
+  className = "",
+  iconSx = {},
+  containerSx = {},
+}: FetchingLoadingStatusProps) => {
   if (!loading) return null;
+
   return (
-    <div className="flex items-center justify-center py-3">
-      <CircularProgress size="28px" />
-      <span className="ml-2 text-white text-sm opacity-70">Processing...</span>
-    </div>
+    <Box
+      className={`flex items-center justify-center ${className}`}
+      sx={{
+        width: width,
+        height: height,
+        ...containerSx, 
+      }}
+    >
+      <CircularProgress
+        size={size}
+        sx={{
+          color,
+          ...iconSx, 
+        }}
+      />
+      <span
+        className="ml-2 text-sm"
+        style={{ color, opacity: textOpacity }}
+      >
+        {text}
+      </span>
+    </Box>
   );
 };
 
