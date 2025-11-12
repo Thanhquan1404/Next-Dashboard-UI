@@ -67,7 +67,7 @@ const Page = () => {
   const [windowVisible, setWindowVisible] = useState<boolean>(false);
   const [productDetailVisible, setProductDetailVisible] = useState<boolean>(false);
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
-  const [selectedCSVFile, setSelectedCSVFile] = useState<boolean>(true);
+  const [selectedCSVFile, setSelectedCSVFile] = useState<File | null>(null);
 
   // FUNCTION TO HANDLE 'ADDING' WINDOW TOGGLE
   const handleWindowToggle = (): void => {
@@ -239,11 +239,12 @@ const Page = () => {
               }`}
           > 
             {selectedCSVFile ? 
-             <ProductInCSVFile /> :
+             <ProductInCSVFile selectedCSVFile={selectedCSVFile} setSelectedCSVFile={setSelectedCSVFile} handleWindowToggle={handleWindowToggle}/> :
               <AddingProductWindow
               handleWindowToggle={handleWindowToggle}
               handleAddingDetailProductEvent={handleAddingDetailProductEvent}
               handleAddingProductEvent={handleAddingProductEvent}
+              setSelectedCSVFile={setSelectedCSVFile}
             />
             }
           </div>

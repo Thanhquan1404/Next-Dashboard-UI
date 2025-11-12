@@ -17,6 +17,7 @@ interface Props {
   handleWindowToggle: () => void,
   handleAddingProductEvent: (newProduct: ProductDataType) => void,
   handleAddingDetailProductEvent: (newProductDetail: ProductDetailType) => void,
+  setSelectedCSVFile: React.Dispatch<React.SetStateAction<File | null>>,
 }
 // FUNCTION TO CONVERT RETRIEVED DATA INTO DETAIL PRODUCT DATA TYPE
 const convertData = (responseProductData: ResponseDataType): ProductDetailType => {
@@ -43,7 +44,7 @@ const convertData = (responseProductData: ResponseDataType): ProductDetailType =
   return data;
 }
 
-const AddingProductWindow = ({ handleWindowToggle, handleAddingProductEvent, handleAddingDetailProductEvent }: Props) => {
+const AddingProductWindow = ({setSelectedCSVFile, handleWindowToggle, handleAddingProductEvent, handleAddingDetailProductEvent }: Props) => {
   //MAKE REQUEST TO DATABASE
   const { loading, data, error, requestAddingProduct } = useAddProduct();
   //IMAGE CATEGORY 
@@ -435,8 +436,8 @@ const AddingProductWindow = ({ handleWindowToggle, handleAddingProductEvent, han
 
         </div>
         {/* LEFT LOWER SIDE  */}
-        <div className="w-full h-full bg-white rounded-2xl py-2 px-2 shadow-md hover:shadow-lg transition-all duration-300 gap-3 flex flex-col">
-          <UpLoadFileCSV />
+        <div className="w-full flex-1 bg-white rounded-2xl py-2 px-2 shadow-md hover:shadow-lg transition-all duration-300 gap-3 flex flex-col">
+          <UpLoadFileCSV setSelectedCSVFile={setSelectedCSVFile}/>
         </div>
       </div>
     </div>

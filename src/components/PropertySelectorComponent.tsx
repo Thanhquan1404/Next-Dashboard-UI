@@ -5,13 +5,9 @@ import Image from "next/image";
 import React, { useState } from "react";
 
 const options = [
-  {
-    icon: "",
-    title: "Selector product property",
-  },
   { 
     icon: "/product_property_productID.png",
-    title: "Product ID" 
+    title: "Internal Product ID" 
   },
   { 
     icon: "/product_property_name.png",
@@ -25,6 +21,34 @@ const options = [
     icon: "/product_property_description.png",
     title: "Description" 
   },
+  {
+    icon: "/product_property_productSubtitle.png",
+    title: "Product Subtitle"
+  },
+  {
+    icon: "/product_property_status.png",
+    title: "Status",
+  },
+  {
+    icon: "/product_property_productCategory.png",
+    title: "Product Category"
+  },
+  {
+    icon: "/product_property_productBrand.png",
+    title: "Product Brand",
+  },
+  {
+    icon: "/product_property_price.png",
+    title: "Price",
+  },
+  {
+    icon: "/product_property_discount.png",
+    title: "Discount"
+  },
+  {
+    icon: "/product_property_discountType.png",
+    title: "Discount Type",
+  },
 ];
 
 interface PropertySelectorProps {
@@ -33,6 +57,8 @@ interface PropertySelectorProps {
   height?: string;
   showIcon?: boolean;
   customIcon?: React.ReactNode;
+  selectedValue: string, 
+  onChange: (e: string) => void,
 }
 
 const PropertySelectorComponent: React.FC<PropertySelectorProps> = ({
@@ -41,12 +67,13 @@ const PropertySelectorComponent: React.FC<PropertySelectorProps> = ({
   height = "h-10",
   showIcon = true,
   customIcon,
+  selectedValue,
+  onChange,
 }) => {
-  const [optionSelector, setOptionSelector] = useState(options[0].title);
 
   return (
     <div className={`relative ${width}`}>
-      <Listbox value={optionSelector} onChange={setOptionSelector}>
+      <Listbox value={selectedValue} onChange={onChange}>
         <div className="relative">
           {/* --- Dropdown Button --- */}
           <Listbox.Button
@@ -61,7 +88,7 @@ const PropertySelectorComponent: React.FC<PropertySelectorProps> = ({
               {label && (
                 <span className="text-xs text-gray-500">{label}</span>
               )}
-              <span className="text-sm font-medium truncate">{optionSelector}</span>
+              <span className="text-sm font-medium truncate">{selectedValue || "Select property"}</span>
             </div>
 
             {/* Icon */}
