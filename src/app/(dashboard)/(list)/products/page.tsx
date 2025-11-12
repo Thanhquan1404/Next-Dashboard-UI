@@ -8,6 +8,7 @@ import { ProductDataType, ProductDetailType } from "@/lib/data.product";
 import ProductDetailWindow from "./ProductDetailWindow";
 import useGetListProducts from "@/fetching/product/getListProducts";
 import useDeleteProduct from "@/fetching/product/deleteProduct";
+import ProductInCSVFile from "./ProductInCSVFile";
 
 // FUNCTION TO ASSIGN PRODUCT DETAIL INTO PRODUCT IN TABLE
 const productTableData = (listProductDetail: ProductDetailType[]): ProductDataType[] => {
@@ -60,16 +61,13 @@ const Page = () => {
     error: errorDeleteProduct,
     deleteProduct
   } = useDeleteProduct();
-  // STATE HOOK TO HANDLE PRODUCTS ARRAY
+  // STATE 
   const [products, setProducts] = useState<ProductDataType[]>([]);
-  // STATE HOOK TO HANDLE DETAIL PRODUCT ARRAY
   const [detailProducts, setDetailProducts] = useState<ProductDetailType[]>([]);
-  // STATE HOOK TO MAKE ADDING WINDOW APPEAR
   const [windowVisible, setWindowVisible] = useState<boolean>(false);
-  // STATE HOOK TO MAKE DETAIL PRODUCT WINDOW APPEAR 
   const [productDetailVisible, setProductDetailVisible] = useState<boolean>(false);
-  // STATE HOOK TO TAKE CHOOSEN PRODUCT 
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+  const [selectedCSVFile, setSelectedCSVFile] = useState<boolean>(true);
 
   // FUNCTION TO HANDLE 'ADDING' WINDOW TOGGLE
   const handleWindowToggle = (): void => {
@@ -239,12 +237,15 @@ const Page = () => {
           <div
             className={`fixed left-0 w-full h-full rounded-t-2xl absolute shadow-lg z-[100] transition-transform duration-500 ${windowVisible ? "bottom-0" : "translate-y-full"
               }`}
-          >
-            <AddingProductWindow
+          > 
+            {selectedCSVFile ? 
+             <ProductInCSVFile /> :
+              <AddingProductWindow
               handleWindowToggle={handleWindowToggle}
               handleAddingDetailProductEvent={handleAddingDetailProductEvent}
               handleAddingProductEvent={handleAddingProductEvent}
             />
+            }
           </div>
         </>
       )}
