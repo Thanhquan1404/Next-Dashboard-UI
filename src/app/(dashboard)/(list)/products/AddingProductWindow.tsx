@@ -11,6 +11,7 @@ import {
 import UploadImageIcon from "@/components/UploadImageIcon";
 import { productInputFormat } from "@/util/productInputFormat";
 import useAddProduct, { ResponseDataType } from "@/fetching/product/addProduct";
+import UpLoadFileCSV from "@/components/UpLoadFileCSV";
 
 interface Props {
   handleWindowToggle: () => void,
@@ -434,8 +435,8 @@ const AddingProductWindow = ({ handleWindowToggle, handleAddingProductEvent, han
 
         </div>
         {/* LEFT LOWER SIDE  */}
-        <div className="w-full h-full bg-white rounded-2xl py-4 px-4 shadow-md hover:shadow-lg transition-all duration-300 gap-3 flex flex-col">
-
+        <div className="w-full h-full bg-white rounded-2xl py-2 px-2 shadow-md hover:shadow-lg transition-all duration-300 gap-3 flex flex-col">
+          <UpLoadFileCSV />
         </div>
       </div>
     </div>
