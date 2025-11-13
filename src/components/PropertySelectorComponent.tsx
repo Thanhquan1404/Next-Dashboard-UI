@@ -49,6 +49,10 @@ const options = [
     icon: "/product_property_discountType.png",
     title: "Discount Type",
   },
+  {
+    icon: "/product_property_ignore.png",
+    title: "Do not choose this column"
+  }
 ];
 
 interface PropertySelectorProps {
@@ -88,7 +92,7 @@ const PropertySelectorComponent: React.FC<PropertySelectorProps> = ({
               {label && (
                 <span className="text-xs text-gray-500">{label}</span>
               )}
-              <span className="text-sm font-medium truncate">{selectedValue || "Select property"}</span>
+              <span className={`text-sm font-medium truncate ${selectedValue ? "text-blue-500" : "text-gray-500"}`}>{selectedValue || "Select property"}</span>
             </div>
 
             {/* Icon */}
