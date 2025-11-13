@@ -22,28 +22,25 @@ interface ApiContentResponseType {
   discountType: string;
   imageUrl: string;
 }
-// API DATA TYPE
-interface ApiDataResponseType {
-  content: any;
-  hasPre: boolean;
-  hasNext: boolean;
-  pageNumber: number;
-  totalPages: number;
-}
-
 // API ERROR TYPE
-
 interface ApiErrorResponseType {
   code: number;
   message: string;
 }
-
+// API PAGINATION TYPE
+interface pagination{
+  hasPre: boolean,
+  hasNext: boolean,
+  pageNumber: number,
+  totalPages: number,
+}
 // API RESPONSE TYPE 
 interface ApiResponse {
   code: string;
   message: string;
-  data?: ApiDataResponseType;
+  data?: ApiContentResponseType[];
   error?: ApiErrorResponseType;
+  pagination?: pagination;
 }
 
 const useGetListProducts = () => {
@@ -66,7 +63,7 @@ const useGetListProducts = () => {
       });
 
       const resData = response.data;
-      const resContent:  ApiContentResponseType[] = resData.data?.content; 
+      const resContent:  ApiContentResponseType[] | undefined = resData.data; 
 
       setData(resData);
       return resContent;

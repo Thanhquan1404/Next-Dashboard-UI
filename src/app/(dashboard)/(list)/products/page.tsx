@@ -166,7 +166,6 @@ const Page = () => {
         if (response && response.code === 200) {
           const newDetailProductArray = deleteProductDetailArray(productId, detailProducts);
           setDetailProducts(newDetailProductArray);
-          alert(response.message || "Product deleted successfully!");
         } else {
           alert("Delete failed!");
         }
@@ -186,12 +185,12 @@ const Page = () => {
         {/* CATEGORY FILTER */}
         <CategoryOptions detailProducts={detailProducts} setDetailProducts={setDetailProducts} />
         {/* PRODUCT TABLE */}
-        <ProductsTable 
+        <ProductsTable
           loadingDeleteProduct={loadingDeleteProduct}
-          handleDeleteProductButtonToggle={handleDeleteProductButtonToggle} 
-          sampleProducts={products} 
-          handleWindowToggle={handleWindowToggle} 
-          handleDetailProductWindowToggle={handleDetailProductWindowToggle} 
+          handleDeleteProductButtonToggle={handleDeleteProductButtonToggle}
+          sampleProducts={products}
+          handleWindowToggle={handleWindowToggle}
+          handleDetailProductWindowToggle={handleDetailProductWindowToggle}
         />
       </div>
 
@@ -216,6 +215,16 @@ const Page = () => {
               }`}
           >
             <ProductDetailWindow
+              updateProductDetail={(productID, newProductUpdate) => {
+                setDetailProducts((prev) => {
+                  const index = prev.findIndex((item) => item.PRODUCT_ID === productID);
+                  if (index === -1) return prev;
+
+                  const updated = [...prev];
+                  updated[index] = { ...updated[index], ...newProductUpdate };
+                  return updated;
+                });
+              }}
               productID={selectedProduct}
               detailProductArray={detailProducts}
               handleWindowToggle={handleWindowToggle}
@@ -237,15 +246,15 @@ const Page = () => {
           <div
             className={`fixed left-0 w-full h-full rounded-t-2xl absolute shadow-lg z-[100] transition-transform duration-500 ${windowVisible ? "bottom-0" : "translate-y-full"
               }`}
-          > 
-            {selectedCSVFile ? 
-             <ProductInCSVFile selectedCSVFile={selectedCSVFile} setSelectedCSVFile={setSelectedCSVFile} handleWindowToggle={handleWindowToggle}/> :
+          >
+            {selectedCSVFile ?
+              <ProductInCSVFile selectedCSVFile={selectedCSVFile} setSelectedCSVFile={setSelectedCSVFile} handleWindowToggle={handleWindowToggle} /> :
               <AddingProductWindow
-              handleWindowToggle={handleWindowToggle}
-              handleAddingDetailProductEvent={handleAddingDetailProductEvent}
-              handleAddingProductEvent={handleAddingProductEvent}
-              setSelectedCSVFile={setSelectedCSVFile}
-            />
+                handleWindowToggle={handleWindowToggle}
+                handleAddingDetailProductEvent={handleAddingDetailProductEvent}
+                handleAddingProductEvent={handleAddingProductEvent}
+                setSelectedCSVFile={setSelectedCSVFile}
+              />
             }
           </div>
         </>

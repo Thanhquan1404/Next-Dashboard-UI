@@ -1,25 +1,43 @@
 "use client";
-import { ProductDetailType, productCategory, productColor, categoryOption, discountOption, productStatusOption } from "@/lib/data.product";
+import {
+  ProductDetailType, productCategory, productColor,
+  categoryOption, discountOption, productStatusOption, ProductDetailRequestType
+} from "@/lib/data.product";
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import UploadImageIcon from "@/components/UploadImageIcon";
 import { Listbox } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import SelectorComponent from "@/components/SelectorComponent";
+import useUpdateProduct from "@/fetching/product/updateProduct";
+import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 
 interface Props {
   productID: string | null;
   detailProductArray: ProductDetailType[];
   handleWindowToggle: () => void,
+  updateProductDetail: (productID: string, newProductUpdate: ProductDetailType) => void,
 }
 
-const ProductDetailWindow = ({ productID, detailProductArray, handleWindowToggle }: Props) => {
+// FUNCTION TO TAKE ONLY CHANGED VALUE
+const getValueChanged = (original: any, updated: any) => {
+  const changes: any = {};
+
+  for (const key in original) {
+    if (updated[key] !== undefined && updated[key] !== original[key]) {
+      changes[key] = updated[key];
+    }
+  }
+  return changes;
+}
+
+const ProductDetailWindow = ({ productID, detailProductArray, updateProductDetail, handleWindowToggle }: Props) => {
   // RETRIEVE PRODUCT FROM DETAIL PRODUCT ARRAY
   const retrievedProduct = useMemo(() => {
     if (!productID || !detailProductArray.length) return null;
     return detailProductArray.find((item) => item.PRODUCT_ID === productID) || null;
   }, [productID, detailProductArray]);
-
+  // PRODUCT UPDATE FETCHING FUNCTION 
+  const { loading, data, error, updateProduct } = useUpdateProduct();
   // STATE
   const [selectedProduct, setSelectedProduct] = useState<ProductDetailType>(
     {
@@ -106,7 +124,6 @@ const ProductDetailWindow = ({ productID, detailProductArray, handleWindowToggle
     setAvailableColor(colors);
   }, [retrievedProduct]);
 
-
   // FUNCTION TO HANDLE CATEGORY CHANGE EVENT, WE NEED TO UPDATE SOME FIELDS
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
@@ -120,30 +137,69 @@ const ProductDetailWindow = ({ productID, detailProductArray, handleWindowToggle
   }
 
   // FUNCTION TO HANDLE PRODUCT UPDATE ACTION 
-  const handleProductDetailUpdate = (): void => {
+  const handleProductDetailUpdate = async () => {
     if (!retrievedProduct) { return; }
-    const updatedDetailProduct: ProductDetailType = {
-      PRODUCT_ID: retrievedProduct?.PRODUCT_ID,
-      PRODUCT_BRAND: updateProductBrand,
-      PRODUCT_CATEGORY: selectedCategory,
-      PRODUCT_NAME: updateProductName,
-      DESCRIPTION: updateProductDescription,
-      PRODUCT_SUBTITLE: updateProductSubtitle,
-      PURCHASE_UNIT_PRICE: Number(updateProductPrice),
-      PRODUCTS: Number(updateProductNumber),
-      SKU: retrievedProduct?.SKU,
-      STATUS: selectedStatus,
-      IMAGE1_URL: retrievedProduct?.IMAGE1_URL,
-      IMAGE2_URL: retrievedProduct?.IMAGE2_URL,
-      IMAGE3_URL: retrievedProduct?.IMAGE3_URL,
-      TAG: updateProductTag,
-      DISCOUNT: Number(updateProductDiscount),
-      DISCOUNT_TYPE: selectedDiscountType,
-      COLOR: selectedColor || "",
+    const updatedDetailProduct: ProductDetailRequestType = {
+      sku: retrievedProduct.SKU,
+      name: updateProductName ? updateProductName : retrievedProduct.PRODUCT_NAME,
+      description: updateProductDescription ? updateProductDescription : retrievedProduct.DESCRIPTION,
+      subtitle: updateProductSubtitle ? updateProductSubtitle : retrievedProduct.PRODUCT_SUBTITLE,
+      brand: updateProductBrand ? updateProductBrand : retrievedProduct.PRODUCT_BRAND,
+      category: selectedCategory,
+      quantity: updateProductNumber ? Number(updateProductNumber) : retrievedProduct.PRODUCTS,
+      status: selectedStatus,
+      price: updateProductPrice ? Number(updateProductPrice) : retrievedProduct.PURCHASE_UNIT_PRICE,
+      discount: updateProductDiscount ? Number(updateProductDiscount) : retrievedProduct.DISCOUNT,
+      discountType: selectedDiscountType,
     };
+    const originalMapping: ProductDetailRequestType = {
+      sku: retrievedProduct.SKU,
+      name: retrievedProduct.PRODUCT_NAME,
+      description: retrievedProduct.DESCRIPTION,
+      subtitle: retrievedProduct.PRODUCT_SUBTITLE,
+      brand: retrievedProduct.PRODUCT_BRAND,
+      category: retrievedProduct.PRODUCT_CATEGORY,
+      quantity: retrievedProduct.PRODUCTS,
+      status: retrievedProduct.STATUS,
+      price: retrievedProduct.PURCHASE_UNIT_PRICE,
+      discount: retrievedProduct.DISCOUNT,
+      discountType: selectedDiscountType,
+    }
+    const productChanges = getValueChanged(originalMapping, updatedDetailProduct);
+    console.log(productChanges);
+    try {
+      const response = await updateProduct(productChanges, retrievedProduct.PRODUCT_ID);
 
-    console.log(updatedDetailProduct);
-    handleWindowToggle();
+      if (response && response.code === 200) {
+        const updatedReponse = response.data;
+        const convertDetailProduct: ProductDetailType = {
+          PRODUCT_ID: updatedReponse?.productId || "",
+          PRODUCT_BRAND: updatedReponse?.productBrand || "",
+          PRODUCT_CATEGORY: updatedReponse?.productCategory || "",
+          PRODUCT_NAME: updatedReponse?.productName || "",
+          DESCRIPTION: updatedReponse?.description || "",
+          PRODUCT_SUBTITLE: updatedReponse?.productSubtitle || "",
+          PURCHASE_UNIT_PRICE: updatedReponse?.purchaseUnitPrice || 0,
+          PRODUCTS: updatedReponse?.quantity || 0,
+          SKU: updatedReponse?.sku || "",
+          STATUS: updatedReponse?.status || "",
+          IMAGE1_URL: updatedReponse?.imageUrl || "",
+          IMAGE2_URL: "",
+          IMAGE3_URL: "",
+          TAG: "",
+          DISCOUNT: updatedReponse?.discount || 0,
+          DISCOUNT_TYPE: updatedReponse?.discountType || "",
+          COLOR: "",
+        }
+        updateProductDetail(convertDetailProduct.PRODUCT_ID, convertDetailProduct);
+        handleWindowToggle();
+      } else {
+        alert("Failed to update product detail");
+      }
+    } catch (err) {
+      alert(`Update product failed \n${err}`)
+    }
+
   }
 
   // HANDLE THE UNIDENTIFIED PRODUCT
@@ -224,7 +280,11 @@ const ProductDetailWindow = ({ productID, detailProductArray, handleWindowToggle
                 type="text"
                 placeholder="Number of products"
                 onChange={(e) => setUpdateProductNumber(e.target.value)}
-                value={selectedProduct.PRODUCTS || ""}
+                value={
+                  updateProductNumber !== undefined && updateProductNumber !== null
+                    ? updateProductNumber.toString()
+                    : selectedProduct.PRODUCTS?.toString() ?? "0"
+                }
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
             </div>
@@ -235,7 +295,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, handleWindowToggle
             <span className="px-1 text-gray-600">Description</span>
             <textarea
               placeholder="Description..."
-              value={selectedProduct.DESCRIPTION || ""}
+              value={updateProductDescription ? updateProductDescription : selectedProduct.DESCRIPTION || ""}
               onChange={(e) => setUpdateProductDescription(e.target.value)}
               className="border rounded-lg px-3 py-2 text-xs resize-none h-full focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
             ></textarea>
@@ -250,7 +310,11 @@ const ProductDetailWindow = ({ productID, detailProductArray, handleWindowToggle
                 type="text"
                 placeholder="Sale price"
                 onChange={(e) => setUpdateProductPrice(e.target.value)}
-                value={selectedProduct.PURCHASE_UNIT_PRICE || ""}
+                value={
+                  updateProductPrice !== undefined && updateProductPrice !== null
+                    ? updateProductPrice.toString()
+                    : selectedProduct.PURCHASE_UNIT_PRICE?.toString() ?? "0"
+                }
                 className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
               />
             </div>
@@ -260,7 +324,11 @@ const ProductDetailWindow = ({ productID, detailProductArray, handleWindowToggle
               <span className="px-1 text-gray-600">Discount</span>
               <div className="flex gap-2 items-center">
                 <input type="text" placeholder="Discount..."
-                  value={updateProductDiscount}
+                  value={
+                    updateProductDiscount !== undefined && updateProductDiscount !== null
+                      ? updateProductDiscount.toString()
+                      : selectedProduct.DISCOUNT?.toString() ?? "0"
+                  }
                   onChange={(e) => setUpdateProductDiscount(e.target.value)}
                   className="border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
                 />
@@ -313,12 +381,17 @@ const ProductDetailWindow = ({ productID, detailProductArray, handleWindowToggle
           <button className="border-[1px] px-4 py-2 rounded-lg text-xs hover:bg-gray-100 transition-all duration-200" onClick={() => handleWindowToggle()}>
             Cancel
           </button>
-          <button
-            className="px-4 py-2 rounded-lg text-xs bg-blue-500 text-white/90 hover:bg-blue-600 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-sm"
-            onClick={() => handleProductDetailUpdate()}
-          >
-            Confirm
-          </button>
+          {
+            loading ?
+              <FetchingLoadingStatus loading={loading} color="blue" size={20} />
+              :
+              <button
+                className="px-4 py-2 rounded-lg text-xs bg-blue-500 text-white/90 hover:bg-blue-600 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-sm"
+                onClick={() => handleProductDetailUpdate()}
+              >
+                Confirm update
+              </button>
+          }
         </div>
       </div>
 
