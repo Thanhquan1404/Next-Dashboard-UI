@@ -45,13 +45,13 @@ const ProductDetailWindow = ({ productID, detailProductArray, handleWindowToggle
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [availableColor, setAvailableColor] = useState<string[] | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
-  const [image1, setImage1] = useState<string >("");
-  const [image2, setImage2] = useState<string >("");
-  const [image3, setImage3] = useState<string >("");
+  const [image1, setImage1] = useState<string>(retrievedProduct ? retrievedProduct.IMAGE1_URL : "");
+  const [image2, setImage2] = useState<string>(retrievedProduct ? retrievedProduct.IMAGE2_URL : "");
+  const [image3, setImage3] = useState<string>(retrievedProduct ? retrievedProduct.IMAGE3_URL : "");
   const [imageFile1, setImageFile1] = useState<File | null>(null);
   const [imageFile2, setImageFile2] = useState<File | null>(null);
   const [imageFile3, setImageFile3] = useState<File | null>(null);
-  
+
   // UPDATE DATA FIELD STATE
   const [updateProductName, setUpdateProductName] = useState<string>("");
   const [updateProductBrand, setUpdateProductBrand] = useState<string>("");
@@ -139,7 +139,7 @@ const ProductDetailWindow = ({ productID, detailProductArray, handleWindowToggle
       TAG: updateProductTag,
       DISCOUNT: Number(updateProductDiscount),
       DISCOUNT_TYPE: selectedDiscountType,
-      COLOR: selectedColor || "", // Space Gray (from MACBOOK colors)
+      COLOR: selectedColor || "",
     };
 
     console.log(updatedDetailProduct);
@@ -361,47 +361,19 @@ const ProductDetailWindow = ({ productID, detailProductArray, handleWindowToggle
             <div className="w-full h-[220px] gap-4 flex">
               {/* MAIN IMAGE */}
               <div className="w-1/2 h-full border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                {selectedProduct.IMAGE1_URL ? (
-                  <Image
-                    src={selectedProduct.IMAGE1_URL}
-                    alt="Preview"
-                    fill
-                    className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                  />
-                ) : (
-                  <UploadImageIcon image={image1} setImageFile={setImageFile1} setImage={setImage1}
-                  />
-                )}
+                <UploadImageIcon setFileImage={setImageFile1} setImage={setImage1} image={image1} />
               </div>
 
               {/* SECONDARY IMAGES */}
               <div className="w-1/2 h-full gap-3 flex flex-col rounded-lg">
                 {/* SECOND IMAGE */}
                 <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                  {selectedProduct.IMAGE2_URL ? (
-                    <Image
-                      src={selectedProduct.IMAGE2_URL}
-                      alt="Preview"
-                      fill
-                      className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <UploadImageIcon image={image2} setImageFile={setImageFile2} setImage={setImage2} />
-                  )}
+                  <UploadImageIcon setFileImage={setImageFile2} setImage={setImage2} image={image2} />
                 </div>
 
                 {/* THIRD IMAGE */}
                 <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                  {selectedProduct.IMAGE3_URL ? (
-                    <Image
-                      src={selectedProduct.IMAGE3_URL}
-                      alt="Preview"
-                      fill
-                      className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <UploadImageIcon image={image3} setImageFile={setImageFile3} setImage={setImage3} />
-                  )}
+                  <UploadImageIcon setFileImage={setImageFile3} setImage={setImage3} image={image3} />
                 </div>
               </div>
             </div>

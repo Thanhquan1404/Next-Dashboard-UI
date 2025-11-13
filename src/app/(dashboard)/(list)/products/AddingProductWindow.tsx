@@ -103,8 +103,6 @@ const AddingProductWindow = ({setSelectedCSVFile, handleWindowToggle, handleAddi
 
     // RESET DATE (IF ANY)
     setCreatedDate("");
-
-    alert("✅ Adding new product successfully");
   };
 
   // HANDLE 'PUBLISH' ICON BUTTON
@@ -149,6 +147,7 @@ const AddingProductWindow = ({setSelectedCSVFile, handleWindowToggle, handleAddi
 
         resetAllFields();
         handleWindowToggle();
+        alert("✅ Adding new product successfully");
       } else {
         console.log("Failed to add a new product");
       }
@@ -314,7 +313,11 @@ const AddingProductWindow = ({setSelectedCSVFile, handleWindowToggle, handleAddi
 
         {/* ACTION BUTTONS */}
         <div className="w-full h-fit flex justify-between mt-4">
-          <button className="border-[1px] px-4 py-2 rounded-lg text-xs hover:bg-gray-100 transition-all duration-200" onClick={() => handleWindowToggle()}>
+          <button className="border-[1px] px-4 py-2 rounded-lg text-xs hover:bg-gray-100 transition-all duration-200" 
+          onClick={() => {
+            handleWindowToggle();
+            resetAllFields();
+          }}>
             Cancel
           </button>
           <button onClick={handlePublishButtonToggle} className="px-4 py-2 rounded-lg text-xs bg-blue-500 text-white/90 hover:bg-blue-600 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-sm">
@@ -361,46 +364,19 @@ const AddingProductWindow = ({setSelectedCSVFile, handleWindowToggle, handleAddi
             <div className="w-full h-[220px] gap-4 flex">
               {/* MAIN IMAGE */}
               <div className="w-1/2 h-full border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                {image1 ? (
-                  <Image
-                    src={image1}
-                    alt="Preview"
-                    fill
-                    className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                  />
-                ) : (
-                  <UploadImageIcon image={image1} setImage={setImage1} setImageFile={setImageFile1} />
-                )}
+                <UploadImageIcon setFileImage={setImageFile1} setImage={setImage1} image={image1}/>
               </div>
 
               {/* SECONDARY IMAGES */}
               <div className="w-1/2 h-full gap-3 flex flex-col rounded-lg">
                 {/* SECOND IMAGE */}
                 <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                  {image2 ? (
-                    <Image
-                      src={image2}
-                      alt="Preview"
-                      fill
-                      className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <UploadImageIcon image={image2} setImage={setImage2} setImageFile={setImageFile2} />
-                  )}
+                  <UploadImageIcon setFileImage={setImageFile2} setImage={setImage2} image={image2}/>
                 </div>
 
                 {/* THIRD IMAGE */}
                 <div className="w-full h-1/2 border rounded-lg flex justify-center items-center relative overflow-hidden group">
-                  {image3 ? (
-                    <Image
-                      src={image3}
-                      alt="Preview"
-                      fill
-                      className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <UploadImageIcon image={image3} setImage={setImage3} setImageFile={setImageFile3} />
-                  )}
+                  <UploadImageIcon setFileImage={setImageFile3} setImage={setImage3} image={image3}/>
                 </div>
               </div>
             </div>
