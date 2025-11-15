@@ -4,6 +4,7 @@ import { useState } from "react";
 import LeadsPageHeader from "./LeadsPageHeader";
 import LeadsNewStatusColumn from "./LeadsNewStatusColumn";
 import LeadsOpenStatusColumn from "./LeadsOpenStatusColumn";
+import LeadsInProgressStatusColumn from "./LeadsInProgressStatusColumn";
 
 const Page = () => {
   // OPTIONS STATE
@@ -24,9 +25,10 @@ const Page = () => {
       <div className="w-full flex-1 flex gap-4">
         {/* LEADS WITH NEW STATUS  */}
         <LeadsNewStatusColumn />
-        {/* LEADS WITH OPEN STATS */}
+        {/* LEADS WITH OPEN STATUS */}
         <LeadsOpenStatusColumn />
-        
+        {/* LEADS WITH IN PROGRESSING STATUS */}
+        <LeadsInProgressStatusColumn />
       </div>
     </div>
   );
