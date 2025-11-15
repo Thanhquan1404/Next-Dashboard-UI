@@ -40,6 +40,7 @@ interface DataConvertProps {
   imageFile2: File | null;
   imageFile3: File | null;
 }
+
 const dataConvert = ({ newDetailProduct, imageFile1, imageFile2, imageFile3 }: DataConvertProps): FormData => {
   const data: ProductDetailRequestType = {
     sku: newDetailProduct.SKU || `SP-${Date.now()}`,

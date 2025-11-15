@@ -5,7 +5,7 @@ export const statusOptions = ["All status", "New", "Open", "In Progress", "Opend
 export const companyOptions = ["All company", "Apple", "Xiaomi",];
 
 //---------------------------------------- LEADS SAMPLES ----------------------------------------
-interface leadType {
+export interface leadType {
   leadID: string;
   avatarURL: string;
   name: string;
@@ -116,3 +116,6 @@ export const leadsOpenDealStatusSample: leadType[] = [
     status: "Open Deal"
   },
 ];
+
+//---------------------------------------- LEADS DRAG DROP EVENT ----------------------------------------
+export type ColumnKey = "newStatus" | "openStatus" | "inProgressingStatus" | "openDealStatus";
