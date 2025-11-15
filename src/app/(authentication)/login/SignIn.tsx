@@ -1,3 +1,4 @@
+"use client"
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import GoogleIcon from '@mui/icons-material/Google';
@@ -10,10 +11,11 @@ import { userLoginType } from '@/lib/data.user';
 import { setToken } from '@/service/localStorageService';
 import FetchingLoadingStatus from '@/components/FetchingLoadingStatus';
 import useSignInFetching from '@/fetching/user/signInFetching';
+import { useRouter } from 'next/navigation';
 
 const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
   // INITIALIZE NAVIGATE FUNTION 
-  // const navigate = useNavigate();
+  const router = useRouter()
   // INITIALIZE FETCHING FUNCTION 
   const { loading, data, error, userLogin } = useSignInFetching();
 
@@ -44,7 +46,7 @@ const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
         console.log(accessToken);
         resetStateField();
         setToken(accessToken);
-        // navigate("/products");
+        router.push('/dashboard');
       } else {
         const errMessage = resData?.message || "Invalid credentials";
         alert(`Login failed\n${errMessage}`);
