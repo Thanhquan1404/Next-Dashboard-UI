@@ -86,3 +86,33 @@ export const leadsInProgressStatusSample: leadType[] = [
     status: "In Progress"
   }
 ];
+
+export const leadsOpenDealStatusSample: leadType[] = [
+  {
+    leadID: "L016",
+    avatarURL: "https://randomuser.me/api/portraits/men/19.jpg",
+    name: "Phan Văn Sơn",
+    createdDate: "2025-11-02T11:40:00+07:00",
+    phone: "+84933445566",
+    email: "son.phan@example.com",
+    status: "Open Deal"
+  },
+  {
+    leadID: "L017",
+    avatarURL: "https://randomuser.me/api/portraits/women/64.jpg",
+    name: "Tô Thị Hồng",
+    createdDate: "2025-11-01T15:30:00+07:00",
+    phone: "+84977889900",
+    email: "hong.to@example.com",
+    status: "Open Deal"
+  },
+  {
+    leadID: "L018",
+    avatarURL: "https://randomuser.me/api/portraits/men/37.jpg",
+    name: "Đinh Công Minh",
+    createdDate: "2025-10-31T09:15:00+07:00",
+    phone: "+84922334455",
+    email: "minh.dinh@example.com",
+    status: "Open Deal"
+  },
+];

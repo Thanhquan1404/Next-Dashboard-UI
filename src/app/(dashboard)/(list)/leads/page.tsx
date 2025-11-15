@@ -5,6 +5,7 @@ import LeadsPageHeader from "./LeadsPageHeader";
 import LeadsNewStatusColumn from "./LeadsNewStatusColumn";
 import LeadsOpenStatusColumn from "./LeadsOpenStatusColumn";
 import LeadsInProgressStatusColumn from "./LeadsInProgressStatusColumn";
+import LeadsOpenDealStatusColumn from "./LeadsOpenDealStatusColumn";
 
 const Page = () => {
   // OPTIONS STATE
@@ -29,6 +30,8 @@ const Page = () => {
         <LeadsOpenStatusColumn />
         {/* LEADS WITH IN PROGRESSING STATUS */}
         <LeadsInProgressStatusColumn />
+        {/* LEADS WITH OPEN DEAL STATUS */}
+        <LeadsOpenDealStatusColumn />
       </div>
     </div>
   );

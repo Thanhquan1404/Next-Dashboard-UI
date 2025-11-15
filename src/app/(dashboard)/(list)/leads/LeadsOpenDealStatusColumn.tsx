@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { leadsInNewStatusSamples } from "@/lib/data.leads";
+import { leadsOpenDealStatusSample } from "@/lib/data.leads";
 
-const LeadsNewStatusColumn = () => {
+const LeadsOpenDealStatusColumn = () => {
   return (
     <div className="w-1/4 h-full flex flex-col gap-4">
       {/* HEADER  */}
@@ -16,8 +16,8 @@ const LeadsNewStatusColumn = () => {
 
         {/* STATUS + CIRCLE */}
         <div className="flex gap-2 items-center text-gray-700 font-semibold text-sm">
-          <div className="w-[14px] h-[14px] rounded-full bg-gray-400 shadow-sm" />
-          New
+          <div className="w-[14px] h-[14px] rounded-full bg-green-400 shadow-sm" />
+          Open Deal
         </div>
 
         {/* LEAD COUNT */}
@@ -26,14 +26,14 @@ const LeadsNewStatusColumn = () => {
               text-gray-700 text-xs
               hover:bg-gray-300 transition-colors duration-200
             ">
-          {leadsInNewStatusSamples.length} leads
+          {leadsOpenDealStatusSample.length} leads
         </div>
 
       </div>
 
       {/* LEAD COMPONENT  */}
       {
-        leadsInNewStatusSamples.map((leadItem) => {
+        leadsOpenDealStatusSample.map((leadItem) => {
           return (
             <div key={leadItem.leadID} draggable className="
             bg-white rounded-xl w-full px-4 py-3 shadow-sm border border-gray-200
@@ -118,7 +118,7 @@ const LeadsNewStatusColumn = () => {
 
                 {/* LEAD STATUS */}
                 <div className="
-                bg-gray-400/90 text-gray-900 px-2 py-1 rounded-lg w-fit text-xs font-medium
+                bg-green-400/90 text-green-900 px-2 py-1 rounded-lg w-fit text-xs font-medium
                 shadow-sm
               ">
                   {leadItem.status}
@@ -133,4 +133,4 @@ const LeadsNewStatusColumn = () => {
   );
 };
 
-export default LeadsNewStatusColumn;
+export default LeadsOpenDealStatusColumn;
