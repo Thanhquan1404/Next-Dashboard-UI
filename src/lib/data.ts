@@ -1,10 +1,11 @@
 // TEMPORARY DATA
 
-export let role = "student";
+export let role = "Employee";
 
 export const URL = "https://vero-3mfn.onrender.com";
 
 export const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzZXJ2ZXIiLCJzdWIiOiJuZ3V5ZW52YW5kYXQiLCJleHAiOjE3NjMzNzI1MjksImlhdCI6MTc2MzE5MjUyOSwianRpIjoiMjI3ODEwYmUtNzMyOS00MjRjLWEzZGQtOWFhOGMyNTRhYzMyIn0.kgRr5dY1u16trs2kMZ7yLsI8iN71F-9LwvLnHVKuHE4';
+
 export const teachersData = [
   {
     id: 1,
