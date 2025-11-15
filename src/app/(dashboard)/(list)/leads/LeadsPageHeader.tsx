@@ -9,7 +9,7 @@ interface Props {
 }
 const LeadsPageHeader = ({selectedStatus, setSelectedStatus, setSelectedCompany, selectedCompany}: Props) => {
   return (
-    <div className="w-full h-[120px] px-4 py-4">
+    <div className="w-full h-[120px] px-4 py-4 bg-white">
       <div className="w-full h-1/2 flex justify-between items-center">
         <div className="text-xl font-bold tracking-wide">
           Leads
