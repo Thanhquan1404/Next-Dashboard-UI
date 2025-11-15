@@ -3,6 +3,7 @@ import { statusOptions, companyOptions } from "@/lib/data.leads";
 import { useState } from "react";
 import LeadsPageHeader from "./LeadsPageHeader";
 import LeadsNewStatusColumn from "./LeadsNewStatusColumn";
+import LeadsOpenStatusColumn from "./LeadsOpenStatusColumn";
 
 const Page = () => {
   // OPTIONS STATE
@@ -20,9 +21,12 @@ const Page = () => {
         />
       </div>
       {/* LEADS STATUS KANBAN BOARD  */}
-      <div className="w-full flex-1">
+      <div className="w-full flex-1 flex gap-4">
         {/* LEADS WITH NEW STATUS  */}
         <LeadsNewStatusColumn />
+        {/* LEADS WITH OPEN STATS */}
+        <LeadsOpenStatusColumn />
+        
       </div>
     </div>
   );

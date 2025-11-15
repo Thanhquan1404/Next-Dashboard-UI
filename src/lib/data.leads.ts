@@ -15,7 +15,7 @@ interface leadType {
   status: string;
 }
 
-export const leadsInNewStatusSamples = [
+export const leadsInNewStatusSamples: leadType[] = [
   {
     leadID: "L001",
     avatarURL: "https://randomuser.me/api/portraits/men/32.jpg",
@@ -43,22 +43,25 @@ export const leadsInNewStatusSamples = [
     email: "cuong.le@example.com",
     status: "New"
   },
+];
+
+export const leadsInOpenStatusSample: leadType[] = [
   {
-    leadID: "L004",
-    avatarURL: "https://randomuser.me/api/portraits/women/12.jpg",
-    name: "Phạm Minh Đào",
-    createdDate: "2025-11-14T14:20:00+07:00",
-    phone: "+84999888777",
-    email: "dao.pham@example.com",
-    status: "New"
+    leadID: "L006",
+    avatarURL: "https://randomuser.me/api/portraits/women/23.jpg",
+    name: "Hoàng Thị Kim",
+    createdDate: "2025-11-12T08:40:00+07:00",
+    phone: "+84933445566",
+    email: "kim.hoang@example.com",
+    status: "Open"
   },
   {
-    leadID: "L005",
-    avatarURL: "https://randomuser.me/api/portraits/men/89.jpg",
-    name: "Vũ Quốc Huy",
-    createdDate: "2025-11-13T11:55:00+07:00",
-    phone: "+84955667788",
-    email: "huy.vu@example.com",
-    status: "New"
-  }
+    leadID: "L007",
+    avatarURL: "https://randomuser.me/api/portraits/men/55.jpg",
+    name: "Đỗ Văn Long",
+    createdDate: "2025-11-11T13:25:00+07:00",
+    phone: "+84966778899",
+    email: "long.do@example.com",
+    status: "Open"
+  },
 ];
