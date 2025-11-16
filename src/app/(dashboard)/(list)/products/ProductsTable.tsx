@@ -12,6 +12,7 @@ import SortIcon from "@/components/SortIcon";
 import { ProductDataType } from "@/lib/data.product"
 import { moneyFormat } from "@/util/moneyFormat";
 import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
+import PageNavigationComponent from "@/components/PageNavigationComponent";
 // --- HEADER DATATYPE ---
 type HeaderDataType = {
   id: number;
@@ -73,9 +74,12 @@ interface Props {
   handleDetailProductWindowToggle: (product: HTMLElement) => void,
   handleDeleteProductButtonToggle: (product: HTMLElement) => void,
   loadingDeleteProduct: boolean,
+  totalPages: number,
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>,
+  currentPage: number,
 }
 
-const ProductsTable = ({ loadingDeleteProduct, handleDeleteProductButtonToggle, sampleProducts, handleWindowToggle, handleDetailProductWindowToggle }: Props) => {
+const ProductsTable = ({ loadingDeleteProduct, handleDeleteProductButtonToggle, sampleProducts, handleWindowToggle, handleDetailProductWindowToggle, totalPages, setCurrentPage, currentPage }: Props) => {
   const [sort, setSort] = useState<{ columnName: keyof ProductDataType; direction: "asc" | "desc" }>({
     columnName: "PRODUCT_NAME" as keyof ProductDataType,
     direction: "desc",
@@ -177,7 +181,7 @@ const ProductsTable = ({ loadingDeleteProduct, handleDeleteProductButtonToggle, 
 
                         {/* DELETE BUTTON */}
                         {loadingDeleteProduct && selectedProductId === row.PRODUCT_ID
-                        ?
+                          ?
                           <FetchingLoadingStatus
                             loading={loadingDeleteProduct}
                             width="30%"
@@ -244,6 +248,12 @@ const ProductsTable = ({ loadingDeleteProduct, handleDeleteProductButtonToggle, 
           ))}
         </tbody>
       </table>
+      {/* PAGENAVIGATION  */}
+      <div className="w-100% h-fit py-2 flex justify-center items-center">
+        <PageNavigationComponent totalPages={totalPages}
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage} />
+      </div>
     </div>
   );
 };

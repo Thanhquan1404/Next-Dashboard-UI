@@ -28,7 +28,7 @@ interface ApiErrorResponseType {
   message: string;
 }
 // API PAGINATION TYPE
-interface pagination{
+interface pagination {
   hasPre: boolean,
   hasNext: boolean,
   pageNumber: number,
@@ -43,7 +43,7 @@ interface ApiResponse {
   pagination?: pagination;
 }
 
-const useGetListProducts = () => {
+export const useGetListProducts = () => {
   // STATE 
   const [data, setData] = useState<any | null>();
   const [error, setError] = useState<any | null>();
@@ -62,18 +62,17 @@ const useGetListProducts = () => {
         },
       });
 
-      const resData = response.data;
-      const resContent:  ApiContentResponseType[] | undefined = resData.data; 
+      const resData: ApiResponse = response.data;
+      const resContent: ApiContentResponseType[] | undefined = resData.data;
 
-      setData(resData);
-      return resContent;
+      setData(resContent);
+      return resData;
     } catch (err) {
       const axiosErr = err as AxiosError<any>;
       const errData: ApiErrorResponseType = axiosErr.response?.data.error;
       const errMess: string = errData.message;
 
       throw new Error(errMess);
-      console.log
     } finally {
       setLoading(false);
     }
@@ -83,4 +82,44 @@ const useGetListProducts = () => {
   return { loading, data, error, getListProducts };
 }
 
-export default useGetListProducts;
+export const useGetListProductWithPageNo = () => {
+  // STATE 
+  const [data, setData] = useState<any | null>();
+  const [error, setError] = useState<any | null>();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // FETCHING FUNCTION
+  const getListProductsWithPageNo = async (pageNumber: number) => {
+    setError(null);
+    setLoading(true);
+
+    try {
+
+      const response = await axios.get<ApiResponse>(path, {
+        params: { pageNo: pageNumber },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
+        },
+      });
+
+      const resData: ApiResponse = response.data;
+      const resContent: ApiContentResponseType[] | undefined = resData.data;
+
+      setData(resContent);
+      return resData;
+    } catch (err) {
+      const axiosErr = err as AxiosError<any>;
+      const errData: ApiErrorResponseType = axiosErr.response?.data.error;
+      const errMess: string = errData.message;
+
+      throw new Error(errMess);
+    } finally {
+      setLoading(false);
+    }
+
+  }
+
+  return { loading, data, error, getListProductsWithPageNo };
+}
+

@@ -6,7 +6,7 @@ import ProductsTable from "./ProductsTable";
 import { useEffect, useState, useRef } from "react";
 import { ProductDataType, ProductDetailType } from "@/lib/data.product";
 import ProductDetailWindow from "./ProductDetailWindow";
-import useGetListProducts from "@/fetching/product/getListProducts";
+import { useGetListProducts, useGetListProductWithPageNo } from "@/fetching/product/getListProducts";
 import useDeleteProduct from "@/fetching/product/deleteProduct";
 import ProductInCSVFile from "./ProductInCSVFile";
 
@@ -61,6 +61,13 @@ const Page = () => {
     error: errorDeleteProduct,
     deleteProduct
   } = useDeleteProduct();
+  // INITIALIZE GET PRODUCT WITH PAGE NO
+  const {
+    loading: loadingGetListProductsWithNo,
+    data: dataGetListProductsWithNo,
+    error: errorGetListProductsWithNo,
+    getListProductsWithPageNo
+  } = useGetListProductWithPageNo();
   // STATE 
   const [products, setProducts] = useState<ProductDataType[]>([]);
   const [detailProducts, setDetailProducts] = useState<ProductDetailType[]>([]);
@@ -75,11 +82,16 @@ const Page = () => {
   };
   // FUNCTION TO FETCHING DATA
   const hasFetched = useRef(false);
+  const isInitialPageSet = useRef(false);
+  // PAGENAVIGATION STATE
+  const [totalPages, setTotalPages] = useState<number>(-1);
+  const [currentPage, setCurrentPage] = useState<number>(-1);
   useEffect(() => {
     const fetchProducts = async () => {
       if (!hasFetched.current) {
         try {
-          const resData = await getListProducts();
+          const response = await getListProducts();
+          const resData = response.data;
 
           if (resData) {
             const listDetailProduct: ProductDetailType[] = resData.map((item) => {
@@ -105,10 +117,13 @@ const Page = () => {
               return result;
             });
             setDetailProducts(listDetailProduct);
+            if (response.pagination?.totalPages && response.pagination.pageNumber) {
+              setTotalPages(response.pagination.totalPages);
+              setCurrentPage(response.pagination.pageNumber);
+            }
+
           }
-          else {
-            alert("Fail to get list of products");
-          }
+          isInitialPageSet.current = true;
         } catch (error) {
           alert(`List product fetching data error \n${error}`);
         } finally {
@@ -119,6 +134,55 @@ const Page = () => {
 
     fetchProducts();
   }, []);
+  // FUNCTION TO HANDLE PAGENAVIGATION 
+  useEffect(() => {
+    const fetchProductsWithPageNo = async () => {
+      if (!isInitialPageSet.current) { return }
+      try {
+        const response = await getListProductsWithPageNo(currentPage);
+        const resData = response.data;
+
+        if (resData) {
+          const listDetailProduct: ProductDetailType[] = resData.map((item) => {
+            const result: ProductDetailType = {
+              PRODUCT_ID: item.productId,
+              PRODUCT_BRAND: item.productBrand,
+              PRODUCT_CATEGORY: item.productCategory,
+              PRODUCT_NAME: item.productName,
+              DESCRIPTION: item.description,
+              PRODUCT_SUBTITLE: item.productSubtitle,
+              PURCHASE_UNIT_PRICE: item.purchaseUnitPrice,
+              PRODUCTS: item.quantity,
+              SKU: item.sku,
+              STATUS: item.status,
+              IMAGE1_URL: item.imageUrl,
+              IMAGE2_URL: "",
+              IMAGE3_URL: "",
+              TAG: "",
+              DISCOUNT: item.discount,
+              DISCOUNT_TYPE: item.discountType,
+              COLOR: "",
+            };
+            return result;
+          });
+          setDetailProducts(listDetailProduct);
+          if (response.pagination?.totalPages && response.pagination.pageNumber) {
+            setCurrentPage(response.pagination.pageNumber);
+          }
+
+        }
+        else {
+          alert("Fail to get list of products");
+        }
+      } catch (error) {
+        alert(`List product fetching data error \n${error}`);
+      } finally {
+        hasFetched.current = true;
+      }
+
+    }
+    fetchProductsWithPageNo();
+  }, [currentPage])
   // FUNCTION TO HANDLE EVEN IF THE PRODUCT DETAILS ARRAY CHANGED
   useEffect(() => {
     const data = productTableData(detailProducts);
@@ -127,7 +191,6 @@ const Page = () => {
       return same ? prev : data;
     });
   }, [detailProducts]);
-
   // FUNCTION TO HANDLE 'ADDING PRODUCT' ACTION
   const handleAddingProductEvent = (newProduct: ProductDataType): void => {
     const arr = [...products];
@@ -191,6 +254,9 @@ const Page = () => {
           sampleProducts={products}
           handleWindowToggle={handleWindowToggle}
           handleDetailProductWindowToggle={handleDetailProductWindowToggle}
+          totalPages={totalPages}
+          setCurrentPage={setCurrentPage}
+          currentPage={currentPage}
         />
       </div>
 
