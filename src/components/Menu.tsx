@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { role } from "@/lib/data";
+import { usePathname } from "next/navigation";
 
 const menuItems = [
   {
@@ -13,6 +14,7 @@ const menuItems = [
       { icon: "/customers.png", label: "Customers", href: "/customers", visible: ["Admin", "Employee"] },
       { icon: "/products.png", label: "Products", href: "/products", visible: ["Admin", "Employee"] },
       { icon: "/leads.png", label: "Leads", href: "/leads", visible: ["Admin", "Employee"] },
+      { icon: "/orders.png", label: "Orders", href: "/orders", visible: ["Admin", "Employee"] },
     ],
   },
   {
@@ -26,6 +28,8 @@ const menuItems = [
 ];
 
 export const Menu = () => {
+  const pathname = usePathname();
+
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((section) => (
@@ -37,33 +41,40 @@ export const Menu = () => {
 
           {/* Menu items */}
           {section.items.map((item) => {
-            if (item.visible.includes(role)) {
-              return (
-                <Link
-                  href={item.href}
-                  key={item.label}
-                  className="
-                    flex items-center gap-4 lg:justify-start justify-center
-                    text-gray-500 p-2 rounded-md relative
-                    transition-all duration-300 ease-in-out
-                    hover:bg-gray-100 hover:text-blue-600
-                    hover:translate-x-2 hover:scale-[1.03]
-                    before:content-[''] before:absolute before:bottom-0 before:left-0 before:w-0 before:h-[2px]
-                    before:bg-blue-500 before:transition-all before:duration-300
-                    hover:before:w-full
-                  "
-                >
-                  <Image
-                    src={item.icon}
-                    width={15}
-                    height={15}
-                    alt={item.label}
-                    className="transition-transform duration-300 ease-in-out group-hover:rotate-6"
-                  />
-                  <span className="hidden lg:block text-sm">{item.label}</span>
-                </Link>
-              );
-            }
+            if (!item.visible.includes(role)) return null;
+
+            const isActive = pathname.startsWith(item.href);
+
+            return (
+              <Link
+                href={item.href}
+                key={item.label}
+                className={`
+                  flex items-center gap-4 lg:justify-start justify-center
+                  p-2 rounded-md relative transition-all duration-300 ease-in-out
+
+                  ${isActive ? "text-blue-600 bg-blue-50 translate-x-2" : "text-gray-500"}
+
+                  hover:bg-gray-100 hover:text-blue-600 hover:translate-x-2 hover:scale-[1.03]
+
+                  before:content-[''] before:absolute before:left-0 before:w-[4px] before:rounded-r-md
+                  before:transition-all before:duration-300
+                  ${isActive ? "before:h-full before:bg-blue-500" : "before:h-0 hover:before:h-full before:bg-blue-500"}
+                `}
+              >
+                <Image
+                  src={item.icon}
+                  width={15}
+                  height={15}
+                  alt={item.label}
+                  className={`
+                    transition-transform duration-300 ease-in-out
+                    ${isActive ? "brightness-0 saturate-150" : ""}
+                  `}
+                />
+                <span className="hidden lg:block text-sm">{item.label}</span>
+              </Link>
+            );
           })}
         </div>
       ))}

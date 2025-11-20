@@ -3,7 +3,7 @@ import { Avatar } from "@mui/material";
 import { salesDataRow, saleRow } from "@/lib/data";
 import { nationAvatar } from "./nationAvatarIndentification";
 import { useMemo, useState } from "react";
-import SortIcon from "../../../components/SortIcon";
+import SortIcon from "../../../../components/SortIcon";
 import StatusComponent from "./StatusComponent";
 
 // table header datatype
