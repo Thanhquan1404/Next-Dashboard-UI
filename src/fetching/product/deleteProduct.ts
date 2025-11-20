@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { useState } from "react";
-import { URL, accessToken } from "@/lib/data";
+import { URL } from "@/lib/data";
+import { getToken } from "@/service/localStorageService";
 
 const path = `${URL}/crm/products/`;
 
@@ -18,7 +19,8 @@ interface ApiResponse {
 const useDeleteProduct = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorResponse | null>();
-
+    const accessToken = getToken();
+  
   const deleteProduct = async (productID: string) => {
     const pathWithProductID = path + productID;
     setError(null);

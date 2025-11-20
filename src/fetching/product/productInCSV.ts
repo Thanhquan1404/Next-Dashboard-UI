@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import { URL, accessToken } from "@/lib/data";
+import { URL } from "@/lib/data";
+import { getToken } from "@/service/localStorageService";
 
 const path = `${URL}/crm/products/csv`;
 // CONVERT TO REQUEST BODY
@@ -17,6 +18,7 @@ const useBrowseCSVFile = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>();
   const [error, setError] = useState<any>();
+  const accessToken = getToken();
 
   const sendCSV = async (csvFile: File, fileHeader: string[], productProperty: string[]) => {
     const formData = requestBody(csvFile, fileHeader, productProperty);

@@ -1,7 +1,6 @@
-import { accessToken, URL } from "@/lib/data";
-import { ProductDetailRequestType } from "@/lib/data.product";
+import { URL } from "@/lib/data";
+import { getToken } from "@/service/localStorageService";
 import axios, { AxiosError } from "axios";
-import { headers } from "next/headers";
 import { useState } from "react";
 
 // API DATA RESPONSE 
@@ -37,6 +36,7 @@ const useUpdateProduct = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<ApiDataResponseType>();
   const [error, setError] = useState<ApiErrorResponseType | null>();
+  const accessToken = getToken();
 
   // FETCHING FUNCTIOn
   const updateProduct = async (updateProductDetail: any, productID: string) => {

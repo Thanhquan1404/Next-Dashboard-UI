@@ -1,7 +1,8 @@
 import axios, { AxiosError } from "axios";
 import { useState } from "react";
 import { ProductDetailType, ProductDetailRequestType } from "@/lib/data.product";
-import {URL, accessToken} from "@/lib/data";
+import {URL} from "@/lib/data";
+import { getToken } from "@/service/localStorageService";
 
 const path = `${URL}/crm/products`;
 // DATA TYPE 
@@ -72,6 +73,7 @@ export const useAddProduct = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ResponseDataType | undefined>();
   const [error, setError] = useState<string | null>(null);
+  const accessToken = getToken();
 
   const requestAddingProduct = async ({ newDetailProduct, imageFile1, imageFile2, imageFile3 }: DataConvertProps) => {
     const formData = dataConvert({ newDetailProduct, imageFile1, imageFile2, imageFile3 });

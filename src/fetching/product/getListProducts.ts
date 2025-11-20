@@ -1,7 +1,7 @@
-import { URL, accessToken } from '@/lib/data';
+import { URL} from '@/lib/data';
 import { useState } from 'react';
 import axios, { AxiosError } from 'axios';
-// import { getToken } from '@/service/localStorageService';
+import { getToken } from '@/service/localStorageService';
 
 // INITIALIZE THE URL PATH 
 const path = `${URL}/crm/products`;
@@ -48,6 +48,7 @@ export const useGetListProducts = () => {
   const [data, setData] = useState<any | null>();
   const [error, setError] = useState<any | null>();
   const [loading, setLoading] = useState<boolean>(false);
+  const accessToken = getToken();
 
   // FETCHING FUNCTION
   const getListProducts = async () => {
@@ -92,6 +93,7 @@ export const useGetListProductWithPageNo = () => {
   const getListProductsWithPageNo = async (pageNumber: number) => {
     setError(null);
     setLoading(true);
+    const accessToken = getToken();
 
     try {
 
