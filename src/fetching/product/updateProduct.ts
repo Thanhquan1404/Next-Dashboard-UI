@@ -41,7 +41,6 @@ const useUpdateProduct = () => {
   // FETCHING FUNCTIOn
   const updateProduct = async (updateProductDetail: any, productID: string) => {
     const path = `${URL}/crm/products/${productID}`;
-    console.log(path);
     setError(null);
     setLoading(true);
 
