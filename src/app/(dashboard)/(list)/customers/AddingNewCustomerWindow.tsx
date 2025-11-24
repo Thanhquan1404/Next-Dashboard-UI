@@ -2,6 +2,7 @@ import PriorityStatusComponent from '@/components/PriorityStatusComponent';
 import Avatar from '@mui/material/Avatar';
 import Image from 'next/image';
 import { useState } from 'react';
+import SequenceActivity from './SequenceActivity';
 const AddingNewCustomerWindow = () => {
   const [havingCurrentActivity, setHavingCurrentActivity] = useState<boolean>(false);
   return (
@@ -317,7 +318,7 @@ const AddingNewCustomerWindow = () => {
       </div>
 
       {/* CURRENT ACTIVITIES  */}
-      <div className='border-t-[2px] h-fit w-full px-4 flex flex-col pb-2 pt-4'>
+      <div className='border-t-[1px] h-fit w-full px-4 flex flex-col pb-5 pt-4'>
 
         {/* TITLE  */}
         <div className='flex h-fit py-2'>
@@ -393,6 +394,11 @@ const AddingNewCustomerWindow = () => {
 
           </div>
         </div>
+      </div>
+      
+      {/* SEQUENCE ACTIVITY  */}
+      <div className='w-full flex-1 border-t-[1px] pt-2 min-h-0'>
+        <SequenceActivity />
       </div>
 
     </div>
