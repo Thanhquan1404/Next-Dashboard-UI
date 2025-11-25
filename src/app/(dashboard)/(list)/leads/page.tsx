@@ -145,6 +145,7 @@ const Page = () => {
           dragStartEvent={dragStartEvent}
           dropEvent={dropEvent}
           dragOverEvent={dragOverEvent}
+          handleAddingNewLead={handleAddingNewLead}
         />
       </div>
     </div>
