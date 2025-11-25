@@ -12,6 +12,7 @@ export interface leadType {
   createdDate: string;
   phone: string;
   email: string;
+  rating: number;
   status: string;
 }
 
@@ -23,6 +24,7 @@ export const leadsInNewStatusSamples: leadType[] = [
     createdDate: "2025-11-15T10:30:00+07:00",
     phone: "+84912345678",
     email: "an.nguyen@example.com",
+    rating: 2,
     status: "New"
   },
   {
@@ -32,6 +34,7 @@ export const leadsInNewStatusSamples: leadType[] = [
     createdDate: "2025-11-15T09:15:00+07:00",
     phone: "+84987654321",
     email: "binh.tran@example.com",
+    rating: 2,
     status: "New"
   },
   {
@@ -41,6 +44,7 @@ export const leadsInNewStatusSamples: leadType[] = [
     createdDate: "2025-11-14T16:45:00+07:00",
     phone: "+84911223344",
     email: "cuong.le@example.com",
+    rating: 2,
     status: "New"
   },
 ];
@@ -53,6 +57,7 @@ export const leadsInOpenStatusSample: leadType[] = [
     createdDate: "2025-11-12T08:40:00+07:00",
     phone: "+84933445566",
     email: "kim.hoang@example.com",
+    rating: 5,
     status: "Open"
   },
   {
@@ -61,6 +66,7 @@ export const leadsInOpenStatusSample: leadType[] = [
     name: "Đỗ Văn Long",
     createdDate: "2025-11-11T13:25:00+07:00",
     phone: "+84966778899",
+    rating: 2,
     email: "long.do@example.com",
     status: "Open"
   },
@@ -74,6 +80,7 @@ export const leadsInProgressStatusSample: leadType[] = [
     createdDate: "2025-11-07T10:35:00+07:00",
     phone: "+84977889900",
     email: "quan.ngo@example.com",
+    rating: 2,
     status: "In Progress"
   },
   {
@@ -83,6 +90,7 @@ export const leadsInProgressStatusSample: leadType[] = [
     createdDate: "2025-11-06T14:20:00+07:00",
     phone: "+84911223344",
     email: "lan.dang@example.com",
+    rating: 2,
     status: "In Progress"
   }
 ];
@@ -95,6 +103,7 @@ export const leadsOpenDealStatusSample: leadType[] = [
     createdDate: "2025-11-02T11:40:00+07:00",
     phone: "+84933445566",
     email: "son.phan@example.com",
+    rating: 2,
     status: "Open Deal"
   },
   {
@@ -104,6 +113,7 @@ export const leadsOpenDealStatusSample: leadType[] = [
     createdDate: "2025-11-01T15:30:00+07:00",
     phone: "+84977889900",
     email: "hong.to@example.com",
+    rating: 2,
     status: "Open Deal"
   },
   {
@@ -113,6 +123,7 @@ export const leadsOpenDealStatusSample: leadType[] = [
     createdDate: "2025-10-31T09:15:00+07:00",
     phone: "+84922334455",
     email: "minh.dinh@example.com",
+    rating: 2,
     status: "Open Deal"
   },
 ];

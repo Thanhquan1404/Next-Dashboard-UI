@@ -29,7 +29,6 @@ const ProductInCSVFile = ({ selectedCSVFile, setSelectedCSVFile, handleWindowTog
             setFilefirstDataRow(secondRow);
             setFileName(selectedCSVFile.name);
             setFileHeader(firstRow);
-            console.log(firstRow);
           }
         },
         error: (error) => {

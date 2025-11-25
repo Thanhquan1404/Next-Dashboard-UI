@@ -3,12 +3,14 @@
 import Image from "next/image";
 import { leadType, ColumnKey } from "@/lib/data.leads";
 import { useState } from "react";
+import Rating from '@mui/material/Rating';
 
 interface Props {
   leadItems: leadType[];
   dragStartEvent: (e: React.DragEvent<HTMLDivElement>, leadID: string) => void;
   dropEvent: (statusColumnName: ColumnKey) => void;
   dragOverEvent: (e: React.DragEvent<HTMLDivElement>) => void;
+  handleAddingNewLead: (newLead: leadType) => void;
 }
 
 const LeadsOpenStatusColumn = ({
@@ -16,8 +18,41 @@ const LeadsOpenStatusColumn = ({
   dragStartEvent,
   dropEvent,
   dragOverEvent,
+  handleAddingNewLead
 }: Props) => {
+  // STATE 
   const [isBeingDragged, setIsBeingDragged] = useState(false);
+  // ADDING LEAD TOGGLE STATE 
+  const [addingLeadToggle, setAddingLeadToggle] = useState<boolean>(false);
+  // HANDLE ADDING A NEW LEAD 
+  const [leadName, setLeadName] = useState("");
+  const [leadPhone, setLeadPhone] = useState("");
+  const [leadEmail, setLeadEmail] = useState("");
+  const [leadSource, setLeadSource] = useState("");
+  const [leadRate, setLeadRate] = useState("");
+  // RESET ALL STATE
+  const resetAllState = () => {
+    setLeadName("");
+    setLeadPhone("");
+    setLeadEmail("");
+    setLeadRate("");
+    setLeadSource("");
+  }
+  // HANDLE SAVE BUTTON TOGGLE
+  const handleSaveButtonToggle = () => {
+    const newLead: leadType = {
+      leadID: crypto.randomUUID(),
+      avatarURL: "",
+      name: leadName,
+      createdDate: new Date().toISOString(),
+      phone: leadPhone,
+      email: leadEmail,
+      rating: Number(leadRate),
+      status: "Open",
+    };
+    handleAddingNewLead(newLead);
+    resetAllState();
+  }
 
   return (
     <div
@@ -75,7 +110,7 @@ const LeadsOpenStatusColumn = ({
           {/* PERSONAL INFO */}
           <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
             <Image
-              src={leadItem.avatarURL}
+              src={!leadItem.avatarURL ? "/profile.png" : leadItem.avatarURL}
               width={42}
               height={42}
               alt="Profile image"
@@ -157,18 +192,155 @@ const LeadsOpenStatusColumn = ({
               {leadItem.email}
             </div>
 
-            {/* LEAD STATUS */}
-            <div
-              className="
+            {/* LEAD STATUS AND RATING */}
+            <div className="w-full flex gap-1 items-center">
+              <div
+                className="
                 bg-blue-400/90 text-blue-900 px-2 py-1 rounded-lg 
                 w-fit text-xs font-medium shadow-sm
               "
-            >
-              {leadItem.status}
+              >
+                {leadItem.status}
+              </div>
+              <div>
+                <Rating
+                  size="small"
+                  readOnly
+                  name="simple-controlled"
+                  value={leadItem.rating}
+                />
+              </div>
             </div>
           </div>
         </div>
       ))}
+      {
+        addingLeadToggle ? (
+          <div className="w-full flex flex-col gap-2">
+
+            {/* Lead Name */}
+            <input
+              placeholder="Lead name"
+              value={leadName}
+              onChange={(e) => setLeadName(e.target.value)}
+              className="border border-gray-300 rounded-md px-2 py-1 text-sm w-full
+                   focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none"
+            />
+
+            {/* Phone */}
+            <input
+              placeholder="Phone"
+              value={leadPhone}
+              onChange={(e) => setLeadPhone(e.target.value)}
+              className="border border-gray-300 rounded-md px-2 py-1 text-sm w-full
+                   focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none"
+            />
+
+            {/* Email */}
+            <input
+              placeholder="Email"
+              value={leadEmail}
+              onChange={(e) => setLeadEmail(e.target.value)}
+              className="border border-gray-300 rounded-md px-2 py-1 text-sm w-full
+                   focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none"
+            />
+
+            {/* Lead Source */}
+            <div className="flex gap-2">
+              <select
+                value={leadSource}
+                onChange={(e) => setLeadSource(e.target.value)}
+                className={`border border-gray-300 rounded-md px-2 py-1 text-sm w-full bg-white
+                   focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none ${!leadSource && "text-gray-500"}`}
+              >
+                <option value="">Lead Source</option>
+                <option value="Facebook">Facebook</option>
+                <option value="Website">Website</option>
+                <option value="Referral">Referral</option>
+                <option value="Event">Event</option>
+              </select>
+
+              {/* Lead Status */}
+              <select
+                value={leadRate}
+                onChange={(e) => setLeadRate(e.target.value)}
+                className={`border border-gray-300 rounded-md px-2 py-1 text-sm w-full bg-white
+                   focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none ${!leadRate && "text-gray-500"}`}
+              >
+                <option value="">Rate</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+
+            {/* Save + Cancel */}
+            <div className="flex gap-2 w-full">
+
+              <button
+                disabled={!leadName || !leadPhone || !leadEmail || !leadRate}
+                onClick={() => {
+                  handleSaveButtonToggle();
+                  setAddingLeadToggle(prev => !prev)
+                }}
+                className={`
+            px-3 py-1.5 rounded-md text-xs font-medium w-1/2 transition-all duration-150
+            ${!leadName || !leadPhone || !leadEmail || !leadRate
+                    ? "bg-blue-300 text-white cursor-not-allowed"
+                    : "bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.97]"}
+          `}
+              >
+                Save
+              </button>
+
+              <button
+                className="px-3 py-1.5 bg-gray-300/50 text-xs font-medium rounded-md w-1/2
+                     hover:scale-[1.05] active:scale-[0.97] transition-all duration-150"
+                onClick={() => {
+                  setAddingLeadToggle((prev) => !prev)
+                  resetAllState();
+                }}
+              >
+                Cancel
+              </button>
+
+            </div>
+          </div>
+        ) : (
+          <div
+            className="
+              flex justify-center items-center gap-1 px-3 py-1.5
+              border border-gray-300 bg-white
+              text-xs font-medium text-gray-700
+              rounded-full cursor-pointer select-none
+              transition-all duration-200
+              hover:shadow-md hover:bg-gray-50 hover:scale-[1.03]
+              active:scale-[0.97]
+            "
+            onClick={() => setAddingLeadToggle(prev => !prev)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="w-3.5 h-3.5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              />
+            </svg>
+
+            <span>New</span>
+          </div>
+        )
+      }
+
     </div>
   );
 };

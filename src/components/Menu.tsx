@@ -10,7 +10,7 @@ const menuItems = [
     title: "MENU",
     items: [
       { icon: "/dashboard.png", label: "Dashboard", href: "/dashboard", visible: ["Admin", "Employee"] },
-      { icon: "/sale-report.png", label: "Sale report", href: "/sale-report", visible: ["Admin", "Employee"] },
+      { icon: "/sale_report.png", label: "Sale report", href: "/sale-report", visible: ["Admin", "Employee"] },
       { icon: "/customers.png", label: "Customers", href: "/customers", visible: ["Admin", "Employee"] },
       { icon: "/products.png", label: "Products", href: "/products", visible: ["Admin", "Employee"] },
       { icon: "/leads.png", label: "Leads", href: "/leads", visible: ["Admin", "Employee"] },

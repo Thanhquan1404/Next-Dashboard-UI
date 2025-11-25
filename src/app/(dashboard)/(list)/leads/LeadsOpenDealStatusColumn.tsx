@@ -11,14 +11,14 @@ interface Props {
   dragOverEvent: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
-const leadsInOpenStatusSample = ({
+const LeadsInOpenStatusSample = ({
   leadItems,
   dragStartEvent,
   dropEvent,
   dragOverEvent,
 }: Props) => {
-  const [isBeingDragged, setIsBeingDragged] = useState(false);
-
+  const [isBeingDragged, setIsBeingDragged] = useState<boolean | null>(false);
+  
   return (
     <div
       className={`
@@ -169,8 +169,36 @@ const leadsInOpenStatusSample = ({
           </div>
         </div>
       ))}
+      <div
+        className="
+          flex justify-center items-center gap-1 px-3 py-1.5
+          border border-gray-300 bg-white
+          text-xs font-medium text-gray-700
+          rounded-full cursor-pointer select-none
+          transition-all duration-200
+          hover:shadow-md hover:bg-gray-50 hover:scale-[1.03]
+          active:scale-[0.97]
+        "
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          className="w-3.5 h-3.5"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 4.5v15m7.5-7.5h-15"
+          />
+        </svg>
+
+        <span>New</span>
+      </div>
     </div>
   );
 };
 
-export default leadsInOpenStatusSample;
+export default LeadsInOpenStatusSample;

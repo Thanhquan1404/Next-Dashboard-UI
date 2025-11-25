@@ -14,8 +14,11 @@ import {
   leadType,
   ColumnKey,
 } from "@/lib/data.leads";
+import { useNotification } from "@/providers/NotificationProvider";
 
 const Page = () => {
+  // INITIALIZE NOTIFICATION PROVIDER 
+  const { showNotification} = useNotification();
   const [selectedStatus, setSelectedStatus] = useState(statusOptions[0]);
   const [selectedCompany, setSelectedCompany] = useState(companyOptions[0]);
 
@@ -79,6 +82,35 @@ const Page = () => {
     setLeadDraggingID("");
   };
 
+  // HANDLE ADDING NEW LEAD 
+  const handleAddingNewLead = (newLead: leadType) => {
+    let targetColumn: ColumnKey;
+
+    switch (newLead.status){
+      case "New": 
+        targetColumn = "newStatus";
+        break;
+      case "Open": 
+        targetColumn = "openStatus";
+        break;
+      case "In Progress": 
+        targetColumn = "inProgressingStatus";
+        break;
+      case "Open Deal": 
+        targetColumn = "openDealStatus";
+        break;
+      default:
+        targetColumn = "newStatus";
+    }
+
+    setLeadItems( (prev) => ({
+      ...prev,
+      [targetColumn]: [...prev[targetColumn], newLead],
+    }));
+
+    showNotification("Successfully add a new lead");
+  }
+
   return (
     <div className="w-full flex flex-col h-screen gap-4 pattern-bg-blue-50">
       <LeadsPageHeader
@@ -100,6 +132,7 @@ const Page = () => {
           dragStartEvent={dragStartEvent}
           dropEvent={dropEvent}
           dragOverEvent={dragOverEvent}
+          handleAddingNewLead={handleAddingNewLead}
         />
         <LeadsInProgressStatusColumn
           leadItems={leadItems.inProgressingStatus}
