@@ -126,6 +126,7 @@ const Page = () => {
           dragStartEvent={dragStartEvent}
           dropEvent={dropEvent}
           dragOverEvent={dragOverEvent}
+          handleAddingNewLead={handleAddingNewLead}
         />
         <LeadsOpenStatusColumn
           leadItems={leadItems.openStatus}
