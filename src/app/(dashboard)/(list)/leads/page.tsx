@@ -18,7 +18,7 @@ import { useNotification } from "@/providers/NotificationProvider";
 
 const Page = () => {
   // INITIALIZE NOTIFICATION PROVIDER 
-  const { showNotification} = useNotification();
+  const { showNotification } = useNotification();
   const [selectedStatus, setSelectedStatus] = useState(statusOptions[0]);
   const [selectedCompany, setSelectedCompany] = useState(companyOptions[0]);
 
@@ -86,24 +86,24 @@ const Page = () => {
   const handleAddingNewLead = (newLead: leadType) => {
     let targetColumn: ColumnKey;
 
-    switch (newLead.status){
-      case "New": 
+    switch (newLead.status) {
+      case "New":
         targetColumn = "newStatus";
         break;
-      case "Open": 
+      case "Open":
         targetColumn = "openStatus";
         break;
-      case "In Progress": 
+      case "In Progress":
         targetColumn = "inProgressingStatus";
         break;
-      case "Open Deal": 
+      case "Open Deal":
         targetColumn = "openDealStatus";
         break;
       default:
         targetColumn = "newStatus";
     }
 
-    setLeadItems( (prev) => ({
+    setLeadItems((prev) => ({
       ...prev,
       [targetColumn]: [...prev[targetColumn], newLead],
     }));
@@ -140,6 +140,7 @@ const Page = () => {
           dragStartEvent={dragStartEvent}
           dropEvent={dropEvent}
           dragOverEvent={dragOverEvent}
+          handleAddingNewLead={handleAddingNewLead}
         />
         <LeadsOpenDealStatusColumn
           leadItems={leadItems.openDealStatus}

@@ -195,7 +195,7 @@ const LeadsNewStatusColumn = ({
             <div className="w-full flex gap-1 items-center">
               <div
                 className="
-                bg-blue-400/90 text-blue-900 px-2 py-1 rounded-lg 
+                bg-gray-400/90 text-gray-900 px-2 py-1 rounded-lg 
                 w-fit text-xs font-medium shadow-sm
               "
               >

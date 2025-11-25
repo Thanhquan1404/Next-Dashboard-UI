@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { leadType, ColumnKey } from "@/lib/data.leads";
 import { useState } from "react";
+import Rating from '@mui/material/Rating';
 
 interface Props {
   leadItems: leadType[];
@@ -191,14 +192,24 @@ const LeadsInOpenStatusSample = ({
               {leadItem.email}
             </div>
 
-            {/* LEAD STATUS */}
-            <div
-              className="
+            {/* LEAD STATUS AND RATING */}
+            <div className="w-full flex gap-1 items-center">
+              <div
+                className="
                 bg-green-400/90 text-green-900 px-2 py-1 rounded-lg 
                 w-fit text-xs font-medium shadow-sm
               "
-            >
-              {leadItem.status}
+              >
+                {leadItem.status}
+              </div>
+              <div>
+                <Rating
+                  size="small"
+                  readOnly
+                  name="simple-controlled"
+                  value={leadItem.rating}
+                />
+              </div>
             </div>
           </div>
         </div>
