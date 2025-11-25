@@ -12,8 +12,11 @@ import { setToken } from '@/service/localStorageService';
 import FetchingLoadingStatus from '@/components/FetchingLoadingStatus';
 import useSignInFetching from '@/fetching/user/signInFetching';
 import { useRouter } from 'next/navigation';
+import { useNotification } from '@/providers/NotificationProvider';
 
 const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
+  // INITIALIZE NOTIFICATION PROVIDER 
+  const { showNotification } = useNotification();
   // INITIALIZE NAVIGATE FUNTION 
   const router = useRouter()
   // INITIALIZE FETCHING FUNCTION 
@@ -43,7 +46,7 @@ const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
 
       if (resData?.code === 200 && resData?.data?.authenticated === true) {
         const accessToken = resData.data.accessToken;
-        console.log(accessToken);
+        showNotification("Welcome to our website");
         resetStateField();
         setToken(accessToken);
         router.push('/dashboard');
@@ -52,7 +55,7 @@ const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
         alert(`Login failed\n${errMessage}`);
       }
     } catch (error) {
-      alert(`Login failed \n ${error}`);
+      showNotification(`Login failed \n ${error}`, true);
     }
   }
 
