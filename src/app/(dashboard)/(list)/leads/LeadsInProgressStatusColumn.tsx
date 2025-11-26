@@ -49,7 +49,7 @@ const LeadsInProgressStatusColumn = ({
       email: leadEmail,
       rating: Number(leadRate),
       source: leadSource,
-      status: "In Progress",
+      status: "In Progess",
     };
     handleAddingNewLead(newLead);
     resetAllState();
@@ -260,7 +260,7 @@ const LeadsInProgressStatusColumn = ({
                 <option value="">Lead Source</option>
                 <option value="Facebook">Facebook</option>
                 <option value="Website">Website</option>
-                <option value="LinkedIn">LinkedIn</option>
+                <option value="Linked">LinkedIn</option>
                 <option value="Form">Form</option>
               </select>
 

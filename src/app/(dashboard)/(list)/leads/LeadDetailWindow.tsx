@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import LeadActivityTimeline from "./LeadActivityTimeLine";
 import { leadProcessingStatus } from "@/lib/data.leads";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
+import LeadActivityTimelineSequence from "./LeadActivityTimelineSequence";
 
 const LeadDetailWindow = () => {
   // INITIALIZE LEAD SELECT CONTEXT 
-  const { removeSelectedLeadDetail, leadDetailInfo} = useLeadDetailSelect();
+  const { removeSelectedLeadDetail, leadDetailInfo, leadSequenceActivity} = useLeadDetailSelect();
   
   // INITIAlIZE LEAD STATUS PROCESSING BAR 
   const processingBar: leadProcessingStatus[] = ["New", "Contacted", "Interested", "Qualified", "Negotiation", "Won-Lost"];
@@ -60,7 +61,7 @@ const LeadDetailWindow = () => {
             {/* LEAD NAME  */}
             <p className="text-[18px] font-semibold">{leadDetailInfo?.name}</p>
             {/* LEAD COMPANY  */}
-            <p className="text-[12px] text-gray-500/80">AABC Firm, USA</p>
+            <p className="text-[12px] text-gray-500/80">{leadDetailInfo?.company}, {leadDetailInfo?.nation}</p>
           </div>
         </div>
 
@@ -102,7 +103,7 @@ const LeadDetailWindow = () => {
         {/* COMPANY */}
         <div className="w-fit h-full flex flex-col justify-center items-startr">
           <div className="text-[12px] text-gray-500/90">Company</div>
-          <div className="text-[14px] font-semibold">ABC Firm</div>
+          <div className="text-[14px] font-semibold">{leadDetailInfo?.company}</div>
         </div>
 
         {/* CREATED DATE */}
@@ -295,29 +296,7 @@ const LeadDetailWindow = () => {
           <LeadActivityTimeline />
         </div>
         {/* LeadActivityTimeLineSequence  */}
-        <div className="flex-1 h-full border border-gray-200 rounded-xl px-4 py-3 
-                flex flex-col shadow-sm bg-white gap-3">
-
-          {/* HEADER */}
-          <div className="text-[14px] font-semibold text-gray-700">
-            Recent {selectedSectionHeader}
-          </div>
-
-          {/* CARD */}
-          <div className="h-[110px] w-full border border-gray-100 rounded-xl px-3 py-3
-                  bg-gray-50 hover:bg-gray-100/70 transition-all duration-300
-                  shadow-inner flex flex-col justify-between">
-
-            {/* CLOSING DATE */}
-            <div className="text-[12px] text-gray-500/80">Closing date</div>
-            <div className="text-[13px] font-semibold text-gray-700">
-              {selectedSectionHeader} ID
-            </div>
-
-            {/* AMOUNT */}
-            <div className="text-[12px] text-gray-500/80">Amount</div>
-          </div>
-        </div>
+        <LeadActivityTimelineSequence sequenceActivity={leadSequenceActivity ? leadSequenceActivity : null} />
 
       </div>
     </div>

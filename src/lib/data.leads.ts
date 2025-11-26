@@ -140,38 +140,45 @@ export const leadsOpenDealStatusSample: leadType[] = [
 ];
 
 //---------------------------------------- LEAD DETAIL TYPE ----------------------------------------
+// ────────────────────────────────────── INTERFACE ĐÃ BỔ SUNG ──────────────────────────────────────
 export interface LeadDetailType {
   leadID: string;
   avatarURL: string;
   name: string;
   jobTitle: string;
+  company: string;     // ← mới
+  nation: string;      // ← mới
   createdDate: string;
   phone: string;
   email: string;
   rating: number;
-  source: string;        
+  source: string;
   status: ColumnKey;
 }
-//---------------------------------------- LEAD DETAIL SAMPLE ----------------------------------------
 
+// ────────────────────────────────────── LEAD DETAIL SAMPLE ──────────────────────────────────────
 export const leadDetailsSample: Record<string, LeadDetailType> = {
   "L001": {
     leadID: "L001",
     avatarURL: "https://randomuser.me/api/portraits/men/32.jpg",
     name: "Nguyễn Văn An",
     jobTitle: "Marketing Manager",
+    company: "FPT Software",
+    nation: "Vietnam",
     createdDate: "2025-11-15T10:30:00+07:00",
     phone: "+84912345678",
     email: "an.nguyen@example.com",
     rating: 2,
     source: "Facebook",
-    status: "New" as ColumnKey 
+    status: "New" as ColumnKey
   },
   "L002": {
     leadID: "L002",
     avatarURL: "https://randomuser.me/api/portraits/women/44.jpg",
     name: "Trần Thị Bình",
     jobTitle: "HR Director",
+    company: "Viettel Group",
+    nation: "Vietnam",
     createdDate: "2025-11-15T09:15:00+07:00",
     phone: "+84987654321",
     email: "binh.tran@example.com",
@@ -184,6 +191,8 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     avatarURL: "https://randomuser.me/api/portraits/men/67.jpg",
     name: "Lê Hoàng Cường",
     jobTitle: "CEO",
+    company: "VinFast",
+    nation: "Vietnam",
     createdDate: "2025-11-14T16:45:00+07:00",
     phone: "+84911223344",
     email: "cuong.le@example.com",
@@ -196,6 +205,8 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     avatarURL: "https://randomuser.me/api/portraits/women/23.jpg",
     name: "Hoàng Thị Kim",
     jobTitle: "Purchasing Manager",
+    company: "Samsung Electronics",
+    nation: "South Korea",
     createdDate: "2025-11-12T08:40:00+07:00",
     phone: "+84933445566",
     email: "kim.hoang@example.com",
@@ -208,6 +219,8 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     avatarURL: "https://randomuser.me/api/portraits/men/55.jpg",
     name: "Đỗ Văn Long",
     jobTitle: "IT Manager",
+    company: "Google Asia Pacific",
+    nation: "Singapore",
     createdDate: "2025-11-11T13:25:00+07:00",
     phone: "+84966778899",
     email: "long.do@example.com",
@@ -220,6 +233,8 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     avatarURL: "https://randomuser.me/api/portraits/men/72.jpg",
     name: "Ngô Văn Quân",
     jobTitle: "Sales Director",
+    company: "Shopee Vietnam",
+    nation: "Singapore",
     createdDate: "2025-11-07T10:35:00+07:00",
     phone: "+84977889900",
     email: "quan.ngo@example.com",
@@ -232,6 +247,8 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     avatarURL: "https://randomuser.me/api/portraits/men/19.jpg",
     name: "Phan Văn Sơn",
     jobTitle: "CFO",
+    company: "Masan Group",
+    nation: "Vietnam",
     createdDate: "2025-11-02T11:40:00+07:00",
     phone: "+84933445566",
     email: "son.phan@example.com",
@@ -244,6 +261,8 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     avatarURL: "https://randomuser.me/api/portraits/women/64.jpg",
     name: "Tô Thị Hồng",
     jobTitle: "Operation Director",
+    company: "Lazada Vietnam",
+    nation: "Singapore",
     createdDate: "2025-11-01T15:30:00+07:00",
     phone: "+84977889900",
     email: "hong.to@example.com",
@@ -256,6 +275,8 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     avatarURL: "https://randomuser.me/api/portraits/men/37.jpg",
     name: "Đinh Công Minh",
     jobTitle: "CEO",
+    company: "Techcombank",
+    nation: "Vietnam",
     createdDate: "2025-10-31T09:15:00+07:00",
     phone: "+84922334455",
     email: "minh.dinh@example.com",

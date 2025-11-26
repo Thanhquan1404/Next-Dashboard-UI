@@ -6,6 +6,7 @@ import { createContext, useContext, useState } from "react";
 interface LeadDetailSelectContextType {
   selectedLeadId: string | null;
   leadDetailInfo: LeadDetailType | null;
+  leadSequenceActivity: LeadDetailActivityTimeline[] | null;
   selectLeadDetail: (leadID: string) => void;
   removeSelectedLeadDetail: () => void;
 }
@@ -27,12 +28,13 @@ interface LeadDetailSelectProviderProps {
 export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderProps) => {
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [leadDetailInfo, setLeadDetailInfo] = useState<LeadDetailType | null>(null);
+  const [leadSequenceActivity, setLeadSequenceActivity] = useState<LeadDetailActivityTimeline[] | null>(null); 
   const selectLeadDetail = (leadID: string) => {
     // RETRIEVE LEAD DETAIL INFOMATION
     const selectedLeadDetailInfo: LeadDetailType = leadDetailsSample[leadID];
     // RETRIEVE LEAD DETAIL ACTIVITY SEQUENCE
-    const sequence: LeadDetailActivityTimeline[] = leadActivitySequences[leadID].sequenceActivities;
-    console.log(sequence);
+    const sequenceActivity: LeadDetailActivityTimeline[] = leadActivitySequences[leadID] ? leadActivitySequences[leadID].sequenceActivities : [];
+    setLeadSequenceActivity(sequenceActivity);
     setLeadDetailInfo(selectedLeadDetailInfo)
     setSelectedLeadId(leadID);
   };
@@ -40,11 +42,13 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
   const removeSelectedLeadDetail = () => {
     setSelectedLeadId(null);
     setLeadDetailInfo(null);
+    setLeadSequenceActivity(null);
   };
 
   const value: LeadDetailSelectContextType = {
     selectedLeadId,
     leadDetailInfo,
+    leadSequenceActivity,
     selectLeadDetail,
     removeSelectedLeadDetail,
   };
