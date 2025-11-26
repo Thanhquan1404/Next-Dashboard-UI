@@ -13,7 +13,7 @@ export interface leadType {
   phone: string;
   email: string;
   rating: number;
-  source: string;        // Đã thêm trường source
+  source: string;        
   status: string;
 }
 
@@ -139,5 +139,207 @@ export const leadsOpenDealStatusSample: leadType[] = [
   },
 ];
 
-//---------------------------------------- LEADS DRAG DROP EVENT ----------------------------------------
+//---------------------------------------- LEAD DETAIL TYPE ----------------------------------------
+export interface LeadDetailType {
+  leadID: string;
+  avatarURL: string;
+  name: string;
+  jobTitle: string;
+  createdDate: string;
+  phone: string;
+  email: string;
+  rating: number;
+  source: string;        
+  status: ColumnKey;
+}
+//---------------------------------------- LEAD DETAIL SAMPLE ----------------------------------------
+
+export const leadDetailsSample: Record<string, LeadDetailType> = {
+  "L001": {
+    leadID: "L001",
+    avatarURL: "https://randomuser.me/api/portraits/men/32.jpg",
+    name: "Nguyễn Văn An",
+    jobTitle: "Marketing Manager",
+    createdDate: "2025-11-15T10:30:00+07:00",
+    phone: "+84912345678",
+    email: "an.nguyen@example.com",
+    rating: 2,
+    source: "Facebook",
+    status: "New" as ColumnKey 
+  },
+  "L002": {
+    leadID: "L002",
+    avatarURL: "https://randomuser.me/api/portraits/women/44.jpg",
+    name: "Trần Thị Bình",
+    jobTitle: "HR Director",
+    createdDate: "2025-11-15T09:15:00+07:00",
+    phone: "+84987654321",
+    email: "binh.tran@example.com",
+    rating: 2,
+    source: "Website",
+    status: "New" as ColumnKey
+  },
+  "L003": {
+    leadID: "L003",
+    avatarURL: "https://randomuser.me/api/portraits/men/67.jpg",
+    name: "Lê Hoàng Cường",
+    jobTitle: "CEO",
+    createdDate: "2025-11-14T16:45:00+07:00",
+    phone: "+84911223344",
+    email: "cuong.le@example.com",
+    rating: 2,
+    source: "LinkedIn",
+    status: "New" as ColumnKey
+  },
+  "L006": {
+    leadID: "L006",
+    avatarURL: "https://randomuser.me/api/portraits/women/23.jpg",
+    name: "Hoàng Thị Kim",
+    jobTitle: "Purchasing Manager",
+    createdDate: "2025-11-12T08:40:00+07:00",
+    phone: "+84933445566",
+    email: "kim.hoang@example.com",
+    rating: 5,
+    source: "Form",
+    status: "Open" as ColumnKey
+  },
+  "L007": {
+    leadID: "L007",
+    avatarURL: "https://randomuser.me/api/portraits/men/55.jpg",
+    name: "Đỗ Văn Long",
+    jobTitle: "IT Manager",
+    createdDate: "2025-11-11T13:25:00+07:00",
+    phone: "+84966778899",
+    email: "long.do@example.com",
+    rating: 2,
+    source: "Facebook",
+    status: "Open" as ColumnKey
+  },
+  "L011": {
+    leadID: "L011",
+    avatarURL: "https://randomuser.me/api/portraits/men/72.jpg",
+    name: "Ngô Văn Quân",
+    jobTitle: "Sales Director",
+    createdDate: "2025-11-07T10:35:00+07:00",
+    phone: "+84977889900",
+    email: "quan.ngo@example.com",
+    rating: 2,
+    source: "Website",
+    status: "In Progress" as ColumnKey
+  },
+  "L016": {
+    leadID: "L016",
+    avatarURL: "https://randomuser.me/api/portraits/men/19.jpg",
+    name: "Phan Văn Sơn",
+    jobTitle: "CFO",
+    createdDate: "2025-11-02T11:40:00+07:00",
+    phone: "+84933445566",
+    email: "son.phan@example.com",
+    rating: 2,
+    source: "Form",
+    status: "Open Deal" as ColumnKey
+  },
+  "L017": {
+    leadID: "L017",
+    avatarURL: "https://randomuser.me/api/portraits/women/64.jpg",
+    name: "Tô Thị Hồng",
+    jobTitle: "Operation Director",
+    createdDate: "2025-11-01T15:30:00+07:00",
+    phone: "+84977889900",
+    email: "hong.to@example.com",
+    rating: 2,
+    source: "Facebook",
+    status: "Open Deal" as ColumnKey
+  },
+  "L018": {
+    leadID: "L018",
+    avatarURL: "https://randomuser.me/api/portraits/men/37.jpg",
+    name: "Đinh Công Minh",
+    jobTitle: "CEO",
+    createdDate: "2025-10-31T09:15:00+07:00",
+    phone: "+84922334455",
+    email: "minh.dinh@example.com",
+    rating: 2,
+    source: "Website",
+    status: "Open Deal" as ColumnKey
+  },
+};
+
+//---------------------------------------- LEAD DETAIL SEQUENCE ACTIVITY TIMELINE ----------------------------------------
+export interface LeadDetailActivityTimeline {
+  title: string,
+  assignTo: string,
+  closingDate: string, 
+  rate: number;  
+}
+export interface LeadDetailActivitySequenceTimeline {
+  leadID: string, 
+  sequenceActivities: LeadDetailActivityTimeline[],
+}
+
+// ---------------------------------------- LEAD DETAIL SEQUENCE ACTIVITY TIMELINE SAMPLES ----------------------------------------
+export const leadActivitySequences: Record<string, LeadDetailActivitySequenceTimeline> = {
+  "L001": {
+    leadID: "L001",
+    sequenceActivities: [
+      {
+        title: "First call",
+        assignTo: "Sales A",
+        closingDate: "2025-11-20T00:00:00+07:00",
+        rate: 3
+      },
+      {
+        title: "Gửi báo giá",
+        assignTo: "Sales A",
+        closingDate: "2025-11-22T00:00:00+07:00",
+        rate: 4
+      }
+    ]
+  },
+  "L006": {
+    leadID: "L006",
+    sequenceActivities: [
+      {
+        title: "Gọi xác nhận form",
+        assignTo: "Sales Pro",
+        closingDate: "2025-11-13T00:00:00+07:00",
+        rate: 5
+      },
+      {
+        title: "Hẹn gặp trực tiếp",
+        assignTo: "Sales Pro",
+        closingDate: "2025-11-28T00:00:00+07:00",
+        rate: 5
+      }
+    ]
+  },
+  "L016": {
+    leadID: "L016",
+    sequenceActivities: [
+      {
+        title: "Chốt giá sơ bộ",
+        assignTo: "Closer Team",
+        closingDate: "2025-11-15T00:00:00+07:00",
+        rate: 5
+      },
+      {
+        title: "Gửi hợp đồng",
+        assignTo: "Closer Team",
+        closingDate: "2025-11-18T00:00:00+07:00",
+        rate: 5
+      },
+      {
+        title: "Ký kết",
+        assignTo: "CEO",
+        closingDate: "2025-11-25T00:00:00+07:00",
+        rate: 5
+      }
+    ]
+  }
+};
+//---------------------------------------- LEAD KEY
+// LEAD STATUS 
 export type ColumnKey = "newStatus" | "openStatus" | "inProgressingStatus" | "openDealStatus";
+// LEAD PROCESSING STATUS 
+export type leadProcessingStatus = "New" | "Contacted" | "Interested" | "Qualified" | "Negotiation" | "Won-Lost";
+

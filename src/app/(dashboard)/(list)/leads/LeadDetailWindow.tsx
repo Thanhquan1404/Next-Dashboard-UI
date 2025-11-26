@@ -1,11 +1,13 @@
 import Image from "next/image"
 import { useEffect, useState } from "react";
 import LeadActivityTimeline from "./LeadActivityTimeLine";
+import { leadProcessingStatus } from "@/lib/data.leads";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
-// LEAD PROCESSING STATUS 
-type leadProcessingStatus = "New" | "Contacted" | "Interested" | "Qualified" | "Negotiation" | "Won-Lost";
 
 const LeadDetailWindow = () => {
+  // INITIALIZE LEAD SELECT CONTEXT 
+  const { removeSelectedLeadDetail, leadDetailInfo} = useLeadDetailSelect();
+  
   // INITIAlIZE LEAD STATUS PROCESSING BAR 
   const processingBar: leadProcessingStatus[] = ["New", "Contacted", "Interested", "Qualified", "Negotiation", "Won-Lost"];
   type leadProcessingBar = Record<leadProcessingStatus, boolean>;
@@ -38,8 +40,7 @@ const LeadDetailWindow = () => {
   const sectionHeader = ["Activity Timeline", "Deals"];
   const [selectedSectionHeader, setSelectedSectionHeader] = useState<string>("Activity Timeline");
 
-  // INITIALIZE LEAD SELECT CONTEXT 
-  const { removeSelectedLeadDetail} = useLeadDetailSelect();
+  
 
   return (
     <div className='w-full h-full bg-white pt-5 rounded-xl flex flex-col'>
@@ -54,10 +55,10 @@ const LeadDetailWindow = () => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
             </svg>
           </div>
-          <Image src="/profile.png" alt="Lead avatar" width={35} height={35} />
+          <Image src={`${leadDetailInfo?.avatarURL ? leadDetailInfo.avatarURL : "/profile.png"}`} alt="Lead avatar" width={35} height={35} className="rounded-full"/>
           <div>
             {/* LEAD NAME  */}
-            <p className="text-[18px] font-semibold">Cody Fisher</p>
+            <p className="text-[18px] font-semibold">{leadDetailInfo?.name}</p>
             {/* LEAD COMPANY  */}
             <p className="text-[12px] text-gray-500/80">AABC Firm, USA</p>
           </div>
@@ -83,19 +84,19 @@ const LeadDetailWindow = () => {
         {/* JOB TITLE */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Job title</div>
-          <div className="text-[14px] font-semibold">Sales Managers</div>
+          <div className="text-[14px] font-semibold">{leadDetailInfo?.jobTitle}</div>
         </div>
 
         {/* EMAIL */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Email</div>
-          <div className="text-[14px] font-semibold">codyfisher@mail.com</div>
+          <div className="text-[14px] font-semibold">{leadDetailInfo?.email}</div>
         </div>
 
         {/* PHONE */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Phone</div>
-          <div className="text-[14px] font-semibold">0123456789</div>
+          <div className="text-[14px] font-semibold">{leadDetailInfo?.phone}</div>
         </div>
 
         {/* COMPANY */}
@@ -107,10 +108,14 @@ const LeadDetailWindow = () => {
         {/* CREATED DATE */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Created at</div>
-          <div className="text-[14px] font-semibold">23-04-2024</div>
+          <div className="text-[14px] font-semibold">
+            {leadDetailInfo?.createdDate
+              ? new Date(leadDetailInfo.createdDate).toLocaleString("vi-VN")
+              : "-"}
+          </div>
         </div>
 
-        {/* UPDATED BY */}
+        {/* ASSIGN TO */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Assign to</div>
           <div className="text-[14px] font-semibold">John Doe</div>
