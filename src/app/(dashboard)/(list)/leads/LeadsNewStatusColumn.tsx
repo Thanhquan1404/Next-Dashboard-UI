@@ -5,6 +5,7 @@ import { leadType, ColumnKey } from "@/lib/data.leads";
 import { useState } from "react";
 import Rating from '@mui/material/Rating';
 import LeadSourceComponent from "@/components/LeadSourceComponent";
+import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 interface Props {
   leadItems: leadType[];
   dragStartEvent: (e: React.DragEvent<HTMLDivElement>, leadID: string) => void;
@@ -54,6 +55,9 @@ const LeadsNewStatusColumn = ({
     handleAddingNewLead(newLead);
     resetAllState();
   }
+  // INITIALIZE LEAD SELECT CONTEXT 
+  const {selectLeadDetail} = useLeadDetailSelect();
+  
   return (
     <div
       className={`
@@ -99,6 +103,7 @@ const LeadsNewStatusColumn = ({
         <div
           key={leadItem.leadID}
           draggable
+          onClick={() => selectLeadDetail(leadItem.leadID)}
           onDragStart={(e) => dragStartEvent(e, leadItem.leadID)}
           className="
             bg-white rounded-xl px-4 py-3 

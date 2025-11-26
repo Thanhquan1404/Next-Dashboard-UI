@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {Menu} from '../../components/Menu';
 import Navbar from '@/components/Navbar';
+import { LeadDetailSelectProvider } from '@/providers/LeadDetailSelectProvider';
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -39,7 +40,9 @@ export default function RootLayout({
         pl-4"
       >
         <Navbar />
-        {children}
+        <LeadDetailSelectProvider >
+          {children}
+        </LeadDetailSelectProvider>
       </div>
       
     </div>

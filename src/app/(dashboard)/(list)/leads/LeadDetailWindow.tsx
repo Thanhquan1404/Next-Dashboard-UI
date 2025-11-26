@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { useEffect, useState } from "react";
 import LeadActivityTimeline from "./LeadActivityTimeLine";
+import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 // LEAD PROCESSING STATUS 
 type leadProcessingStatus = "New" | "Contacted" | "Interested" | "Qualified" | "Negotiation" | "Won-Lost";
 
@@ -36,12 +37,23 @@ const LeadDetailWindow = () => {
   // LEAD ACTIVITY AND RECENT DEALS
   const sectionHeader = ["Activity Timeline", "Deals"];
   const [selectedSectionHeader, setSelectedSectionHeader] = useState<string>("Activity Timeline");
+
+  // INITIALIZE LEAD SELECT CONTEXT 
+  const { removeSelectedLeadDetail} = useLeadDetailSelect();
+
   return (
     <div className='w-full h-full bg-white pt-5 rounded-xl flex flex-col'>
       {/* LEAD GENERAL INFORMATION  */}
       <div className="w-full h-fit flex justify-between px-4 pb-4 border-gray-300/80">
         {/* AVATAR AND NAME  */}
         <div className="flex items-center gap-2">
+          <div 
+            onClick={() => removeSelectedLeadDetail()}
+            className="h-full rounded-xl flex items-center px-1 hover:bg-blue-500/80 hover:text-white/80 transition-all duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>
+          </div>
           <Image src="/profile.png" alt="Lead avatar" width={35} height={35} />
           <div>
             {/* LEAD NAME  */}

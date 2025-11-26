@@ -16,6 +16,7 @@ import {
 } from "@/lib/data.leads";
 import { useNotification } from "@/providers/NotificationProvider";
 import LeadDetailWindow from "./LeadDetailWindow";
+import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 
 const Page = () => {
   // INITIALIZE NOTIFICATION PROVIDER 
@@ -113,12 +114,12 @@ const Page = () => {
   }
 
   // LEAD DETAIL ID SELECTED
-  const [selectedLeadDetailID, setSelectedLeadDetailID] = useState<string>("");
+  const {selectedLeadId} = useLeadDetailSelect();
 
   return (
     <div className="w-full flex flex-col h-screen gap-4 pattern-bg-blue-50">
       {
-        selectedLeadDetailID ?
+        selectedLeadId ?
           <>
             <LeadDetailWindow />
           </>
