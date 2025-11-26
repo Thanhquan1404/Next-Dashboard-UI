@@ -13,6 +13,7 @@ export interface leadType {
   phone: string;
   email: string;
   rating: number;
+  source: string;        // Đã thêm trường source
   status: string;
 }
 
@@ -25,6 +26,7 @@ export const leadsInNewStatusSamples: leadType[] = [
     phone: "+84912345678",
     email: "an.nguyen@example.com",
     rating: 2,
+    source: "Facebook",
     status: "New"
   },
   {
@@ -35,6 +37,7 @@ export const leadsInNewStatusSamples: leadType[] = [
     phone: "+84987654321",
     email: "binh.tran@example.com",
     rating: 2,
+    source: "Website",
     status: "New"
   },
   {
@@ -45,6 +48,7 @@ export const leadsInNewStatusSamples: leadType[] = [
     phone: "+84911223344",
     email: "cuong.le@example.com",
     rating: 2,
+    source: "LinkedIn",
     status: "New"
   },
 ];
@@ -58,6 +62,7 @@ export const leadsInOpenStatusSample: leadType[] = [
     phone: "+84933445566",
     email: "kim.hoang@example.com",
     rating: 5,
+    source: "Form",
     status: "Open"
   },
   {
@@ -66,8 +71,9 @@ export const leadsInOpenStatusSample: leadType[] = [
     name: "Đỗ Văn Long",
     createdDate: "2025-11-11T13:25:00+07:00",
     phone: "+84966778899",
-    rating: 2,
     email: "long.do@example.com",
+    rating: 2,
+    source: "Facebook",
     status: "Open"
   },
 ];
@@ -81,6 +87,7 @@ export const leadsInProgressStatusSample: leadType[] = [
     phone: "+84977889900",
     email: "quan.ngo@example.com",
     rating: 2,
+    source: "Website",
     status: "In Progress"
   },
   {
@@ -91,6 +98,7 @@ export const leadsInProgressStatusSample: leadType[] = [
     phone: "+84911223344",
     email: "lan.dang@example.com",
     rating: 2,
+    source: "LinkedIn",
     status: "In Progress"
   }
 ];
@@ -104,6 +112,7 @@ export const leadsOpenDealStatusSample: leadType[] = [
     phone: "+84933445566",
     email: "son.phan@example.com",
     rating: 2,
+    source: "Form",
     status: "Open Deal"
   },
   {
@@ -114,6 +123,7 @@ export const leadsOpenDealStatusSample: leadType[] = [
     phone: "+84977889900",
     email: "hong.to@example.com",
     rating: 2,
+    source: "Facebook",
     status: "Open Deal"
   },
   {
@@ -124,6 +134,7 @@ export const leadsOpenDealStatusSample: leadType[] = [
     phone: "+84922334455",
     email: "minh.dinh@example.com",
     rating: 2,
+    source: "Website",
     status: "Open Deal"
   },
 ];

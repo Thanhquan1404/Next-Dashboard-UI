@@ -20,6 +20,16 @@ const config: Config = {
         lamaPurpleLight: "#F1F0FF",
         lamaYellow: "#FAE27C",
         lamaYellowLight: "#FEFCe8",
+        facebook: {
+          50: "#f0f5ff",
+          200: "#90b8ff",
+          600: "#1877f2",
+        },
+        linkedin: {
+          50: "#eff8ff",
+          200: "#80b3e8",
+          600: "#0a66c2",
+        },
       },
       fontFamily:{
         'michroma': ["Michroma", 'sans-serif'],

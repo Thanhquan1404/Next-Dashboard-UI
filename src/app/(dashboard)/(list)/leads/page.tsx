@@ -118,7 +118,7 @@ const Page = () => {
   return (
     <div className="w-full flex flex-col h-screen gap-4 pattern-bg-blue-50">
       {
-        !selectedLeadDetailID ?
+        selectedLeadDetailID ?
           <>
             <LeadDetailWindow />
           </>

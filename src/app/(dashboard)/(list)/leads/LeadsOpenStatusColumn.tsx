@@ -4,6 +4,7 @@ import Image from "next/image";
 import { leadType, ColumnKey } from "@/lib/data.leads";
 import { useState } from "react";
 import Rating from '@mui/material/Rating';
+import LeadSourceComponent from "@/components/LeadSourceComponent";
 
 interface Props {
   leadItems: leadType[];
@@ -48,6 +49,7 @@ const LeadsOpenStatusColumn = ({
       phone: leadPhone,
       email: leadEmail,
       rating: Number(leadRate),
+      source: leadSource,
       status: "Open",
     };
     handleAddingNewLead(newLead);
@@ -197,10 +199,13 @@ const LeadsOpenStatusColumn = ({
               <div
                 className="
                 bg-blue-400/90 text-blue-900 px-2 py-1 rounded-lg 
-                w-fit text-xs font-medium shadow-sm
+                w-fit text-[10px] font-medium shadow-sm
               "
               >
                 {leadItem.status}
+              </div>
+              <div>
+                <LeadSourceComponent leadSource={leadItem.source} />
               </div>
               <div>
                 <Rating
@@ -211,6 +216,8 @@ const LeadsOpenStatusColumn = ({
                 />
               </div>
             </div>
+
+
           </div>
         </div>
       ))}
@@ -256,8 +263,8 @@ const LeadsOpenStatusColumn = ({
                 <option value="">Lead Source</option>
                 <option value="Facebook">Facebook</option>
                 <option value="Website">Website</option>
-                <option value="Referral">Referral</option>
-                <option value="Event">Event</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="Form">Form</option>
               </select>
 
               {/* Lead Status */}
