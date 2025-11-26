@@ -15,6 +15,7 @@ import {
   ColumnKey,
 } from "@/lib/data.leads";
 import { useNotification } from "@/providers/NotificationProvider";
+import LeadDetailWindow from "./LeadDetailWindow";
 
 const Page = () => {
   // INITIALIZE NOTIFICATION PROVIDER 
@@ -111,45 +112,57 @@ const Page = () => {
     showNotification("Successfully add a new lead");
   }
 
+  // LEAD DETAIL ID SELECTED
+  const [selectedLeadDetailID, setSelectedLeadDetailID] = useState<string>("");
+
   return (
     <div className="w-full flex flex-col h-screen gap-4 pattern-bg-blue-50">
-      <LeadsPageHeader
-        selectedStatus={selectedStatus}
-        setSelectedStatus={setSelectedStatus}
-        selectedCompany={selectedCompany}
-        setSelectedCompany={setSelectedCompany}
-      />
+      {
+        !selectedLeadDetailID ?
+          <>
+            <LeadDetailWindow />
+          </>
+          :
+          <div>
+            <LeadsPageHeader
+              selectedStatus={selectedStatus}
+              setSelectedStatus={setSelectedStatus}
+              selectedCompany={selectedCompany}
+              setSelectedCompany={setSelectedCompany}
+            />
 
-      <div className="w-full flex-1 flex gap-4">
-        <LeadsNewStatusColumn
-          leadItems={leadItems.newStatus}
-          dragStartEvent={dragStartEvent}
-          dropEvent={dropEvent}
-          dragOverEvent={dragOverEvent}
-          handleAddingNewLead={handleAddingNewLead}
-        />
-        <LeadsOpenStatusColumn
-          leadItems={leadItems.openStatus}
-          dragStartEvent={dragStartEvent}
-          dropEvent={dropEvent}
-          dragOverEvent={dragOverEvent}
-          handleAddingNewLead={handleAddingNewLead}
-        />
-        <LeadsInProgressStatusColumn
-          leadItems={leadItems.inProgressingStatus}
-          dragStartEvent={dragStartEvent}
-          dropEvent={dropEvent}
-          dragOverEvent={dragOverEvent}
-          handleAddingNewLead={handleAddingNewLead}
-        />
-        <LeadsOpenDealStatusColumn
-          leadItems={leadItems.openDealStatus}
-          dragStartEvent={dragStartEvent}
-          dropEvent={dropEvent}
-          dragOverEvent={dragOverEvent}
-          handleAddingNewLead={handleAddingNewLead}
-        />
-      </div>
+            <div className="w-full flex-1 flex gap-4">
+              <LeadsNewStatusColumn
+                leadItems={leadItems.newStatus}
+                dragStartEvent={dragStartEvent}
+                dropEvent={dropEvent}
+                dragOverEvent={dragOverEvent}
+                handleAddingNewLead={handleAddingNewLead}
+              />
+              <LeadsOpenStatusColumn
+                leadItems={leadItems.openStatus}
+                dragStartEvent={dragStartEvent}
+                dropEvent={dropEvent}
+                dragOverEvent={dragOverEvent}
+                handleAddingNewLead={handleAddingNewLead}
+              />
+              <LeadsInProgressStatusColumn
+                leadItems={leadItems.inProgressingStatus}
+                dragStartEvent={dragStartEvent}
+                dropEvent={dropEvent}
+                dragOverEvent={dragOverEvent}
+                handleAddingNewLead={handleAddingNewLead}
+              />
+              <LeadsOpenDealStatusColumn
+                leadItems={leadItems.openDealStatus}
+                dragStartEvent={dragStartEvent}
+                dropEvent={dropEvent}
+                dragOverEvent={dragOverEvent}
+                handleAddingNewLead={handleAddingNewLead}
+              />
+            </div>
+          </div>
+      }
     </div>
   );
 };
