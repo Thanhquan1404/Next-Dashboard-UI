@@ -21,7 +21,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
       setMessage(null);
       setIsError(false);
       clearTimeout(timer);
-    }, 2000);
+    }, 3000);
   }, []);
 
   return (

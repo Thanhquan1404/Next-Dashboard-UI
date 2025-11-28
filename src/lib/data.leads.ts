@@ -140,7 +140,7 @@ export const leadsOpenDealStatusSample: leadType[] = [
 ];
 
 //---------------------------------------- LEAD DETAIL TYPE ----------------------------------------
-// ────────────────────────────────────── INTERFACE ĐÃ BỔ SUNG ──────────────────────────────────────
+// ────────────────────────────────────── INTERFACE ──────────────────────────────────────
 export interface LeadDetailType {
   leadID: string;
   avatarURL: string;

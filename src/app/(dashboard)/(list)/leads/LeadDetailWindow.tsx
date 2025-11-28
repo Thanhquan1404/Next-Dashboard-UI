@@ -1,6 +1,6 @@
 import Image from "next/image"
 import { useEffect, useState } from "react";
-import LeadActivityTimeline from "./LeadActivityTimeLine";
+import AddingLeadActivityTimeline from "./AddingLeadActivityTimeline";
 import { leadProcessingStatus } from "@/lib/data.leads";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 import LeadActivityTimelineSequence from "./LeadActivityTimelineSequence";
@@ -293,7 +293,7 @@ const LeadDetailWindow = () => {
           </div>
 
           {/* ACTIVITY TIME LINE */}
-          <LeadActivityTimeline />
+          <AddingLeadActivityTimeline />
         </div>
         {/* LeadActivityTimeLineSequence  */}
         <LeadActivityTimelineSequence sequenceActivity={leadSequenceActivity ? leadSequenceActivity : null} />

@@ -1,7 +1,9 @@
 "use client";
 
-import { leadActivitySequences, LeadDetailActivitySequenceTimeline, LeadDetailActivityTimeline, leadDetailsSample, LeadDetailType } from "@/lib/data.leads";
+import { leadActivitySequences, LeadDetailActivitySequenceTimeline, LeadDetailActivityTimeline, 
+          leadDetailsSample, LeadDetailType } from "@/lib/data.leads";
 import { createContext, useContext, useState } from "react";
+import { useNotification } from "./NotificationProvider";
 
 interface LeadDetailSelectContextType {
   selectedLeadId: string | null;
@@ -9,6 +11,7 @@ interface LeadDetailSelectContextType {
   leadSequenceActivity: LeadDetailActivityTimeline[] | null;
   selectLeadDetail: (leadID: string) => void;
   removeSelectedLeadDetail: () => void;
+  addingNewLeadActivity: (newLead: LeadDetailActivityTimeline) => void,
 }
 
 const LeadDetailSelectContext = createContext<LeadDetailSelectContextType | null>(null);
@@ -29,6 +32,8 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [leadDetailInfo, setLeadDetailInfo] = useState<LeadDetailType | null>(null);
   const [leadSequenceActivity, setLeadSequenceActivity] = useState<LeadDetailActivityTimeline[] | null>(null); 
+  const { showNotification } = useNotification();
+  // HANDLE CLICK ON A LEAD DETAIL
   const selectLeadDetail = (leadID: string) => {
     // RETRIEVE LEAD DETAIL INFOMATION
     const selectedLeadDetailInfo: LeadDetailType = leadDetailsSample[leadID];
@@ -39,11 +44,22 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
     setSelectedLeadId(leadID);
   };
 
+  //HANDLE CLICK OUT LEAD DETAIL WINDOW
   const removeSelectedLeadDetail = () => {
     setSelectedLeadId(null);
     setLeadDetailInfo(null);
     setLeadSequenceActivity(null);
   };
+
+  // HANDLE ADDING A NEW LEAD ACTIVITY 
+  const addingNewLeadActivity = (newLeadActivity: LeadDetailActivityTimeline) => {
+    setLeadSequenceActivity((prev) => [
+        newLeadActivity,
+        ...(prev || [])
+      ]
+    )
+    showNotification("Successfully adding a new lead activity");
+  }
 
   const value: LeadDetailSelectContextType = {
     selectedLeadId,
@@ -51,6 +67,7 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
     leadSequenceActivity,
     selectLeadDetail,
     removeSelectedLeadDetail,
+    addingNewLeadActivity,
   };
 
   return (
