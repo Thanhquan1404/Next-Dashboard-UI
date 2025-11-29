@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import {Menu} from '../../components/Menu';
+import { Menu } from '../../components/Menu';
 import Navbar from '@/components/Navbar';
 import { LeadDetailSelectProvider } from '@/providers/LeadDetailSelectProvider';
+import { LeadStageColumnProvider } from '@/providers/LeadStageColumnProvider';
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -40,11 +41,13 @@ export default function RootLayout({
         pl-4"
       >
         <Navbar />
-        <LeadDetailSelectProvider >
-          {children}
-        </LeadDetailSelectProvider>
+        <LeadStageColumnProvider>
+          <LeadDetailSelectProvider >
+            {children}
+          </LeadDetailSelectProvider>
+        </LeadStageColumnProvider>
       </div>
-      
+
     </div>
   );
 }

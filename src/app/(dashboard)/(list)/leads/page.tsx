@@ -1,22 +1,26 @@
 "use client";
-import { statusOptions, companyOptions } from "@/lib/data.leads";
-import { useState } from "react";
+import { statusOptions, companyOptions, LeadStage } from "@/lib/data.leads";
+import { useEffect, useState } from "react";
 import LeadsPageHeader from "./LeadsPageHeader";
 import LeadsNewStatusColumn from "./LeadsNewStatusColumn";
 import LeadsOpenStatusColumn from "./LeadsOpenStatusColumn";
 import LeadsInProgressStatusColumn from "./LeadsInProgressStatusColumn";
 import LeadsOpenDealStatusColumn from "./LeadsOpenDealStatusColumn";
 import {
-  leadsInNewStatusSamples,
-  leadsInOpenStatusSample,
-  leadsInProgressStatusSample,
-  leadsOpenDealStatusSample,
+  // leadsInNewStatusSamples,
+  // leadsInOpenStatusSample,
+  // leadsInProgressStatusSample,
+  // leadsOpenDealStatusSample,
   leadType,
   ColumnKey,
+  // LeadStage,
+  // LeadItems
 } from "@/lib/data.leads";
 import { useNotification } from "@/providers/NotificationProvider";
 import LeadDetailWindow from "./LeadDetailWindow";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
+import { useLeadStageColumn } from "@/providers/LeadStageColumnProvider";
+import LeadStageColumn from "./LeadStageColumn";
 
 const Page = () => {
   // INITIALIZE NOTIFICATION PROVIDER 
@@ -26,13 +30,8 @@ const Page = () => {
 
   const [leadDraggingID, setLeadDraggingID] = useState<string>("");
 
-  type ColumnState = Record<ColumnKey, leadType[]>;
-  const [leadItems, setLeadItems] = useState<ColumnState>({
-    newStatus: leadsInNewStatusSamples,
-    openStatus: leadsInOpenStatusSample,
-    inProgressingStatus: leadsInProgressStatusSample,
-    openDealStatus: leadsOpenDealStatusSample,
-  });
+  // LEAD ITEMS IN STAGE 
+  const { leadItemsInStage, updateLeadStage } = useLeadStageColumn();
 
   // DRAG START
   const dragStartEvent = (
@@ -48,40 +47,9 @@ const Page = () => {
   };
 
   // DROP
-  const dropEvent = (statusColumnName: ColumnKey) => {
-    setLeadItems((prev) => {
-      const allLeads = [
-        ...prev.newStatus,
-        ...prev.openStatus,
-        ...prev.inProgressingStatus,
-        ...prev.openDealStatus,
-      ];
-
-      let draggingLead = allLeads.find(
-        (leadItem) => leadItem.leadID === leadDraggingID
-      );
-      if (!draggingLead) return prev;
-
-      const newState: ColumnState = {
-        newStatus: prev.newStatus.filter((item) => item.leadID !== leadDraggingID),
-        openStatus: prev.openStatus.filter((item) => item.leadID !== leadDraggingID),
-        inProgressingStatus: prev.inProgressingStatus.filter((item) => item.leadID !== leadDraggingID),
-        openDealStatus: prev.openDealStatus.filter((item) => item.leadID !== leadDraggingID),
-      };
-
-      switch (statusColumnName) {
-        case "newStatus": draggingLead.status = "New"; break;
-        case "openStatus": draggingLead.status = "Open"; break;
-        case "inProgressingStatus": draggingLead.status = "In Progress"; break;
-        case "openDealStatus": draggingLead.status = "Open Deal"; break;
-      }
-
-
-      newState[statusColumnName].push(draggingLead);
-      return newState;
-    });
-
-    setLeadDraggingID("");
+  const dropEvent = (statusColumnName: string) => {
+    updateLeadStage(leadDraggingID, statusColumnName);
+    showNotification("Drag successfully");
   };
 
   // HANDLE ADDING NEW LEAD 
@@ -105,65 +73,38 @@ const Page = () => {
         targetColumn = "newStatus";
     }
 
-    setLeadItems((prev) => ({
-      ...prev,
-      [targetColumn]: [...prev[targetColumn], newLead],
-    }));
+    // setLeadItems((prev) => ({
+    //   ...prev,
+    //   [targetColumn]: [...prev[targetColumn], newLead],
+    // }));
 
     showNotification("Successfully add a new lead");
   }
 
   // LEAD DETAIL ID SELECTED
-  const {selectedLeadId} = useLeadDetailSelect();
+  const { selectedLeadId } = useLeadDetailSelect();
 
   return (
-    <div className="w-full flex flex-col h-screen gap-4 pattern-bg-blue-50">
-      {
-        selectedLeadId ?
-          <>
-            <LeadDetailWindow />
-          </>
-          :
-          <div>
-            <LeadsPageHeader
-              selectedStatus={selectedStatus}
-              setSelectedStatus={setSelectedStatus}
-              selectedCompany={selectedCompany}
-              setSelectedCompany={setSelectedCompany}
-            />
+    <div className="flex flex-col bg-gray-50">
+      <LeadsPageHeader
+        selectedStatus={selectedStatus}
+        setSelectedStatus={setSelectedStatus}
+        selectedCompany={selectedCompany}
+        setSelectedCompany={setSelectedCompany}
+      />
 
-            <div className="w-full flex-1 flex gap-4">
-              <LeadsNewStatusColumn
-                leadItems={leadItems.newStatus}
-                dragStartEvent={dragStartEvent}
-                dropEvent={dropEvent}
-                dragOverEvent={dragOverEvent}
-                handleAddingNewLead={handleAddingNewLead}
-              />
-              <LeadsOpenStatusColumn
-                leadItems={leadItems.openStatus}
-                dragStartEvent={dragStartEvent}
-                dropEvent={dropEvent}
-                dragOverEvent={dragOverEvent}
-                handleAddingNewLead={handleAddingNewLead}
-              />
-              <LeadsInProgressStatusColumn
-                leadItems={leadItems.inProgressingStatus}
-                dragStartEvent={dragStartEvent}
-                dropEvent={dropEvent}
-                dragOverEvent={dragOverEvent}
-                handleAddingNewLead={handleAddingNewLead}
-              />
-              <LeadsOpenDealStatusColumn
-                leadItems={leadItems.openDealStatus}
-                dragStartEvent={dragStartEvent}
-                dropEvent={dropEvent}
-                dragOverEvent={dragOverEvent}
-                handleAddingNewLead={handleAddingNewLead}
-              />
-            </div>
-          </div>
-      }
+      <div className="flex gap-2 overflow-x-auto p-2">
+        {LeadStage.map((leadStage) => (
+          <LeadStageColumn
+            dropEvent={dropEvent}
+            dragOverEvent={dragOverEvent}
+            dragStartEvent={dragStartEvent}
+            key={leadStage}
+            leadItems={leadItemsInStage[leadStage]}
+            leadStage={leadStage}
+          />
+        ))}
+      </div>
     </div>
   );
 };

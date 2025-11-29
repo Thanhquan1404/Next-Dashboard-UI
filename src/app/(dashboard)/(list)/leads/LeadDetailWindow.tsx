@@ -1,14 +1,36 @@
 import Image from "next/image"
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import AddingLeadActivityTimeline from "./AddingLeadActivityTimeline";
 import { leadProcessingStatus } from "@/lib/data.leads";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 import LeadActivityTimelineSequence from "./LeadActivityTimelineSequence";
+import UpLoadAvatar from "@/components/UpLoadAvatar";
+import { userInfo } from "os";
 
 const LeadDetailWindow = () => {
   // INITIALIZE LEAD SELECT CONTEXT 
-  const { removeSelectedLeadDetail, leadDetailInfo, leadSequenceActivity} = useLeadDetailSelect();
-  
+  const { removeSelectedLeadDetail, leadDetailInfo, leadSequenceActivity } = useLeadDetailSelect();
+
+  // UPDATE INFO STATE
+  const [updateAvatar, setUpdateAvatar] = useState<string>("");
+  const [updateCompany, setUpdateCompany] = useState<string>("");
+  const [updateCreatedDate, setUpdateCreatedDate] = useState<string>("");
+  const [updateEmail, setUpdateEmail] = useState<string>("");
+  const [updateJobTitle, setUpdateJobTitle] = useState<string>("");
+  const [updateName, setUpdateName] = useState<string>("");
+  const [updatePhone, setUpdatePhone] = useState<string>("");
+  const [updateRating, setUpdateRating] = useState<number>(1);
+  const [updateSource, setUpdateSource] = useState<string>("");
+  const [updateStatus, setUpdateStatus] = useState<string>("");
+  const [isUpdated, setIsUpdated] = useState<boolean>(false);
+
+  // HANDLE ANY FIELD UPDATED
+  useEffect(() => {
+    if (isUpdated){ return; }
+    setIsUpdated(prev => !prev);
+  }, [updateAvatar,updateCompany,updateCreatedDate,updateEmail,updateJobTitle,updateName,updatePhone,updateRating,updateSource,updateStatus]);
+
+
   // INITIAlIZE LEAD STATUS PROCESSING BAR 
   const processingBar: leadProcessingStatus[] = ["New", "Contacted", "Interested", "Qualified", "Negotiation", "Won-Lost"];
   type leadProcessingBar = Record<leadProcessingStatus, boolean>;
@@ -41,22 +63,22 @@ const LeadDetailWindow = () => {
   const sectionHeader = ["Activity Timeline", "Deals"];
   const [selectedSectionHeader, setSelectedSectionHeader] = useState<string>("Activity Timeline");
 
-  
+
 
   return (
-    <div className='w-full h-full bg-white pt-5 rounded-xl flex flex-col'>
+    <div className='w-screen h-full bg-white pt-5 rounded-xl flex flex-col'>
       {/* LEAD GENERAL INFORMATION  */}
       <div className="w-full h-fit flex justify-between px-4 pb-4 border-gray-300/80">
         {/* AVATAR AND NAME  */}
         <div className="flex items-center gap-2">
-          <div 
+          <div
             onClick={() => removeSelectedLeadDetail()}
             className="h-full rounded-xl flex items-center px-1 hover:bg-blue-500/80 hover:text-white/80 transition-all duration-300">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
             </svg>
           </div>
-          <Image src={`${leadDetailInfo?.avatarURL ? leadDetailInfo.avatarURL : "/profile.png"}`} alt="Lead avatar" width={35} height={35} className="rounded-full"/>
+          <UpLoadAvatar avatar={updateAvatar ? updateAvatar : leadDetailInfo?.avatarURL} setAvatar={setUpdateAvatar} />
           <div>
             {/* LEAD NAME  */}
             <p className="text-[18px] font-semibold">{leadDetailInfo?.name}</p>
@@ -78,6 +100,15 @@ const LeadDetailWindow = () => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
             </svg>
           </div>
+          {
+            isUpdated && (
+              <div className={`px-1 py-1 rounded-full border-blue-600/80 border-[1px] w-fit h-fit text-blue-600 hover:scale-[1.15] transition-all duration-500 ${isUpdated ? "text-green-500 border-green-500" : ""}`}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+              </div>
+            )
+          }
         </div>
       </div>
       {/* LEAD CONTACT INFORMATION  */}
@@ -85,25 +116,27 @@ const LeadDetailWindow = () => {
         {/* JOB TITLE */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Job title</div>
-          <div className="text-[14px] font-semibold">{leadDetailInfo?.jobTitle}</div>
+          <div className="text-[14px] font-semibold">
+            <input type="text" value={updateJobTitle ? updateJobTitle : leadDetailInfo?.jobTitle} onChange={(e) => setUpdateJobTitle(e.target.value)} />
+          </div>
         </div>
 
         {/* EMAIL */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Email</div>
-          <div className="text-[14px] font-semibold">{leadDetailInfo?.email}</div>
+          <input type="text" value={updateEmail ? updateEmail : leadDetailInfo?.email} onChange={(e) => setUpdateEmail(e.target.value)} />
         </div>
 
         {/* PHONE */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Phone</div>
-          <div className="text-[14px] font-semibold">{leadDetailInfo?.phone}</div>
+          <input type="text" value={updatePhone ? updatePhone : leadDetailInfo?.phone} onChange={(e) => setUpdatePhone(e.target.value)} />
         </div>
 
         {/* COMPANY */}
         <div className="w-fit h-full flex flex-col justify-center items-startr">
           <div className="text-[12px] text-gray-500/90">Company</div>
-          <div className="text-[14px] font-semibold">{leadDetailInfo?.company}</div>
+          <input type="text" value={updateCompany ? updateCompany : leadDetailInfo?.company} onChange={(e) => setUpdateCompany(e.target.value)} />
         </div>
 
         {/* CREATED DATE */}
