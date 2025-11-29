@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { leadType, ColumnKey, LeadStage } from "@/lib/data.leads";
+import { leadType, leadSourceType } from "@/lib/data.leads";
 import { useState } from "react";
 import Rating from '@mui/material/Rating';
 import LeadSourceComponent from "@/components/LeadSourceComponent";
@@ -12,7 +12,7 @@ interface Props {
   dragStartEvent: (e: React.DragEvent<HTMLDivElement>, leadID: string) => void;
   dropEvent: (statusColumnName: string) => void;
   dragOverEvent: (e: React.DragEvent<HTMLDivElement>) => void;
-  handleAddingNewLead: (newLead: leadType) => void,
+  handleAddingNewLead: (newLead: leadType, targetColumn: string) => void,
 }
 
 const LeadStageColumn = ({
@@ -51,10 +51,10 @@ const LeadStageColumn = ({
       phone: leadPhone,
       email: leadEmail,
       rating: Number(leadRate),
-      source: leadSource,
+      source: leadSource as leadSourceType,
       status: leadStage,
     };
-    handleAddingNewLead(newLead);
+    handleAddingNewLead(newLead, leadStage);
     resetAllState();
   }
   // INITIALIZE LEAD SELECT CONTEXT 
@@ -66,7 +66,7 @@ const LeadStageColumn = ({
         min-w-[320px] max-w-[320px] flex-shrink-0 h-full flex flex-col gap-4 p-2 rounded-xl border
         transition-all duration-200 ease-out
         ${isBeingDragged
-          ? "bg-gray-50 border-gray-400 shadow-lg scale-[1.01]"
+          ? "bg-blue-50 border-blue-400 shadow-lg scale-[1.01]"
           : "bg-white/30 border-transparent"
         }
       `}
@@ -86,12 +86,12 @@ const LeadStageColumn = ({
       <div
         className="
           w-full h-[45px] px-4 flex justify-between items-center
-          rounded-lg bg-white shadow-sm border border-gray-200
+          rounded-lg bg-white shadow-md
           hover:shadow-md transition-all duration-200
         "
       >
-        <div className="flex gap-2 items-center text-gray-700 font-semibold text-sm">
-          <div className="w-[14px] h-[14px] rounded-full bg-gray-400 shadow-sm" />
+        <div className="flex gap-2 items-center text-blue-700 font-semibold text-sm">
+          <div className="w-[14px] h-[14px] rounded-full bg-blue-400 shadow-sm" />
           {leadStage}
         </div>
 
@@ -110,8 +110,8 @@ const LeadStageColumn = ({
           className="
             w-full
             bg-white rounded-xl px-4 py-3 
-            border border-gray-200 shadow-sm
-            hover:shadow-lg hover:border-blue-400 hover:-translate-y-[2px]
+            shadow-md
+            hover:shadow-lg hover:-translate-y-[2px]
             transition-all duration-200 cursor-pointer
           "
         >
@@ -226,7 +226,7 @@ const LeadStageColumn = ({
               placeholder="Lead name"
               value={leadName}
               onChange={(e) => setLeadName(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm w-full
+              className="border border-blue-300 rounded-md px-2 py-1 text-sm w-full
                    focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none"
             />
 
@@ -235,7 +235,7 @@ const LeadStageColumn = ({
               placeholder="Phone"
               value={leadPhone}
               onChange={(e) => setLeadPhone(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm w-full
+              className="border border-blue-300 rounded-md px-2 py-1 text-sm w-full
                    focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none"
             />
 
@@ -244,7 +244,7 @@ const LeadStageColumn = ({
               placeholder="Email"
               value={leadEmail}
               onChange={(e) => setLeadEmail(e.target.value)}
-              className="border border-gray-300 rounded-md px-2 py-1 text-sm w-full
+              className="border border-blue-300 rounded-md px-2 py-1 text-sm w-full
                    focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none"
             />
 
@@ -253,8 +253,8 @@ const LeadStageColumn = ({
               <select
                 value={leadSource}
                 onChange={(e) => setLeadSource(e.target.value)}
-                className={`border border-gray-300 rounded-md px-2 py-1 text-sm w-full bg-white
-                   focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none ${!leadSource && "text-gray-500"}`}
+                className={`border border-blue-300 rounded-md px-2 py-1 text-sm w-full bg-white
+                   focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none ${!leadSource && "text-blue-500"}`}
               >
                 <option value="">Lead Source</option>
                 <option value="Facebook">Facebook</option>
@@ -267,8 +267,8 @@ const LeadStageColumn = ({
               <select
                 value={leadRate}
                 onChange={(e) => setLeadRate(e.target.value)}
-                className={`border border-gray-300 rounded-md px-2 py-1 text-sm w-full bg-white
-                   focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none ${!leadRate && "text-gray-500"}`}
+                className={`border border-blue-300 rounded-md px-2 py-1 text-sm w-full bg-white
+                   focus:ring-1 focus:ring-blue-400 focus:border-blue-400 outline-none ${!leadRate && "text-blue-500"}`}
               >
                 <option value="">Rate</option>
                 <option value="1">1</option>
@@ -299,7 +299,7 @@ const LeadStageColumn = ({
               </button>
 
               <button
-                className="px-3 py-1.5 bg-gray-300/50 text-xs font-medium rounded-md w-1/2
+                className="px-3 py-1.5 bg-blue-300/50 text-xs font-medium rounded-md w-1/2
                      hover:scale-[1.05] active:scale-[0.97] transition-all duration-150"
                 onClick={() => {
                   setAddingLeadToggle((prev) => !prev)
@@ -319,7 +319,7 @@ const LeadStageColumn = ({
               text-xs font-medium text-gray-700
               rounded-full cursor-pointer select-none
               transition-all duration-200
-              hover:shadow-md hover:bg-gray-50 hover:scale-[1.03]
+              hover:shadow-md hover:bg-blue-400 hover:scale-[1.03] hover:text-white
               active:scale-[0.97]
             "
             onClick={() => setAddingLeadToggle(prev => !prev)}

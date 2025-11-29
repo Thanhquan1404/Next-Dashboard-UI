@@ -1,13 +1,10 @@
 import 'remixicon/fonts/remixicon.css';
-
+import { leadSourceType } from '@/lib/data.leads';
 interface Props {
-  leadSource: string;
+  leadSource: leadSourceType;
 }
 
-const styleMapping: Record<
-  string,
-  { icon: string; bg: string; text: string; border: string }
-> = {
+const styleMapping: Record<leadSourceType, { icon: string; bg: string; text: string; border: string }> = {
   Facebook: {
     icon: "ri-facebook-fill",
     bg: "bg-facebook-50",

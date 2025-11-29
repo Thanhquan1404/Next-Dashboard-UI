@@ -3,6 +3,8 @@
 export const statusOptions = ["All status", "New", "Open", "In Progress", "Opend Deal"];
 // COMPANY OPTIONS
 export const companyOptions = ["All company", "Apple", "Xiaomi",];
+export type leadSourceType = "Facebook" | "Website" | "LinkedIn" | "Form";
+
 
 //---------------------------------------- LEADS SAMPLES ----------------------------------------
 export interface leadType {
@@ -13,131 +15,9 @@ export interface leadType {
   phone: string;
   email: string;
   rating: number;
-  source: string;        
+  source: leadSourceType;        
   status: string;
 }
-
-export const leadsInNewStatusSamples: leadType[] = [
-  {
-    leadID: "L001",
-    avatarURL: "https://randomuser.me/api/portraits/men/32.jpg",
-    name: "Nguyễn Văn An",
-    createdDate: "2025-11-15T10:30:00+07:00",
-    phone: "+84912345678",
-    email: "an.nguyen@example.com",
-    rating: 2,
-    source: "Facebook",
-    status: "New"
-  },
-  {
-    leadID: "L002",
-    avatarURL: "https://randomuser.me/api/portraits/women/44.jpg",
-    name: "Trần Thị Bình",
-    createdDate: "2025-11-15T09:15:00+07:00",
-    phone: "+84987654321",
-    email: "binh.tran@example.com",
-    rating: 2,
-    source: "Website",
-    status: "New"
-  },
-  {
-    leadID: "L003",
-    avatarURL: "https://randomuser.me/api/portraits/men/67.jpg",
-    name: "Lê Hoàng Cường",
-    createdDate: "2025-11-14T16:45:00+07:00",
-    phone: "+84911223344",
-    email: "cuong.le@example.com",
-    rating: 2,
-    source: "LinkedIn",
-    status: "New"
-  },
-];
-
-export const leadsInOpenStatusSample: leadType[] = [
-  {
-    leadID: "L006",
-    avatarURL: "https://randomuser.me/api/portraits/women/23.jpg",
-    name: "Hoàng Thị Kim",
-    createdDate: "2025-11-12T08:40:00+07:00",
-    phone: "+84933445566",
-    email: "kim.hoang@example.com",
-    rating: 5,
-    source: "Form",
-    status: "Open"
-  },
-  {
-    leadID: "L007",
-    avatarURL: "https://randomuser.me/api/portraits/men/55.jpg",
-    name: "Đỗ Văn Long",
-    createdDate: "2025-11-11T13:25:00+07:00",
-    phone: "+84966778899",
-    email: "long.do@example.com",
-    rating: 2,
-    source: "Facebook",
-    status: "Open"
-  },
-];
-
-export const leadsInProgressStatusSample: leadType[] = [
-  {
-    leadID: "L011",
-    avatarURL: "https://randomuser.me/api/portraits/men/72.jpg",
-    name: "Ngô Văn Quân",
-    createdDate: "2025-11-07T10:35:00+07:00",
-    phone: "+84977889900",
-    email: "quan.ngo@example.com",
-    rating: 2,
-    source: "Website",
-    status: "In Progress"
-  },
-  {
-    leadID: "L012",
-    avatarURL: "https://randomuser.me/api/portraits/women/39.jpg",
-    name: "Đặng Thị Lan",
-    createdDate: "2025-11-06T14:20:00+07:00",
-    phone: "+84911223344",
-    email: "lan.dang@example.com",
-    rating: 2,
-    source: "LinkedIn",
-    status: "In Progress"
-  }
-];
-
-export const leadsOpenDealStatusSample: leadType[] = [
-  {
-    leadID: "L016",
-    avatarURL: "https://randomuser.me/api/portraits/men/19.jpg",
-    name: "Phan Văn Sơn",
-    createdDate: "2025-11-02T11:40:00+07:00",
-    phone: "+84933445566",
-    email: "son.phan@example.com",
-    rating: 2,
-    source: "Form",
-    status: "Open Deal"
-  },
-  {
-    leadID: "L017",
-    avatarURL: "https://randomuser.me/api/portraits/women/64.jpg",
-    name: "Tô Thị Hồng",
-    createdDate: "2025-11-01T15:30:00+07:00",
-    phone: "+84977889900",
-    email: "hong.to@example.com",
-    rating: 2,
-    source: "Facebook",
-    status: "Open Deal"
-  },
-  {
-    leadID: "L018",
-    avatarURL: "https://randomuser.me/api/portraits/men/37.jpg",
-    name: "Đinh Công Minh",
-    createdDate: "2025-10-31T09:15:00+07:00",
-    phone: "+84922334455",
-    email: "minh.dinh@example.com",
-    rating: 2,
-    source: "Website",
-    status: "Open Deal"
-  },
-];
 
 //---------------------------------------- LEAD DETAIL TYPE ----------------------------------------
 // ────────────────────────────────────── INTERFACE ──────────────────────────────────────
@@ -153,10 +33,11 @@ export interface LeadDetailType {
   email: string;
   rating: number;
   source: string;
-  status: ColumnKey;
+  status: string;
 }
 
 // ────────────────────────────────────── LEAD DETAIL SAMPLE ──────────────────────────────────────
+
 export const leadDetailsSample: Record<string, LeadDetailType> = {
   "L001": {
     leadID: "L001",
@@ -170,7 +51,7 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     email: "an.nguyen@example.com",
     rating: 2,
     source: "Facebook",
-    status: "New" as ColumnKey
+    status: "New"
   },
   "L002": {
     leadID: "L002",
@@ -184,7 +65,7 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     email: "binh.tran@example.com",
     rating: 2,
     source: "Website",
-    status: "New" as ColumnKey
+    status: "New"
   },
   "L003": {
     leadID: "L003",
@@ -197,8 +78,8 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     phone: "+84911223344",
     email: "cuong.le@example.com",
     rating: 2,
-    source: "LinkedIn",
-    status: "New" as ColumnKey
+    source: "LinkedIn" as leadSourceType,
+    status: "New"
   },
   "L006": {
     leadID: "L006",
@@ -212,7 +93,7 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     email: "kim.hoang@example.com",
     rating: 5,
     source: "Form",
-    status: "Open" as ColumnKey
+    status: "Open"
   },
   "L007": {
     leadID: "L007",
@@ -226,7 +107,7 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     email: "long.do@example.com",
     rating: 2,
     source: "Facebook",
-    status: "Open" as ColumnKey
+    status: "Open"
   },
   "L011": {
     leadID: "L011",
@@ -240,7 +121,7 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     email: "quan.ngo@example.com",
     rating: 2,
     source: "Website",
-    status: "In Progress" as ColumnKey
+    status: "In Progress"
   },
   "L016": {
     leadID: "L016",
@@ -254,7 +135,7 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     email: "son.phan@example.com",
     rating: 2,
     source: "Form",
-    status: "Open Deal" as ColumnKey
+    status: "Open Deal"
   },
   "L017": {
     leadID: "L017",
@@ -268,7 +149,7 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     email: "hong.to@example.com",
     rating: 2,
     source: "Facebook",
-    status: "Open Deal" as ColumnKey
+    status: "Open Deal"
   },
   "L018": {
     leadID: "L018",
@@ -282,7 +163,7 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
     email: "minh.dinh@example.com",
     rating: 2,
     source: "Website",
-    status: "Open Deal" as ColumnKey
+    status: "Open Deal"
   },
 };
 
@@ -360,7 +241,6 @@ export const leadActivitySequences: Record<string, LeadDetailActivitySequenceTim
 };
 //---------------------------------------- LEAD KEY ---------------------------------------- 
 // LEAD STATUS 
-export type ColumnKey = "newStatus" | "openStatus" | "inProgressingStatus" | "openDealStatus";
 // LEAD PROCESSING STATUS 
 export type leadProcessingStatus = "New" | "Contacted" | "Interested" | "Qualified" | "Negotiation" | "Won-Lost";
 
@@ -384,7 +264,7 @@ export const LeadItems: leadType[] = [
     phone: "0901234567",
     email: "nhung.nguyen@gmail.com",
     rating: 5,
-    source: "Facebook Ads",
+    source: "Facebook" as leadSourceType,
     status: "New",
   },
   {
@@ -395,7 +275,7 @@ export const LeadItems: leadType[] = [
     phone: "0912345678",
     email: "namtran@company.vn",
     rating: 4,
-    source: "Google Ads",
+    source: "Facebook" as leadSourceType,
     status: "Contacted",
   },
   {
@@ -406,7 +286,7 @@ export const LeadItems: leadType[] = [
     phone: "0934567890",
     email: "khoile@fpt.edu.vn",
     rating: 5,
-    source: "Website",
+    source: "Website" as leadSourceType,
     status: "Interested",
   },
   {
@@ -417,7 +297,7 @@ export const LeadItems: leadType[] = [
     phone: "0987654321",
     email: "lananh.pham@yahoo.com",
     rating: 3,
-    source: "Referral",
+    source: "Website" as leadSourceType,
     status: "Qualified",
   },
   {
@@ -428,7 +308,7 @@ export const LeadItems: leadType[] = [
     phone: "0923456789",
     email: "hunghoang@outlook.com",
     rating: 5,
-    source: "Zalo OA",
+    source: "Form" as leadSourceType,
     status: "Negotiation",
   },
   {
@@ -439,7 +319,7 @@ export const LeadItems: leadType[] = [
     phone: "0891234567",
     email: "duyenvu@gmail.com",
     rating: 4,
-    source: "TikTok",
+    source: "Facebook" as leadSourceType,
     status: "Won",
   },
   {
@@ -450,7 +330,7 @@ export const LeadItems: leadType[] = [
     phone: "0909876543",
     email: "vinh.dang@company.co",
     rating: 5,
-    source: "Facebook Ads",
+    source: "Facebook" as leadSourceType,
     status: "New",
   },
   {
@@ -461,7 +341,7 @@ export const LeadItems: leadType[] = [
     phone: "0931122334",
     email: "kimngan88@gmail.com",
     rating: 4,
-    source: "Event",
+    source: "Form" as leadSourceType,
     status: "Contacted",
   },
   {
@@ -472,7 +352,7 @@ export const LeadItems: leadType[] = [
     phone: "0919988776",
     email: "longdo.business@gmail.com",
     rating: 5,
-    source: "Google Ads",
+    source: "LinkedIn" as leadSourceType,
     status: "Interested",
   },
   {
@@ -483,7 +363,7 @@ export const LeadItems: leadType[] = [
     phone: "0981122334",
     email: "thao.huynh@gmail.com",
     rating: 3,
-    source: "Referral",
+    source: "Website" as leadSourceType,
     status: "Qualified",
   },
   {
@@ -494,7 +374,7 @@ export const LeadItems: leadType[] = [
     phone: "0905566778",
     email: "tuantran.pro@gmail.com",
     rating: 5,
-    source: "Website",
+    source: "Website" as leadSourceType,
     status: "Negotiation",
   },
   {
@@ -505,7 +385,7 @@ export const LeadItems: leadType[] = [
     phone: "0936677889",
     email: "mai.nguyen@fpt.vn",
     rating: 2,
-    source: "Zalo OA",
+    source: "Facebook" as leadSourceType,
     status: "Lost",
   },
   {
@@ -516,7 +396,7 @@ export const LeadItems: leadType[] = [
     phone: "0912233445",
     email: "datphan88@gmail.com",
     rating: 4,
-    source: "Facebook Ads",
+    source: "Facebook" as leadSourceType,
     status: "Won",
   },
   {
@@ -527,7 +407,7 @@ export const LeadItems: leadType[] = [
     phone: "0983344556",
     email: "phuongly@gmail.com",
     rating: 5,
-    source: "Google Ads",
+    source: "Form" as leadSourceType,
     status: "Interested",
   },
   {
@@ -538,7 +418,7 @@ export const LeadItems: leadType[] = [
     phone: "0904455667",
     email: "trietvo@company.vn",
     rating: 4,
-    source: "Referral",
+    source: "Website" as leadSourceType,
     status: "Qualified",
   },
   {
@@ -549,7 +429,7 @@ export const LeadItems: leadType[] = [
     phone: "0925566778",
     email: "kimchi.to@gmail.com",
     rating: 5,
-    source: "Event",
+    source: "Facebook" as leadSourceType,
     status: "Negotiation",
   },
   {
@@ -560,7 +440,7 @@ export const LeadItems: leadType[] = [
     phone: "0937788990",
     email: "hieuhapro@gmail.com",
     rating: 3,
-    source: "TikTok",
+    source: "LinkedIn" as leadSourceType,
     status: "Lost",
   },
   {
@@ -571,7 +451,7 @@ export const LeadItems: leadType[] = [
     phone: "0918899001",
     email: "huyenmai@gmail.com",
     rating: 5,
-    source: "Website",
+    source: "Website" as leadSourceType,
     status: "Contacted",
   },
   {
@@ -582,7 +462,7 @@ export const LeadItems: leadType[] = [
     phone: "0906677889",
     email: "khanh.truong@outlook.com",
     rating: 4,
-    source: "Facebook Ads",
+    source: "Facebook" as leadSourceType,
     status: "Interested",
   },
   {
@@ -593,7 +473,7 @@ export const LeadItems: leadType[] = [
     phone: "0988899001",
     email: "ngocanh.dinh@gmail.com",
     rating: 5,
-    source: "Google Ads",
+    source: "Website" as leadSourceType,
     status: "Qualified",
   },
 ];

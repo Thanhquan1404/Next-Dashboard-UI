@@ -7,6 +7,7 @@ import { leadType, LeadItems, LeadStage } from "@/lib/data.leads";
 interface LeadStageColumnContextType {
   leadItemsInStage: Record<string, leadType[]>;
   updateLeadStage: (leadId: string, newStage: string) => void;
+  addingNewLead: (newLead: leadType, targetColumn: string) => void;
 }
 
 // CREATE CONTEXT
@@ -67,13 +68,20 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
         { ...leadToMove, status: newStage } 
       ];
 
-      console.log(newColumns);
       return newColumns;
     });
   };
 
+  // ADDING A NEW LEAD 
+  const addingNewLead = (newLead: leadType, targetColumn: string) => {
+    setLeadItemsInStage( (prev) => ({
+      ...prev,
+      [targetColumn]: [...prev[targetColumn], newLead]
+    }));
+  }
+
   return (
-    <LeadStageColumnContext.Provider value={{ leadItemsInStage, updateLeadStage }}>
+    <LeadStageColumnContext.Provider value={{ leadItemsInStage, updateLeadStage, addingNewLead }}>
       {children}
     </LeadStageColumnContext.Provider>
   );

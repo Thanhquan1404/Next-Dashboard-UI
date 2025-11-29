@@ -1,21 +1,8 @@
 "use client";
 import { statusOptions, companyOptions, LeadStage } from "@/lib/data.leads";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import LeadsPageHeader from "./LeadsPageHeader";
-import LeadsNewStatusColumn from "./LeadsNewStatusColumn";
-import LeadsOpenStatusColumn from "./LeadsOpenStatusColumn";
-import LeadsInProgressStatusColumn from "./LeadsInProgressStatusColumn";
-import LeadsOpenDealStatusColumn from "./LeadsOpenDealStatusColumn";
-import {
-  // leadsInNewStatusSamples,
-  // leadsInOpenStatusSample,
-  // leadsInProgressStatusSample,
-  // leadsOpenDealStatusSample,
-  leadType,
-  ColumnKey,
-  // LeadStage,
-  // LeadItems
-} from "@/lib/data.leads";
+import { leadType } from "@/lib/data.leads";
 import { useNotification } from "@/providers/NotificationProvider";
 import LeadDetailWindow from "./LeadDetailWindow";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
@@ -31,7 +18,7 @@ const Page = () => {
   const [leadDraggingID, setLeadDraggingID] = useState<string>("");
 
   // LEAD ITEMS IN STAGE 
-  const { leadItemsInStage, updateLeadStage } = useLeadStageColumn();
+  const { leadItemsInStage, updateLeadStage, addingNewLead } = useLeadStageColumn();
 
   // DRAG START
   const dragStartEvent = (
@@ -53,31 +40,8 @@ const Page = () => {
   };
 
   // HANDLE ADDING NEW LEAD 
-  const handleAddingNewLead = (newLead: leadType) => {
-    let targetColumn: ColumnKey;
-
-    switch (newLead.status) {
-      case "New":
-        targetColumn = "newStatus";
-        break;
-      case "Open":
-        targetColumn = "openStatus";
-        break;
-      case "In Progress":
-        targetColumn = "inProgressingStatus";
-        break;
-      case "Open Deal":
-        targetColumn = "openDealStatus";
-        break;
-      default:
-        targetColumn = "newStatus";
-    }
-
-    // setLeadItems((prev) => ({
-    //   ...prev,
-    //   [targetColumn]: [...prev[targetColumn], newLead],
-    // }));
-
+  const handleAddingNewLead = (newLead: leadType, targetColumn: string) => {
+    addingNewLead(newLead, targetColumn);
     showNotification("Successfully add a new lead");
   }
 
@@ -96,6 +60,7 @@ const Page = () => {
       <div className="flex gap-2 overflow-x-auto p-2">
         {LeadStage.map((leadStage) => (
           <LeadStageColumn
+            handleAddingNewLead={handleAddingNewLead}
             dropEvent={dropEvent}
             dragOverEvent={dragOverEvent}
             dragStartEvent={dragStartEvent}
