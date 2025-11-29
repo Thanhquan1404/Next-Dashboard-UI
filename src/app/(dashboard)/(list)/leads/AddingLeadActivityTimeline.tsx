@@ -65,7 +65,6 @@ const AddingLeadActivityTimeline = () => {
       addingNewLeadActivity(newActivity);
       showNotification("Activity added successfully!", false);
 
-      // Reset form
       resetAllState();
     } catch (error: any) {
       showNotification(error.message, true); 

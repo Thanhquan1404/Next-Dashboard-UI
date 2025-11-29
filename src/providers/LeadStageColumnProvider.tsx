@@ -5,9 +5,11 @@ import { leadType, LeadItems, LeadStage } from "@/lib/data.leads";
 
 // CONTEXT VALUE TYPE
 interface LeadStageColumnContextType {
+  leadStage: string[],
   leadItemsInStage: Record<string, leadType[]>;
   updateLeadStage: (leadId: string, newStage: string) => void;
   addingNewLead: (newLead: leadType, targetColumn: string) => void;
+  addingNewLeadColum: (columnName: string, columnColor: string) => void;
 }
 
 // CREATE CONTEXT
@@ -56,7 +58,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
       }
 
       if (!leadToMove || !fromStage) {
-        return prev; 
+        return prev;
       }
 
       const newColumns: Record<string, leadType[]> = { ...prev };
@@ -64,8 +66,8 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
       newColumns[fromStage] = prev[fromStage].filter((item) => item.leadID !== leadId);
 
       newColumns[newStage] = [
-        ...(prev[newStage] || []), 
-        { ...leadToMove, status: newStage } 
+        ...(prev[newStage] || []),
+        { ...leadToMove, status: newStage }
       ];
 
       return newColumns;
@@ -74,14 +76,28 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
 
   // ADDING A NEW LEAD 
   const addingNewLead = (newLead: leadType, targetColumn: string) => {
-    setLeadItemsInStage( (prev) => ({
+    setLeadItemsInStage((prev) => ({
       ...prev,
       [targetColumn]: [...prev[targetColumn], newLead]
     }));
   }
 
+  // ADDING NEW COLUMN 
+  const addingNewLeadColum = (columnName: string, columnColor: string) => {
+    if (columnName === "" ){
+      throw new Error("Fill in column name")
+    }
+    setLeadStage((prev) => [...prev, columnName]);
+
+    setLeadItemsInStage((prev) => ({
+      ...prev,
+      [columnName]: [] 
+    }));
+  };
+
+
   return (
-    <LeadStageColumnContext.Provider value={{ leadItemsInStage, updateLeadStage, addingNewLead }}>
+    <LeadStageColumnContext.Provider value={{ leadStage,leadItemsInStage, updateLeadStage, addingNewLead, addingNewLeadColum }}>
       {children}
     </LeadStageColumnContext.Provider>
   );

@@ -1,5 +1,5 @@
 "use client";
-import { statusOptions, companyOptions, LeadStage } from "@/lib/data.leads";
+import { statusOptions, companyOptions } from "@/lib/data.leads";
 import { useState } from "react";
 import LeadsPageHeader from "./LeadsPageHeader";
 import { leadType } from "@/lib/data.leads";
@@ -18,7 +18,7 @@ const Page = () => {
   const [leadDraggingID, setLeadDraggingID] = useState<string>("");
 
   // LEAD ITEMS IN STAGE 
-  const { leadItemsInStage, updateLeadStage, addingNewLead } = useLeadStageColumn();
+  const { leadItemsInStage, updateLeadStage, addingNewLead, leadStage } = useLeadStageColumn();
 
   // DRAG START
   const dragStartEvent = (
@@ -58,7 +58,7 @@ const Page = () => {
       />
 
       <div className="flex gap-2 overflow-x-auto p-2">
-        {LeadStage.map((leadStage) => (
+        {leadStage.map((leadStage) => (
           <LeadStageColumn
             handleAddingNewLead={handleAddingNewLead}
             dropEvent={dropEvent}

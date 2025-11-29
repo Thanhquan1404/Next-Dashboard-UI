@@ -1,5 +1,9 @@
+import InputColorComponent from "@/components/InputColorComponent";
 import SelectorComponent from "@/components/SelectorComponent";
 import { statusOptions, companyOptions } from "@/lib/data.leads";
+import { useLeadStageColumn } from "@/providers/LeadStageColumnProvider";
+import { useNotification } from "@/providers/NotificationProvider";
+import { useState } from "react";
 
 interface Props {
   selectedStatus: string,
@@ -7,12 +11,100 @@ interface Props {
   selectedCompany: string,
   setSelectedCompany: React.Dispatch<React.SetStateAction<string>>,
 }
-const LeadsPageHeader = ({selectedStatus, setSelectedStatus, setSelectedCompany, selectedCompany}: Props) => {
+const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany, selectedCompany }: Props) => {
+  const { addingNewLeadColum } = useLeadStageColumn();
+  const { showNotification } = useNotification();
+  // ADDING NEW COLUMN STATE 
+  const [selectedColor, setSelectedColor] = useState<string>("#000");
+  const [newColumnTitle, setNewColumnTitle] = useState<string>("");
+  const [isOpenAddingNewColumnWindow, setIsOpenAddingNewColumnWindow] = useState<boolean>(false);
+
+  const resetAllState = () => {
+    setSelectedColor("#000");
+    setNewColumnTitle("");
+  }
+  const handleAddingNewColumn = () => {
+    try {
+      addingNewLeadColum(newColumnTitle, selectedColor);
+      showNotification("Successfully adding a new stage");
+    } catch (error: any) {
+      showNotification(error.message, true);
+    }
+    finally {
+      resetAllState();
+      setIsOpenAddingNewColumnWindow(prev => !prev); 
+    }
+  }
   return (
     <div className="w-full h-[120px] px-4 py-4 bg-white">
       <div className="w-full h-1/2 flex justify-between items-center">
         <div className="text-xl font-bold tracking-wide">
           Leads
+        </div>
+        <div className="relative inline-block">
+          {/* ADD NEW COLUMN BUTTON */}
+          <button
+            onClick={() => setIsOpenAddingNewColumnWindow(prev => !prev)}
+            className="
+              text-xs bg-blue-500/80 text-white px-3 py-1.5 rounded-lg 
+              hover:bg-blue-500 hover:shadow-md hover:scale-[1.03]
+              transition-all duration-300
+            "
+          >
+            New Column
+          </button>
+
+          {/* Popup panel */}
+          {
+            <>
+              <div
+                className={`
+                  absolute top-full right-0 mt-2 w-52 p-3 bg-white rounded-xl shadow-lg border 
+                  flex flex-col gap-2 z-20 transform transition-all duration-5000
+                  ${isOpenAddingNewColumnWindow ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 pointer-events-none"}
+                `}
+              >
+                <input
+                  value={newColumnTitle ? newColumnTitle : ""}
+                  type="text"
+                  placeholder="Column name..."
+                  onChange={(e) => setNewColumnTitle(e.target.value)}
+                  className="
+                    w-full px-3 py-1.5 text-sm rounded-lg border 
+                    focus:ring-2 focus:ring-blue-400 outline-none
+                  "
+                />
+
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-gray-600">Color</div>
+                  <InputColorComponent selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
+                </div>
+
+                <div className="flex w-full items-center gap-2">
+                  <button
+                    onClick={() => handleAddingNewColumn()}
+                    className="
+                      w-1/2
+                      bg-blue-500 text-white text-xs px-3 py-1.5 rounded-lg 
+                      hover:bg-blue-600 transition-all duration-300
+                    "
+                  >
+                    Add
+                  </button>
+                  <button
+                    onClick={() => setIsOpenAddingNewColumnWindow(prev => !prev)}
+                    className="
+                      w-1/2
+                      bg-gray-300 text-white text-xs px-3 py-1.5 rounded-lg 
+                      hover:bg-gray-400 transition-all duration-300
+                    "
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </>
+          }
         </div>
       </div>
 
@@ -54,7 +146,7 @@ const LeadsPageHeader = ({selectedStatus, setSelectedStatus, setSelectedCompany,
           Filter
         </div>
       </div>
-      
+
     </div>
   )
 }
