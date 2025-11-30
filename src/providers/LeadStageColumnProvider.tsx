@@ -1,11 +1,11 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { leadType, LeadItems, LeadStage } from "@/lib/data.leads";
+import { leadType, lead, LeadStage, leadStageType } from "@/lib/data.leads";
 
 // CONTEXT VALUE TYPE
 interface LeadStageColumnContextType {
-  leadStage: string[],
+  leadStage: leadStageType[],
   leadItemsInStage: Record<string, leadType[]>;
   updateLeadStage: (leadId: string, newStage: string) => void;
   addingNewLead: (newLead: leadType, targetColumn: string) => void;
@@ -30,13 +30,13 @@ interface LeadStageColumnProviderProps {
 }
 
 export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = ({ children }) => {
-  const [leadStage, setLeadStage] = useState<string[]>(LeadStage);
+  const [leadStage, setLeadStage] = useState<leadStageType[]>(LeadStage);
   // LEAD ITEMS IN SPECIFIC COLUMN INITIALIZE
   const [leadItemsInStage, setLeadItemsInStage] = useState<Record<string, leadType[]>>(() => {
     const initial: Record<string, leadType[]> = {};
 
     leadStage.forEach((stage) => {
-      initial[stage] = LeadItems.filter((item) => item.status === stage);
+      initial[stage.status] = lead.filter((item) => item.status === stage.status);
     });
 
     return initial;
@@ -87,7 +87,12 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
     if (columnName === "" ){
       throw new Error("Fill in column name")
     }
-    setLeadStage((prev) => [...prev, columnName]);
+    setLeadStage((prev) => [...prev, 
+      {
+        status: columnName,
+        color: columnColor
+      }
+    ]);
 
     setLeadItemsInStage((prev) => ({
       ...prev,

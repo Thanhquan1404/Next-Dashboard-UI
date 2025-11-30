@@ -46,30 +46,40 @@ const Page = () => {
   }
 
   // LEAD DETAIL ID SELECTED
-  const { selectedLeadId } = useLeadDetailSelect();
+  const { selectedLeadId, removeSelectedLeadDetail } = useLeadDetailSelect();
 
   return (
-    <div className="flex flex-col bg-gray-50">
-      <LeadsPageHeader
-        selectedStatus={selectedStatus}
-        setSelectedStatus={setSelectedStatus}
-        selectedCompany={selectedCompany}
-        setSelectedCompany={setSelectedCompany}
-      />
+    <div className={`flex flex-col bg-gray-50 ${selectedLeadId && "h-full"}`}>
+      {
+        selectedLeadId ?
+          <>
+            <LeadDetailWindow />
+          </>
+          :
+          <>
+            <LeadsPageHeader
+              selectedStatus={selectedStatus}
+              setSelectedStatus={setSelectedStatus}
+              selectedCompany={selectedCompany}
+              setSelectedCompany={setSelectedCompany}
+            />
 
-      <div className="flex gap-2 overflow-x-auto p-2">
-        {leadStage.map((leadStage) => (
-          <LeadStageColumn
-            handleAddingNewLead={handleAddingNewLead}
-            dropEvent={dropEvent}
-            dragOverEvent={dragOverEvent}
-            dragStartEvent={dragStartEvent}
-            key={leadStage}
-            leadItems={leadItemsInStage[leadStage]}
-            leadStage={leadStage}
-          />
-        ))}
-      </div>
+            <div className="flex gap-2 overflow-x-auto p-2">
+              {leadStage.map((leadStage) => (
+                <LeadStageColumn
+                  handleAddingNewLead={handleAddingNewLead}
+                  dropEvent={dropEvent}
+                  dragOverEvent={dragOverEvent}
+                  dragStartEvent={dragStartEvent}
+                  key={leadStage.status}
+                  leadItems={leadItemsInStage[leadStage.status]}
+                  leadStage={leadStage.status}
+                  leadColor={leadStage.color}
+                />
+              ))}
+            </div>
+          </>
+      }
     </div>
   );
 };

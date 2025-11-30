@@ -8,6 +8,7 @@ import LeadSourceComponent from "@/components/LeadSourceComponent";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 interface Props {
   leadStage: string,
+  leadColor: string,
   leadItems: leadType[];
   dragStartEvent: (e: React.DragEvent<HTMLDivElement>, leadID: string) => void;
   dropEvent: (statusColumnName: string) => void;
@@ -16,7 +17,8 @@ interface Props {
 }
 
 const LeadStageColumn = ({
-  leadStage, 
+  leadStage,
+  leadColor,
   leadItems,
   dragStartEvent,
   dropEvent,
@@ -58,15 +60,19 @@ const LeadStageColumn = ({
     resetAllState();
   }
   // INITIALIZE LEAD SELECT CONTEXT 
-  const {selectLeadDetail} = useLeadDetailSelect();
-  
+  const { selectLeadDetail } = useLeadDetailSelect();
+
   return (
     <div
+      style={{
+        backgroundColor: isBeingDragged ? `${leadColor}20` : undefined,
+        borderColor: isBeingDragged ? `${leadColor}` : "transparent",
+      }}
       className={`
         min-w-[320px] max-w-[320px] flex-shrink-0 h-full flex flex-col gap-4 p-2 rounded-xl border
         transition-all duration-200 ease-out
         ${isBeingDragged
-          ? "bg-blue-50 border-blue-400 shadow-lg scale-[1.01]"
+          ? `shadow-lg scale-[1.01]`
           : "bg-white/30 border-transparent"
         }
       `}
@@ -91,7 +97,7 @@ const LeadStageColumn = ({
         "
       >
         <div className="flex gap-2 items-center text-blue-700 font-semibold text-sm">
-          <div className="w-[14px] h-[14px] rounded-full bg-blue-400 shadow-sm" />
+          <div className="w-[14px] h-[14px] rounded-full shadow-sm" style={{ backgroundColor: leadColor }} />
           {leadStage}
         </div>
 

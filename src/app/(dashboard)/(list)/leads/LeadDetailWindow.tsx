@@ -1,16 +1,15 @@
 import Image from "next/image"
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import AddingLeadActivityTimeline from "./AddingLeadActivityTimeline";
-import { leadProcessingStatus } from "@/lib/data.leads";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 import LeadActivityTimelineSequence from "./LeadActivityTimelineSequence";
 import UpLoadAvatar from "@/components/UpLoadAvatar";
-import { userInfo } from "os";
+import { useLeadStageColumn } from "@/providers/LeadStageColumnProvider";
 
 const LeadDetailWindow = () => {
   // INITIALIZE LEAD SELECT CONTEXT 
   const { removeSelectedLeadDetail, leadDetailInfo, leadSequenceActivity } = useLeadDetailSelect();
-
+  const { leadStage } = useLeadStageColumn();
   // UPDATE INFO STATE
   const [updateAvatar, setUpdateAvatar] = useState<string>("");
   const [updateCompany, setUpdateCompany] = useState<string>("");
@@ -32,29 +31,26 @@ const LeadDetailWindow = () => {
 
 
   // INITIAlIZE LEAD STATUS PROCESSING BAR 
-  const processingBar: leadProcessingStatus[] = ["New", "Contacted", "Interested", "Qualified", "Negotiation", "Won-Lost"];
-  type leadProcessingBar = Record<leadProcessingStatus, boolean>;
-  const [processingStatusBar, setProcessingStatusBar] = useState<leadProcessingBar>({
-    New: false,
-    Contacted: false,
-    Interested: false,
-    Qualified: false,
-    Negotiation: false,
-    "Won-Lost": false,
+  const [processingStatusBar, setProcessingStatusBar] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {} 
+    leadStage.map( (stage) => {
+      initial[stage.status] = false;
+    })
+    return initial;
   });
-  const [currentStatus, setCurrentStatus] = useState<leadProcessingStatus | null>(null);
+  const [currentStatus, setCurrentStatus] = useState<string | null>(leadDetailInfo ? leadDetailInfo.status : null);
 
   // MATCHING PROCESSING STATUS BAR WITH CURRENT STATUS BAR
   useEffect(() => {
     setProcessingStatusBar(prev => {
-      const newState: leadProcessingBar = { ...prev };
+      const newState: Record<string, boolean> = { ...prev };
       if (currentStatus === null) { return newState };
       let active = true;
 
-      for (const status of processingBar) {
-        newState[status] = active;
-        if (status === currentStatus) active = false;
-      }
+      leadStage.map( (stage) => {
+        newState[stage.status] = active;
+        if (stage.status === currentStatus) {active=false;}
+      })
 
       return newState;
     });
@@ -66,7 +62,7 @@ const LeadDetailWindow = () => {
 
 
   return (
-    <div className='w-screen h-full bg-white pt-5 rounded-xl flex flex-col'>
+    <div className='w-full h-full bg-white pt-5 rounded-xl flex flex-col'>
       {/* LEAD GENERAL INFORMATION  */}
       <div className="w-full h-fit flex justify-between px-4 pb-4 border-gray-300/80">
         {/* AVATAR AND NAME  */}
@@ -162,18 +158,18 @@ const LeadDetailWindow = () => {
         </div>
         <div className="w-full h-[40px] flex gap-2">
           {
-            processingBar.map((status, index) => {
+            leadStage.map((stage, index) => {
               // FIRST ITEM
               if (index === 0) {
                 return (
                   <div
                     key={index}
-                    onClick={() => setCurrentStatus(status)}
+                    onClick={() => setCurrentStatus(stage.status)}
                     className={`
                   w-1/6 h-full flex rounded-tl-3xl rounded-bl-3xl
                   justify-center items-center text-[14px]
                   transition-all duration-300 cursor-pointer
-                  ${processingStatusBar[status]
+                  ${processingStatusBar[stage.status]
                         ? "bg-[#BFF8C2] hover:bg-[#A4EEA8] text-[#2FA739]"
                         : "bg-gray-300/70 hover:bg-gray-300/90"
                       }
@@ -203,7 +199,7 @@ const LeadDetailWindow = () => {
               }
 
               // LAST ITEM
-              if (index === processingBar.length - 1) {
+              if (index === leadStage.length - 1) {
                 return (
                   <div
                     key={index}
@@ -243,12 +239,12 @@ const LeadDetailWindow = () => {
               return (
                 <div
                   key={index}
-                  onClick={() => setCurrentStatus(status)}
+                  onClick={() => setCurrentStatus(stage.status)}
                   className={`
                   w-1/6 h-full flex justify-center items-center text-[14px] 
                   transition-all duration-300 gap-2 cursor-pointer
-                  ${processingStatusBar[status]
-                      ? currentStatus === status
+                  ${processingStatusBar[stage.status]
+                      ? currentStatus === stage.status
                         ? "bg-[#4CCB56] hover:bg-[#35B440] text-white"
                         : "bg-[#BFF8C2] hover:bg-[#A4EEA8] text-[#2FA739] font-semibold"
                       : "bg-gray-300/70 hover:bg-gray-300/90 text-gray-600/60"
