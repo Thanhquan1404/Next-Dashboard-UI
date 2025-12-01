@@ -5,60 +5,140 @@ import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 import LeadActivityTimelineSequence from "./LeadActivityTimelineSequence";
 import UpLoadAvatar from "@/components/UpLoadAvatar";
 import { useLeadStageColumn } from "@/providers/LeadStageColumnProvider";
+import { LeadDetailType } from "@/lib/data.leads";
 
 const LeadDetailWindow = () => {
-  // INITIALIZE LEAD SELECT CONTEXT 
-  const { removeSelectedLeadDetail, leadDetailInfo, leadSequenceActivity } = useLeadDetailSelect();
+  // LEAD DETAIL PROVIDER 
+  const { removeSelectedLeadDetail, leadDetailInfo, leadSequenceActivity, updateALeadDetail } = useLeadDetailSelect();
+  // LEAD STAGE PROVIDER 
   const { leadStage } = useLeadStageColumn();
-  // UPDATE INFO STATE
-  const [updateAvatar, setUpdateAvatar] = useState<string>("");
-  const [updateCompany, setUpdateCompany] = useState<string>("");
-  const [updateCreatedDate, setUpdateCreatedDate] = useState<string>("");
-  const [updateEmail, setUpdateEmail] = useState<string>("");
-  const [updateJobTitle, setUpdateJobTitle] = useState<string>("");
-  const [updateName, setUpdateName] = useState<string>("");
-  const [updatePhone, setUpdatePhone] = useState<string>("");
-  const [updateRating, setUpdateRating] = useState<number>(1);
-  const [updateSource, setUpdateSource] = useState<string>("");
-  const [updateStatus, setUpdateStatus] = useState<string>("");
-  const [isUpdated, setIsUpdated] = useState<boolean>(false);
 
-  // HANDLE ANY FIELD UPDATED
+  // UPDATE STATE 
+  const [updateAvatar, setUpdateAvatar] = useState(leadDetailInfo?.avatarURL || "");
+  const [updateCompany, setUpdateCompany] = useState(leadDetailInfo?.company || "");
+  const [updateEmail, setUpdateEmail] = useState(leadDetailInfo?.email || "");
+  const [updateJobTitle, setUpdateJobTitle] = useState(leadDetailInfo?.jobTitle || "");
+  const [updateName, setUpdateName] = useState(leadDetailInfo?.name || "");
+  const [updatePhone, setUpdatePhone] = useState(leadDetailInfo?.phone || "");
+  const [updateRating, setUpdateRating] = useState(Number(leadDetailInfo?.rating) || 1);
+  const [updateSource, setUpdateSource] = useState(leadDetailInfo?.source || "");
+  const [updateStatus, setUpdateStatus] = useState<string | null>(leadDetailInfo?.status || null);
+
+  // UPDATED FLAG
+  const [isUpdated, setIsUpdated] = useState(false);
+  // HANDLE CLICK CONFIRM CHANGE BUTTON
+  const handleConfirmChangeToggle = () => {
+    if (!leadDetailInfo) return;
+
+    const newLeadDetail: LeadDetailType = {
+      leadID: leadDetailInfo.leadID ?? "",
+      avatarURL: updateAvatar || leadDetailInfo.avatarURL || "",
+      name: updateName || leadDetailInfo.name || "",
+      jobTitle: updateJobTitle || leadDetailInfo.jobTitle || "",
+      company: updateCompany || leadDetailInfo.company || "",
+      phone: updatePhone || leadDetailInfo.phone || "",
+      email: updateEmail || leadDetailInfo.email || "",
+      status: updateStatus || leadDetailInfo.status || "",
+      source: updateSource || leadDetailInfo.source || "",
+      nation: leadDetailInfo.nation ?? "",
+      createdDate: leadDetailInfo.createdDate ?? "",
+      rating: updateRating || leadDetailInfo.rating || 1,
+    };
+
+    updateALeadDetail(newLeadDetail);
+    resetAllUpdatestate();
+  };
+
+  // RESET ALL UPDATE STATE
+  const resetAllUpdatestate = () => {
+    setUpdateAvatar(leadDetailInfo?.avatarURL || "");
+    setUpdateCompany(leadDetailInfo?.company || "");
+    setUpdateEmail(leadDetailInfo?.email || "");
+    setUpdateJobTitle(leadDetailInfo?.jobTitle || "");
+    setUpdatePhone(leadDetailInfo?.phone || "");
+    setUpdateStatus(leadDetailInfo?.status || null);
+    setIsUpdated(false);
+  };
+
+  // HANDLE ANY UPDATE FIELDS CHANGED
   useEffect(() => {
-    if (isUpdated){ return; }
-    setIsUpdated(prev => !prev);
-  }, [updateAvatar,updateCompany,updateCreatedDate,updateEmail,updateJobTitle,updateName,updatePhone,updateRating,updateSource,updateStatus]);
+    if (!leadDetailInfo) return;
 
+    if (
+      updateAvatar !== leadDetailInfo.avatarURL ||
+      updateCompany !== leadDetailInfo.company ||
+      updateEmail !== leadDetailInfo.email ||
+      updateJobTitle !== leadDetailInfo.jobTitle ||
+      updateName !== leadDetailInfo.name ||
+      updatePhone !== leadDetailInfo.phone ||
+      updateRating !== Number(leadDetailInfo.rating) ||
+      updateSource !== leadDetailInfo.source ||
+      updateStatus !== leadDetailInfo.status
+    ) {
+      setIsUpdated(true);
+    } else {
+      setIsUpdated(false);
+    }
+  }, [
+    updateAvatar,
+    updateCompany,
+    updateEmail,
+    updateJobTitle,
+    updateName,
+    updatePhone,
+    updateRating,
+    updateSource,
+    updateStatus,
+    leadDetailInfo,
+  ]);
 
-  // INITIAlIZE LEAD STATUS PROCESSING BAR 
+  // PROCESSING BAR INITIALIZATION
   const [processingStatusBar, setProcessingStatusBar] = useState<Record<string, boolean>>(() => {
-    const initial: Record<string, boolean> = {} 
-    leadStage.map( (stage) => {
+    const initial: Record<string, boolean> = {};
+    leadStage.forEach((stage) => {
       initial[stage.status] = false;
-    })
+    });
     return initial;
   });
-  const [currentStatus, setCurrentStatus] = useState<string | null>(leadDetailInfo ? leadDetailInfo.status : null);
 
-  // MATCHING PROCESSING STATUS BAR WITH CURRENT STATUS BAR
+  // PROCESSING BAR SYNC
   useEffect(() => {
-    setProcessingStatusBar(prev => {
-      const newState: Record<string, boolean> = { ...prev };
-      if (currentStatus === null) { return newState };
-      let active = true;
+    setProcessingStatusBar((prev) => {
+      const newState = { ...prev };
+      if (!updateStatus) return newState;
 
-      leadStage.map( (stage) => {
+      let active = true;
+      leadStage.forEach((stage) => {
         newState[stage.status] = active;
-        if (stage.status === currentStatus) {active=false;}
-      })
+        if (stage.status === updateStatus) active = false;
+      });
 
       return newState;
     });
-  }, [currentStatus]);
-  // LEAD ACTIVITY AND RECENT DEALS
-  const sectionHeader = ["Activity Timeline", "Deals"];
-  const [selectedSectionHeader, setSelectedSectionHeader] = useState<string>("Activity Timeline");
+  }, [updateStatus, leadStage]);
 
+  // UPDATE LEAD DETAIL SYNC 
+  useEffect(() => {
+    if (!leadDetailInfo) return;
+
+    setUpdateAvatar(leadDetailInfo.avatarURL || "");
+    setUpdateCompany(leadDetailInfo.company || "");
+    setUpdateEmail(leadDetailInfo.email || "");
+    setUpdateJobTitle(leadDetailInfo.jobTitle || "");
+    setUpdateName(leadDetailInfo.name || "");
+    setUpdatePhone(leadDetailInfo.phone || "");
+    setUpdateRating(Number(leadDetailInfo.rating) || 1);
+    setUpdateSource(leadDetailInfo.source || "");
+    setUpdateStatus(leadDetailInfo.status || null);
+
+    setIsUpdated(false);
+  }, [leadDetailInfo]);
+
+
+  // HEADER SECTION
+  const sectionHeader = ["Activity Timeline", "Deals"];
+  const [selectedSectionHeader, setSelectedSectionHeader] =
+    useState("Activity Timeline");
 
 
   return (
@@ -98,45 +178,54 @@ const LeadDetailWindow = () => {
           </div>
           {
             isUpdated && (
-              <div className={`px-1 py-1 rounded-full border-blue-600/80 border-[1px] w-fit h-fit text-blue-600 hover:scale-[1.15] transition-all duration-500 ${isUpdated ? "text-green-500 border-green-500" : ""}`}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                </svg>
-              </div>
+              <>
+                <div
+                  onClick={() => handleConfirmChangeToggle()}
+                  className={`cursor-pointer px-1 py-1 rounded-full border-blue-600/80 border-[1px] w-fit h-fit text-blue-600 hover:scale-[1.15] transition-all duration-500 ${isUpdated ? "text-green-500 border-green-500" : ""}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                </div>
+                <div
+                  onClick={() => resetAllUpdatestate()}
+                  className={`cursor-pointer px-1 py-1 rounded-full border-blue-600/80 border-[1px] w-fit h-fit text-blue-600 hover:scale-[1.15] transition-all duration-500 ${isUpdated ? "text-red-500 border-red-500" : ""}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                  </svg>
+                </div>
+              </>
             )
           }
         </div>
       </div>
       {/* LEAD CONTACT INFORMATION  */}
-      <div className="flex h-[80px] border-t-[1px] border-b-[1px] px-4 w-full justify-between">
+      <div className="flex h-[80px] border-t-[1px] border-b-[1px] px-4 w-full justify-evenly">
         {/* JOB TITLE */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Job title</div>
-          <div className="text-[14px] font-semibold">
-            <input type="text" value={updateJobTitle ? updateJobTitle : leadDetailInfo?.jobTitle} onChange={(e) => setUpdateJobTitle(e.target.value)} />
-          </div>
+          <input className="text-[14px] w-full h-fit font-semibold outline-none" type="text" value={updateJobTitle} onChange={(e) => setUpdateJobTitle(e.target.value)} />
         </div>
 
         {/* EMAIL */}
-        <div className="w-fit h-full flex flex-col justify-center items-start">
+        <div className="w-1/6 h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Email</div>
-          <input type="text" value={updateEmail ? updateEmail : leadDetailInfo?.email} onChange={(e) => setUpdateEmail(e.target.value)} />
+          <input className="text-[14px] w-full h-fit font-semibold outline-none" type="text" value={updateEmail} onChange={(e) => setUpdateEmail(e.target.value)} />
         </div>
 
         {/* PHONE */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Phone</div>
-          <input type="text" value={updatePhone ? updatePhone : leadDetailInfo?.phone} onChange={(e) => setUpdatePhone(e.target.value)} />
+          <input className="text-[14px] w-full h-fit font-semibold outline-none" type="text" value={updatePhone} onChange={(e) => setUpdatePhone(e.target.value)} />
         </div>
 
         {/* COMPANY */}
-        <div className="w-fit h-full flex flex-col justify-center items-startr">
+        <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Company</div>
-          <input type="text" value={updateCompany ? updateCompany : leadDetailInfo?.company} onChange={(e) => setUpdateCompany(e.target.value)} />
+          <input className="text-[14px] w-full h-fit font-semibold outline-none" type="text" value={updateCompany} onChange={(e) => setUpdateCompany(e.target.value)} />
         </div>
 
         {/* CREATED DATE */}
-        <div className="w-fit h-full flex flex-col justify-center items-start">
+        <div className="w-1/6 h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Created at</div>
           <div className="text-[14px] font-semibold">
             {leadDetailInfo?.createdDate
@@ -144,7 +233,6 @@ const LeadDetailWindow = () => {
               : "-"}
           </div>
         </div>
-
         {/* ASSIGN TO */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Assign to</div>
@@ -164,7 +252,7 @@ const LeadDetailWindow = () => {
                 return (
                   <div
                     key={index}
-                    onClick={() => setCurrentStatus(stage.status)}
+                    onClick={() => setUpdateStatus(stage.status)}
                     className={`
                   w-1/6 h-full flex rounded-tl-3xl rounded-bl-3xl
                   justify-center items-center text-[14px]
@@ -176,7 +264,7 @@ const LeadDetailWindow = () => {
           `}
                   >
                     <div className="font-semibold flex gap-2 justify-center items-center">
-                      {processingStatusBar[status] && (
+                      {processingStatusBar[stage.status] && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -192,7 +280,7 @@ const LeadDetailWindow = () => {
                           />
                         </svg>
                       )}
-                      {status}
+                      {stage.status}
                     </div>
                   </div>
                 );
@@ -203,18 +291,18 @@ const LeadDetailWindow = () => {
                 return (
                   <div
                     key={index}
-                    onClick={() => setCurrentStatus(status)}
+                    onClick={() => setUpdateStatus(stage.status)}
                     className={`
                   w-1/6 h-full flex rounded-tr-3xl rounded-br-3xl
                   justify-center items-center text-[14px]
                   transition-all duration-300 cursor-pointer
-                  ${processingStatusBar[status]
+                  ${processingStatusBar[stage.status]
                         ? "bg-[#4CCB56] hover:bg-[#35B440] text-white"
                         : "bg-gray-300/70 hover:bg-gray-300/90 text-gray-600/60"
                       }
           `}
                   >
-                    {processingStatusBar[status] && (
+                    {processingStatusBar[stage.status] && (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -230,7 +318,7 @@ const LeadDetailWindow = () => {
                         />
                       </svg>
                     )}
-                    {status}
+                    {stage.status}
                   </div>
                 );
               }
@@ -239,19 +327,19 @@ const LeadDetailWindow = () => {
               return (
                 <div
                   key={index}
-                  onClick={() => setCurrentStatus(stage.status)}
+                  onClick={() => setUpdateStatus(stage.status)}
                   className={`
                   w-1/6 h-full flex justify-center items-center text-[14px] 
                   transition-all duration-300 gap-2 cursor-pointer
                   ${processingStatusBar[stage.status]
-                      ? currentStatus === stage.status
+                      ? updateStatus === stage.status
                         ? "bg-[#4CCB56] hover:bg-[#35B440] text-white"
                         : "bg-[#BFF8C2] hover:bg-[#A4EEA8] text-[#2FA739] font-semibold"
                       : "bg-gray-300/70 hover:bg-gray-300/90 text-gray-600/60"
                     }
         `}
                 >
-                  {processingStatusBar[status] && (
+                  {processingStatusBar[stage.status] && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -267,7 +355,7 @@ const LeadDetailWindow = () => {
                       />
                     </svg>
                   )}
-                  {status}
+                  {stage.status}
                 </div>
               );
             })

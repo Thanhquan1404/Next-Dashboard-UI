@@ -52,10 +52,12 @@ const Page = () => {
     <div className={`flex flex-col bg-gray-50 ${selectedLeadId && "h-full"}`}>
       {
         selectedLeadId ?
+          // LEAD DETAIL WINDOW 
           <>
             <LeadDetailWindow />
           </>
           :
+          // LEAD KANBAN 
           <>
             <LeadsPageHeader
               selectedStatus={selectedStatus}

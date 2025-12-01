@@ -57,7 +57,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
         }
       }
 
-      if (!leadToMove || !fromStage) {
+      if (!leadToMove || !fromStage || fromStage === newStage) {
         return prev;
       }
 
