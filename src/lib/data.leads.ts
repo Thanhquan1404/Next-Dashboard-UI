@@ -248,7 +248,7 @@ export interface LeadDetailType {
   leadID: string;
   avatarURL: string;
   name: string;
-  jobTitle: string;
+  expectedValue: number;
   company: string;
   nation: string;
   createdDate: string;

@@ -6,6 +6,8 @@ import LeadActivityTimelineSequence from "./LeadActivityTimelineSequence";
 import UpLoadAvatar from "@/components/UpLoadAvatar";
 import { useLeadStageColumn } from "@/providers/LeadStageColumnProvider";
 import { LeadDetailType } from "@/lib/data.leads";
+import LeadProcessingBar from "@/components/LeadProcessingBar";
+import { moneyFormat } from "@/util/moneyFormat";
 
 const LeadDetailWindow = () => {
   // LEAD DETAIL PROVIDER 
@@ -17,7 +19,7 @@ const LeadDetailWindow = () => {
   const [updateAvatar, setUpdateAvatar] = useState("");
   const [updateCompany, setUpdateCompany] = useState("");
   const [updateEmail, setUpdateEmail] = useState("");
-  const [updateJobTitle, setUpdateJobTitle] = useState("");
+  const [updateExpectedValue, setUpdateExpectedValue] = useState(0);
   const [updateName, setUpdateName] = useState("");
   const [updatePhone, setUpdatePhone] = useState("");
   const [updateRating, setUpdateRating] = useState(1);
@@ -34,7 +36,7 @@ const LeadDetailWindow = () => {
       leadID: leadDetailInfo.leadID ?? "",
       avatarURL: updateAvatar || leadDetailInfo.avatarURL || "",
       name: updateName || leadDetailInfo.name || "",
-      jobTitle: updateJobTitle || leadDetailInfo.jobTitle || "",
+      expectedValue: updateExpectedValue || leadDetailInfo.expectedValue || 0,
       company: updateCompany || leadDetailInfo.company || "",
       phone: updatePhone || leadDetailInfo.phone || "",
       email: updateEmail || leadDetailInfo.email || "",
@@ -55,7 +57,7 @@ const LeadDetailWindow = () => {
     setUpdateAvatar(leadDetailInfo?.avatarURL || "");
     setUpdateCompany(leadDetailInfo?.company || "");
     setUpdateEmail(leadDetailInfo?.email || "");
-    setUpdateJobTitle(leadDetailInfo?.jobTitle || "");
+    setUpdateExpectedValue(leadDetailInfo?.expectedValue || 0);
     setUpdatePhone(leadDetailInfo?.phone || "");
     setUpdateStatus(leadDetailInfo?.status || null);
     setIsUpdated(false);
@@ -67,7 +69,7 @@ const LeadDetailWindow = () => {
       setUpdateAvatar("");
       setUpdateCompany("");
       setUpdateEmail("");
-      setUpdateJobTitle("");
+      setUpdateExpectedValue(0);
       setUpdateName("");
       setUpdatePhone("");
       setUpdateRating(1);
@@ -80,7 +82,7 @@ const LeadDetailWindow = () => {
     setUpdateAvatar(leadDetailInfo.avatarURL || "");
     setUpdateCompany(leadDetailInfo.company || "");
     setUpdateEmail(leadDetailInfo.email || "");
-    setUpdateJobTitle(leadDetailInfo.jobTitle || "");
+    setUpdateExpectedValue(leadDetailInfo.expectedValue || 0);
     setUpdateName(leadDetailInfo.name || "");
     setUpdatePhone(leadDetailInfo.phone || "");
     setUpdateRating(Number(leadDetailInfo.rating) || 1);
@@ -101,7 +103,7 @@ const LeadDetailWindow = () => {
       updateAvatar !== (leadDetailInfo.avatarURL || "") ||
       updateCompany !== (leadDetailInfo.company || "") ||
       updateEmail !== (leadDetailInfo.email || "") ||
-      updateJobTitle !== (leadDetailInfo.jobTitle || "") ||
+      updateExpectedValue !== (leadDetailInfo.expectedValue || "") ||
       updateName !== (leadDetailInfo.name || "") ||
       updatePhone !== (leadDetailInfo.phone || "") ||
       updateRating !== (Number(leadDetailInfo.rating) || 1) ||
@@ -113,7 +115,7 @@ const LeadDetailWindow = () => {
     updateAvatar,
     updateCompany,
     updateEmail,
-    updateJobTitle,
+    updateExpectedValue,
     updateName,
     updatePhone,
     updateRating,
@@ -155,7 +157,7 @@ const LeadDetailWindow = () => {
     setUpdateAvatar(leadDetailInfo.avatarURL || "");
     setUpdateCompany(leadDetailInfo.company || "");
     setUpdateEmail(leadDetailInfo.email || "");
-    setUpdateJobTitle(leadDetailInfo.jobTitle || "");
+    setUpdateExpectedValue(leadDetailInfo.expectedValue || 0);
     setUpdateName(leadDetailInfo.name || "");
     setUpdatePhone(leadDetailInfo.phone || "");
     setUpdateRating(Number(leadDetailInfo.rating) || 1);
@@ -235,8 +237,8 @@ const LeadDetailWindow = () => {
       <div className="flex h-[80px] border-t-[1px] border-b-[1px] px-4 w-full justify-evenly">
         {/* JOB TITLE */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
-          <div className="text-[12px] text-gray-500/90">Job title</div>
-          <input className="text-[14px] w-full h-fit font-semibold outline-none" type="text" value={updateJobTitle} onChange={(e) => setUpdateJobTitle(e.target.value)} />
+          <div className="text-[12px] text-gray-500/90">Expected value</div>
+          <div className="text-[14px] w-full h-fit font-semibold"> {moneyFormat(updateExpectedValue)}đ</div>
         </div>
 
         {/* EMAIL */}
@@ -274,126 +276,7 @@ const LeadDetailWindow = () => {
       </div>
       {/* LEAD PROCESSING BAR  */}
       <div className="w-full h-fit py-4 px-4 flex flex-col gap-2">
-        <div className="text-[12px] font-semibold py-1">
-          Leads Details
-        </div>
-        <div className="w-full h-[40px] flex gap-2">
-          {
-            leadStage.map((stage, index) => {
-              // FIRST ITEM
-              if (index === 0) {
-                return (
-                  <div
-                    key={index}
-                    onClick={() => setUpdateStatus(stage.status)}
-                    className={`
-                  w-1/6 h-full flex rounded-tl-3xl rounded-bl-3xl
-                  justify-center items-center text-[14px]
-                  transition-all duration-300 cursor-pointer
-                  ${processingStatusBar[stage.status]
-                        ? "bg-[#BFF8C2] hover:bg-[#A4EEA8] text-[#2FA739]"
-                        : "bg-gray-300/70 hover:bg-gray-300/90"
-                      }
-          `}
-                  >
-                    <div className="font-semibold flex gap-2 justify-center items-center">
-                      {processingStatusBar[stage.status] && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          strokeWidth={1.5}
-                          stroke="currentColor"
-                          className="size-4"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="m4.5 12.75 6 6 9-13.5"
-                          />
-                        </svg>
-                      )}
-                      {stage.status}
-                    </div>
-                  </div>
-                );
-              }
-
-              // LAST ITEM
-              if (index === leadStage.length - 1) {
-                return (
-                  <div
-                    key={index}
-                    onClick={() => setUpdateStatus(stage.status)}
-                    className={`
-                  w-1/6 h-full flex rounded-tr-3xl rounded-br-3xl
-                  justify-center items-center text-[14px]
-                  transition-all duration-300 cursor-pointer
-                  ${processingStatusBar[stage.status]
-                        ? "bg-[#4CCB56] hover:bg-[#35B440] text-white"
-                        : "bg-gray-300/70 hover:bg-gray-300/90 text-gray-600/60"
-                      }
-          `}
-                  >
-                    {processingStatusBar[stage.status] && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="size-4"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="m4.5 12.75 6 6 9-13.5"
-                        />
-                      </svg>
-                    )}
-                    {stage.status}
-                  </div>
-                );
-              }
-
-              // MIDDLE ITEMS
-              return (
-                <div
-                  key={index}
-                  onClick={() => setUpdateStatus(stage.status)}
-                  className={`
-                  w-1/6 h-full flex justify-center items-center text-[14px] 
-                  transition-all duration-300 gap-2 cursor-pointer
-                  ${processingStatusBar[stage.status]
-                      ? updateStatus === stage.status
-                        ? "bg-[#4CCB56] hover:bg-[#35B440] text-white"
-                        : "bg-[#BFF8C2] hover:bg-[#A4EEA8] text-[#2FA739] font-semibold"
-                      : "bg-gray-300/70 hover:bg-gray-300/90 text-gray-600/60"
-                    }
-        `}
-                >
-                  {processingStatusBar[stage.status] && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="size-4"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="m4.5 12.75 6 6 9-13.5"
-                      />
-                    </svg>
-                  )}
-                  {stage.status}
-                </div>
-              );
-            })
-          }
-        </div>
+        <LeadProcessingBar currentStage={updateStatus || ""} setCurrentStage={setUpdateStatus} />
       </div>
       {/* LEAD ACTIVITY AND RECENT DEALS */}
       <div className="w-full flex-1 flex px-4 py-4 gap-2">

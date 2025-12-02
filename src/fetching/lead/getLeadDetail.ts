@@ -18,7 +18,11 @@ export interface ApiResponseDataType {
   expectedRevenue: number;
   note: string;
   avatarUrl: string;
-  stage: leadStageType;
+  stage: {
+    id: string,
+    name: string,
+    color: string,
+  };
   createdAt: string;
   updatedAt: string; 
   assignTo: AssignedUser;
@@ -29,7 +33,7 @@ const mappingResponseData = (responseLeadDetail: ApiResponseDataType): LeadDetai
     leadID: responseLeadDetail.id,
     avatarURL: responseLeadDetail.avatarUrl,
     name: responseLeadDetail.fullName,
-    jobTitle: "",
+    expectedValue: responseLeadDetail.expectedRevenue,
     company: responseLeadDetail.company,
     nation: "",
     createdDate: responseLeadDetail.createdAt,
@@ -37,7 +41,7 @@ const mappingResponseData = (responseLeadDetail: ApiResponseDataType): LeadDetai
     email: responseLeadDetail.email,
     rating: responseLeadDetail.rating,
     source: "",
-    status: responseLeadDetail.stage.status,
+    status: responseLeadDetail.stage.name,
     assignTo: responseLeadDetail.assignTo.lastName + " " + responseLeadDetail.assignTo.firstName,
   }
 
