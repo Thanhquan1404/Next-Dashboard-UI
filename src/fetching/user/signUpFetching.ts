@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
-import { URL, UserSignUpType } from "@/lib/data";
+import { UserSignUpType } from "@/lib/data.user";
+import { URL } from "@/lib/data"
 // FETCHING DATA TYPE 
 interface FetchingDataType {
   username: string;
@@ -57,7 +58,7 @@ export const useSignUpFetching = () => {
 
     try {
       const response = await axios.post<ApiResponse>(
-        `${URL}/crm/users/registration`,
+        `${URL}/authentication/registration`,
         payload,
         {
           headers: { "Content-Type": "application/json" },
