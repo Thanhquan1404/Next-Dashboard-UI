@@ -8,16 +8,18 @@ import {
 import { createContext, useCallback, useContext, useState, useEffect } from "react";
 import { useNotification } from "./NotificationProvider";
 import useGetLeadDetail from "@/fetching/lead/getLeadDetail";
+import useUpdateLeadStage from "@/fetching/lead/updateLeadStage";
 
 interface LeadDetailSelectContextType {
   selectedLeadId: string | null;
   leadDetailInfo: LeadDetailType | null;
   leadSequenceActivity: LeadDetailActivityTimeline[] | null;
-  loading: boolean;
+  loadingGetLeadDetail: boolean;
   selectLeadDetail: (leadID: string) => void;
   removeSelectedLeadDetail: () => void;
   addingNewLeadActivity: (newLead: LeadDetailActivityTimeline) => void;
   updateALeadDetail: (newLeadDetail: LeadDetailType) => void;
+  updateLeadStage: (leadID: string, forwardStageID: string) => void;
 }
 
 const LeadDetailSelectContext = createContext<LeadDetailSelectContextType | null>(null);
@@ -41,7 +43,8 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
   const [leadSequenceActivity, setLeadSequenceActivity] = useState<LeadDetailActivityTimeline[] | null>(null);
   const { showNotification } = useNotification();
 
-  const { loading, data, error, getLeadDetailInformation } = useGetLeadDetail();
+  const { loading: loadingGetLeadDetail,  getLeadDetailInformation } = useGetLeadDetail();
+  const { loading: loadingUpdateLeadStage, updateLeadStage: updateStage} = useUpdateLeadStage();
   // HANDLE CLICK ON A LEAD
   const selectLeadDetail = (leadID: string) => {
     setSelectedLeadId(leadID);
@@ -96,16 +99,31 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
     setLeadDetailInfo(newLeadDetail);
     showNotification("Lead information updated successfully");
   };
+  // UPDATE LEAD STAGE 
+  const updateLeadStage = async (leadID: string, forwardStageID: string) => {
+    try {
+      const success  = await updateStage(leadID, forwardStageID);
+
+      if (success){
+        showNotification("Successfully update lead stage")
+      } else{
+        showNotification("Error in update lead stage", true);
+      }
+    } catch (err) {
+      showNotification(String(err), true);
+    }
+  }
 
   const value: LeadDetailSelectContextType = {
     selectedLeadId,
     leadDetailInfo,
     leadSequenceActivity,
-    loading,
+    loadingGetLeadDetail,
     selectLeadDetail,
     removeSelectedLeadDetail,
     addingNewLeadActivity,
     updateALeadDetail,
+    updateLeadStage
   };
 
   return (

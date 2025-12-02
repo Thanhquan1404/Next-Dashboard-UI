@@ -11,7 +11,10 @@ import { moneyFormat } from "@/util/moneyFormat";
 
 const LeadDetailWindow = () => {
   // LEAD DETAIL PROVIDER 
-  const { removeSelectedLeadDetail, leadDetailInfo, leadSequenceActivity, updateALeadDetail, loading } = useLeadDetailSelect();
+  const { 
+    removeSelectedLeadDetail, leadDetailInfo, leadSequenceActivity, 
+    updateALeadDetail, loadingGetLeadDetail, updateLeadStage
+  } = useLeadDetailSelect();
   // LEAD STAGE PROVIDER 
   const { leadStage } = useLeadStageColumn();
 
@@ -25,12 +28,17 @@ const LeadDetailWindow = () => {
   const [updateRating, setUpdateRating] = useState(1);
   const [updateSource, setUpdateSource] = useState("");
   const [updateStatus, setUpdateStatus] = useState<string | null>(null);
+  const [forwardStageID, setForwardStageID] = useState<string | null>(null);
 
   // UPDATED FLAG
   const [isUpdated, setIsUpdated] = useState(false);
   // HANDLE CLICK CONFIRM CHANGE BUTTON
   const handleConfirmChangeToggle = () => {
     if (!leadDetailInfo) return;
+
+    if (forwardStageID){
+      updateLeadStage(leadDetailInfo.leadID, forwardStageID);
+    }
 
     const newLeadDetail: LeadDetailType = {
       leadID: leadDetailInfo.leadID ?? "",
@@ -276,7 +284,7 @@ const LeadDetailWindow = () => {
       </div>
       {/* LEAD PROCESSING BAR  */}
       <div className="w-full h-fit py-4 px-4 flex flex-col gap-2">
-        <LeadProcessingBar currentStage={updateStatus || ""} setCurrentStage={setUpdateStatus} />
+        <LeadProcessingBar currentStage={updateStatus || ""} setCurrentStage={setUpdateStatus} setForwardStageId={setForwardStageID}/>
       </div>
       {/* LEAD ACTIVITY AND RECENT DEALS */}
       <div className="w-full flex-1 flex px-4 py-4 gap-2">

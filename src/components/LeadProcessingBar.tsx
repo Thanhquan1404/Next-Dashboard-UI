@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 interface Props {
   currentStage: string;
   setCurrentStage: React.Dispatch<React.SetStateAction<string | null>>;
+  setForwardStageId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-const LeadProcessingBar = ({ currentStage, setCurrentStage }: Props) => {
+const LeadProcessingBar = ({ currentStage, setCurrentStage, setForwardStageId }: Props) => {
   // GET LEAD STAGE LIST 
   const { leadStage } = useLeadStageColumn();
 
@@ -25,7 +26,6 @@ const LeadProcessingBar = ({ currentStage, setCurrentStage }: Props) => {
       if (stage.status === currentStage) active = false;
     });
 
-    barLength = leadStage.length;
     setStagePreprocessingBar(bar);
   }, [leadStage, currentStage]);  
 
@@ -60,7 +60,10 @@ const LeadProcessingBar = ({ currentStage, setCurrentStage }: Props) => {
           return (
             <div
               key={index}
-              onClick={() => setCurrentStage(stage.status)}
+              onClick={() => {
+                setCurrentStage(stage.status);
+                setForwardStageId(stage.id);
+              }}
               className={`${base} ${color} ${shape}`}
             >
               {isActive && (
