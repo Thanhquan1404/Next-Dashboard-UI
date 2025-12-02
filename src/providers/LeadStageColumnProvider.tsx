@@ -3,14 +3,17 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from "react";
 import { leadType, leadStageType } from "@/lib/data.leads";
 import useGetListLeads from "@/fetching/lead/getListLeads";
+import useAddLead from "@/fetching/lead/addLead";
+import { useNotification } from "./NotificationProvider";
 
 // CONTEXT VALUE TYPE
 interface LeadStageColumnContextType {
   leadStage: leadStageType[],
-  loading: boolean,
+  getListLeadLoading: boolean,
+  addLeadLoading: boolean,
   leadItemsInStage: Record<string, leadType[]>,
   updateLeadStage: (leadId: string, newStage: string) => void,
-  addingNewLead: (newLead: leadType, targetColumn: string) => void,
+  addingNewLead: (newLead: leadType, targetColumn: string, stageID: string) => void,
   addingNewLeadColum: (columnName: string, columnColor: string) => void,
 }
 
@@ -32,12 +35,15 @@ interface LeadStageColumnProviderProps {
 }
 
 export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = ({ children }) => {
+  const {showNotification} = useNotification();
   // INITIALIZE GET LIST LEADS REQUEST
-  const { loading, data, error, requestGetListLeads } = useGetListLeads();
+  const { loading: getListLeadLoading, requestGetListLeads } = useGetListLeads();
+  const { loading: addLeadLoading, addLead} = useAddLead();
+
   // LEAD ITEMS IN SPECIFIC COLUMN INITIALIZE
   const [leadItemsInStage, setLeadItemsInStage] = useState<Record<string, leadType[]>>({});
   const [leadStage, setLeadStage] = useState<leadStageType[]>([]);
-  // ACTIVATE API REQUEST 
+  // GET LIST LEAD REQUEST
   const getListLeads = useCallback(async () => {
     try {
       const { data, leadStage } = await requestGetListLeads();
@@ -119,11 +125,23 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
   };
 
   // ADDING A NEW LEAD 
-  const addingNewLead = (newLead: leadType, targetColumn: string) => {
-    setLeadItemsInStage((prev) => ({
-      ...prev,
-      [targetColumn]: [...prev[targetColumn], newLead]
-    }));
+  const addingNewLead = async (newLead: leadType, targetColumn: string, stageID: string) => {
+    try {
+      const success: boolean = await addLead(newLead, stageID);
+      
+      if (!success) {
+        showNotification("Failed to add lead", true);
+        return;
+      }
+
+      setLeadItemsInStage((prev) => ({
+        ...prev,
+        [targetColumn]: [...prev[targetColumn], newLead]
+      }));
+      showNotification("Successfully add a new lead");
+    } catch (err) {
+      showNotification(String(err), true);
+    }
   }
 
   // ADDING NEW COLUMN 
@@ -147,7 +165,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
 
 
   return (
-    <LeadStageColumnContext.Provider value={{ loading, leadStage, leadItemsInStage, updateLeadStage, addingNewLead, addingNewLeadColum }}>
+    <LeadStageColumnContext.Provider value={{ getListLeadLoading, addLeadLoading,leadStage, leadItemsInStage, updateLeadStage, addingNewLead, addingNewLeadColum }}>
       {children}
     </LeadStageColumnContext.Provider>
   );

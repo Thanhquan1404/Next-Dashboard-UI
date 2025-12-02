@@ -1,5 +1,5 @@
 "use client";
-import { statusOptions, companyOptions } from "@/lib/data.leads";
+import { statusOptions, companyOptions, leadStageType } from "@/lib/data.leads";
 import { useState } from "react";
 import LeadsPageHeader from "./LeadsPageHeader";
 import { leadType } from "@/lib/data.leads";
@@ -19,7 +19,7 @@ const Page = () => {
   const [leadDraggingID, setLeadDraggingID] = useState<string>("");
 
   // LEAD ITEMS IN STAGE 
-  const { leadItemsInStage, updateLeadStage, addingNewLead, leadStage, loading } = useLeadStageColumn();
+  const { leadItemsInStage, updateLeadStage, addingNewLead, leadStage, getListLeadLoading } = useLeadStageColumn();
 
   // DRAG START
   const dragStartEvent = (
@@ -41,15 +41,14 @@ const Page = () => {
   };
 
   // HANDLE ADDING NEW LEAD 
-  const handleAddingNewLead = (newLead: leadType, targetColumn: string) => {
-    addingNewLead(newLead, targetColumn);
-    showNotification("Successfully add a new lead");
+  const handleAddingNewLead = (newLead: leadType, targetColumn: string, stageID: string) => {
+    addingNewLead(newLead, targetColumn, stageID);
   }
 
   // LEAD DETAIL ID SELECTED
   const { selectedLeadId, removeSelectedLeadDetail } = useLeadDetailSelect();
 
-  if (loading){
+  if (getListLeadLoading){
     return (
       <LoadingOverlay isLoading={true}/>
     )
@@ -76,9 +75,10 @@ const Page = () => {
               style={{ scrollbarGutter: "stable" }} 
             >
               <div className="flex gap-4 p-4 h-full items-start"> 
-                {leadStage.map((stage: any) => (
+                {leadStage.map((stage: leadStageType) => (
                   <LeadStageColumn
                     key={stage.status}
+                    stageID={stage.id}
                     leadStage={stage.status}
                     leadColor={stage.color}
                     leadItems={leadItemsInStage[stage.status]}

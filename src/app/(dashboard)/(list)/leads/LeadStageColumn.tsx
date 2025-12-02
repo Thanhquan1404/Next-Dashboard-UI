@@ -7,16 +7,18 @@ import Rating from '@mui/material/Rating';
 import LeadSourceComponent from "@/components/LeadSourceComponent";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 interface Props {
+  stageID: string,
   leadStage: string,
   leadColor: string,
   leadItems: leadType[];
   dragStartEvent: (e: React.DragEvent<HTMLDivElement>, leadID: string) => void;
   dropEvent: (statusColumnName: string) => void;
   dragOverEvent: (e: React.DragEvent<HTMLDivElement>) => void;
-  handleAddingNewLead: (newLead: leadType, targetColumn: string) => void,
+  handleAddingNewLead: (newLead: leadType, targetColumn: string, stageID: string) => void,
 }
 
 const LeadStageColumn = ({
+  stageID,
   leadStage,
   leadColor,
   leadItems,
@@ -56,7 +58,7 @@ const LeadStageColumn = ({
       source: leadSource as leadSourceType,
       status: leadStage,
     };
-    handleAddingNewLead(newLead, leadStage);
+    handleAddingNewLead(newLead, leadStage, stageID);
     resetAllState();
   }
   // INITIALIZE LEAD SELECT CONTEXT 

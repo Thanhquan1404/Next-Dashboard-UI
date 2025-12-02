@@ -12,7 +12,7 @@ const LeadProcessingBar = ({ currentStage, setCurrentStage }: Props) => {
 
   // PREPROCESS BAR STATE
   const [stagePreprocessingBar, setStagePreprocessingBar] = useState<Record<string, boolean>>({});
-
+  let barLength = 0;
   // UPDATE BAR WHEN leadStage OR currentStage changes
   useEffect(() => {
     if (!leadStage || leadStage.length === 0) return;
@@ -25,6 +25,7 @@ const LeadProcessingBar = ({ currentStage, setCurrentStage }: Props) => {
       if (stage.status === currentStage) active = false;
     });
 
+    barLength = leadStage.length;
     setStagePreprocessingBar(bar);
   }, [leadStage, currentStage]);  
 
@@ -39,7 +40,7 @@ const LeadProcessingBar = ({ currentStage, setCurrentStage }: Props) => {
 
           // CSS BASE
           const base =
-            "w-1/6 h-full flex justify-center items-center text-[14px] transition-all duration-300 cursor-pointer gap-2";
+            `w-1/${leadStage.length} h-full flex justify-center items-center text-[14px] transition-all duration-300 cursor-pointer gap-2`;
 
           // COLOR LOGIC
           const color = isActive
