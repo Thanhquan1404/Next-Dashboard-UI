@@ -9,20 +9,20 @@ import { LeadDetailType } from "@/lib/data.leads";
 
 const LeadDetailWindow = () => {
   // LEAD DETAIL PROVIDER 
-  const { removeSelectedLeadDetail, leadDetailInfo, leadSequenceActivity, updateALeadDetail } = useLeadDetailSelect();
+  const { removeSelectedLeadDetail, leadDetailInfo, leadSequenceActivity, updateALeadDetail, loading } = useLeadDetailSelect();
   // LEAD STAGE PROVIDER 
   const { leadStage } = useLeadStageColumn();
 
   // UPDATE STATE 
-  const [updateAvatar, setUpdateAvatar] = useState(leadDetailInfo?.avatarURL || "");
-  const [updateCompany, setUpdateCompany] = useState(leadDetailInfo?.company || "");
-  const [updateEmail, setUpdateEmail] = useState(leadDetailInfo?.email || "");
-  const [updateJobTitle, setUpdateJobTitle] = useState(leadDetailInfo?.jobTitle || "");
-  const [updateName, setUpdateName] = useState(leadDetailInfo?.name || "");
-  const [updatePhone, setUpdatePhone] = useState(leadDetailInfo?.phone || "");
-  const [updateRating, setUpdateRating] = useState(Number(leadDetailInfo?.rating) || 1);
-  const [updateSource, setUpdateSource] = useState(leadDetailInfo?.source || "");
-  const [updateStatus, setUpdateStatus] = useState<string | null>(leadDetailInfo?.status || null);
+  const [updateAvatar, setUpdateAvatar] = useState("");
+  const [updateCompany, setUpdateCompany] = useState("");
+  const [updateEmail, setUpdateEmail] = useState("");
+  const [updateJobTitle, setUpdateJobTitle] = useState("");
+  const [updateName, setUpdateName] = useState("");
+  const [updatePhone, setUpdatePhone] = useState("");
+  const [updateRating, setUpdateRating] = useState(1);
+  const [updateSource, setUpdateSource] = useState("");
+  const [updateStatus, setUpdateStatus] = useState<string | null>(null);
 
   // UPDATED FLAG
   const [isUpdated, setIsUpdated] = useState(false);
@@ -43,6 +43,7 @@ const LeadDetailWindow = () => {
       nation: leadDetailInfo.nation ?? "",
       createdDate: leadDetailInfo.createdDate ?? "",
       rating: updateRating || leadDetailInfo.rating || 1,
+      assignTo: leadDetailInfo.assignTo || "not assign",
     };
 
     updateALeadDetail(newLeadDetail);
@@ -60,25 +61,54 @@ const LeadDetailWindow = () => {
     setIsUpdated(false);
   };
 
-  // HANDLE ANY UPDATE FIELDS CHANGED
+  // SYNC EDIT STATE WITH LEAD DETAIL
   useEffect(() => {
-    if (!leadDetailInfo) return;
-
-    if (
-      updateAvatar !== leadDetailInfo.avatarURL ||
-      updateCompany !== leadDetailInfo.company ||
-      updateEmail !== leadDetailInfo.email ||
-      updateJobTitle !== leadDetailInfo.jobTitle ||
-      updateName !== leadDetailInfo.name ||
-      updatePhone !== leadDetailInfo.phone ||
-      updateRating !== Number(leadDetailInfo.rating) ||
-      updateSource !== leadDetailInfo.source ||
-      updateStatus !== leadDetailInfo.status
-    ) {
-      setIsUpdated(true);
-    } else {
+    if (!leadDetailInfo) {
+      setUpdateAvatar("");
+      setUpdateCompany("");
+      setUpdateEmail("");
+      setUpdateJobTitle("");
+      setUpdateName("");
+      setUpdatePhone("");
+      setUpdateRating(1);
+      setUpdateSource("");
+      setUpdateStatus(null);
       setIsUpdated(false);
+      return;
     }
+
+    setUpdateAvatar(leadDetailInfo.avatarURL || "");
+    setUpdateCompany(leadDetailInfo.company || "");
+    setUpdateEmail(leadDetailInfo.email || "");
+    setUpdateJobTitle(leadDetailInfo.jobTitle || "");
+    setUpdateName(leadDetailInfo.name || "");
+    setUpdatePhone(leadDetailInfo.phone || "");
+    setUpdateRating(Number(leadDetailInfo.rating) || 1);
+    setUpdateSource(leadDetailInfo.source || "");
+    setUpdateStatus(leadDetailInfo.status || null);
+
+    setIsUpdated(false);
+  }, [leadDetailInfo]);
+
+  // DETECT CHANGES AND UPDATE isUpdated
+  useEffect(() => {
+    if (!leadDetailInfo) {
+      setIsUpdated(false);
+      return;
+    }
+
+    const changed =
+      updateAvatar !== (leadDetailInfo.avatarURL || "") ||
+      updateCompany !== (leadDetailInfo.company || "") ||
+      updateEmail !== (leadDetailInfo.email || "") ||
+      updateJobTitle !== (leadDetailInfo.jobTitle || "") ||
+      updateName !== (leadDetailInfo.name || "") ||
+      updatePhone !== (leadDetailInfo.phone || "") ||
+      updateRating !== (Number(leadDetailInfo.rating) || 1) ||
+      updateSource !== (leadDetailInfo.source || "") ||
+      updateStatus !== (leadDetailInfo.status || null);
+
+    setIsUpdated(changed);
   }, [
     updateAvatar,
     updateCompany,
@@ -89,8 +119,9 @@ const LeadDetailWindow = () => {
     updateRating,
     updateSource,
     updateStatus,
-    leadDetailInfo,
+    leadDetailInfo
   ]);
+
 
   // PROCESSING BAR INITIALIZATION
   const [processingStatusBar, setProcessingStatusBar] = useState<Record<string, boolean>>(() => {
@@ -154,12 +185,14 @@ const LeadDetailWindow = () => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
             </svg>
           </div>
-          <UpLoadAvatar avatar={updateAvatar ? updateAvatar : leadDetailInfo?.avatarURL} setAvatar={setUpdateAvatar} />
+          <div className="w-[50px] h-[50px] flex justify-center items-center rounded-full overflow-hidden">
+            <UpLoadAvatar avatar={updateAvatar ? updateAvatar : leadDetailInfo?.avatarURL} setAvatar={setUpdateAvatar} />
+          </div>
           <div>
             {/* LEAD NAME  */}
             <p className="text-[18px] font-semibold">{leadDetailInfo?.name}</p>
             {/* LEAD COMPANY  */}
-            <p className="text-[12px] text-gray-500/80">{leadDetailInfo?.company}, {leadDetailInfo?.nation}</p>
+            <p className="text-[12px] text-gray-500/80">{leadDetailInfo?.company}</p>
           </div>
         </div>
 
@@ -236,7 +269,7 @@ const LeadDetailWindow = () => {
         {/* ASSIGN TO */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Assign to</div>
-          <div className="text-[14px] font-semibold">John Doe</div>
+          <div className="text-[14px] font-semibold">{leadDetailInfo && leadDetailInfo.assignTo}</div>
         </div>
       </div>
       {/* LEAD PROCESSING BAR  */}

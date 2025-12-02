@@ -257,129 +257,8 @@ export interface LeadDetailType {
   rating: number;
   source: string;
   status: string;
+  assignTo: string;
 }
-export const leadDetailsSample: Record<string, LeadDetailType> = {
-  "lead-001": {
-    ...lead[0],
-    jobTitle: "Sales Staff",
-    company: "Vingroup",
-    nation: "Vietnam",
-  },
-  "lead-002": {
-    ...lead[1],
-    jobTitle: "HR Officer",
-    company: "VNPT",
-    nation: "Vietnam",
-  },
-  "lead-003": {
-    ...lead[2],
-    jobTitle: "Software Engineer",
-    company: "FPT Software",
-    nation: "Vietnam",
-  },
-  "lead-004": {
-    ...lead[3],
-    jobTitle: "Accountant",
-    company: "TH True Milk",
-    nation: "Vietnam",
-  },
-  "lead-005": {
-    ...lead[4],
-    jobTitle: "Purchasing Manager",
-    company: "Honda Vietnam",
-    nation: "Vietnam",
-  },
-  "lead-006": {
-    ...lead[5],
-    jobTitle: "Marketing Specialist",
-    company: "Google Vietnam",
-    nation: "Vietnam",
-  },
-  "lead-007": {
-    ...lead[6],
-    jobTitle: "IT Manager",
-    company: "Tiki",
-    nation: "Vietnam",
-  },
-  "lead-008": {
-    ...lead[7],
-    jobTitle: "Operations Supervisor",
-    company: "Grab Vietnam",
-    nation: "Vietnam",
-  },
-  "lead-009": {
-    ...lead[8],
-    jobTitle: "Business Analyst",
-    company: "VinFast",
-    nation: "Vietnam",
-  },
-  "lead-010": {
-    ...lead[9],
-    jobTitle: "Project Manager",
-    company: "CMC Corp",
-    nation: "Vietnam",
-  },
-  "lead-011": {
-    ...lead[10],
-    jobTitle: "Sales Director",
-    company: "Shopee",
-    nation: "Singapore",
-  },
-  "lead-012": {
-    ...lead[11],
-    jobTitle: "Finance Controller",
-    company: "Masan Group",
-    nation: "Vietnam",
-  },
-  "lead-013": {
-    ...lead[12],
-    jobTitle: "CEO",
-    company: "StartupX",
-    nation: "Vietnam",
-  },
-  "lead-014": {
-    ...lead[13],
-    jobTitle: "HR Manager",
-    company: "Vietjet Air",
-    nation: "Vietnam",
-  },
-  "lead-015": {
-    ...lead[14],
-    jobTitle: "Product Manager",
-    company: "MoMo",
-    nation: "Vietnam",
-  },
-  "lead-016": {
-    ...lead[15],
-    jobTitle: "Marketing Director",
-    company: "Unilever",
-    nation: "UK",
-  },
-  "lead-017": {
-    ...lead[16],
-    jobTitle: "Operations Director",
-    company: "Lazada",
-    nation: "Singapore",
-  },
-  "lead-018": {
-    ...lead[17],
-    jobTitle: "CFO",
-    company: "Techcombank",
-    nation: "Vietnam",
-  },
-  "lead-019": {
-    ...lead[18],
-    jobTitle: "Senior Consultant",
-    company: "KPMG Vietnam",
-    nation: "Vietnam",
-  },
-  "lead-020": {
-    ...lead[19],
-    jobTitle: "QA Engineer",
-    company: "Samsung Electronics",
-    nation: "South Korea",
-  },
-};
 
 
 //---------------------------------------- LEAD DETAIL SEQUENCE ACTIVITY TIMELINE ----------------------------------------
@@ -466,6 +345,13 @@ export interface leadStageType {
 }
 
 //---------------------------------------- GET LIST LEADS REQUEST ---------------------------------------- 
+export interface AssignedUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 export interface ApiResponseDataLeadType {
   id: string,
   fullName: string,
@@ -482,3 +368,4 @@ export interface ApiResponseDataLeadType {
     email: string
   }
 }
+

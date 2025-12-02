@@ -455,3 +455,20 @@ export const tableRows: tableRowDataType[] = [
   },
 ];
 
+
+
+
+
+
+//---------------------------------------------------- API RESPONSE COMMONE TYPE ----------------------------------------------------
+export interface ApiResponseError {
+  code: number,
+  message: string,
+}
+export interface ApiResponse{
+  code: number,
+  message: string,
+  data?: any,
+  error?: ApiResponseError | ApiResponseError[],
+}
+

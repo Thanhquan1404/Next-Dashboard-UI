@@ -1,18 +1,23 @@
 "use client";
 
-import { leadActivitySequences, LeadDetailActivitySequenceTimeline, LeadDetailActivityTimeline, leadDetailsSample, LeadDetailType } from "@/lib/data.leads";
-import { createContext, useContext, useState } from "react";
+import { 
+  leadActivitySequences, 
+  LeadDetailActivityTimeline,  
+  LeadDetailType 
+} from "@/lib/data.leads";
+import { createContext, useCallback, useContext, useState, useEffect } from "react";
 import { useNotification } from "./NotificationProvider";
-import { useLeadStageColumn } from "./LeadStageColumnProvider";
+import useGetLeadDetail from "@/fetching/lead/getLeadDetail";
 
 interface LeadDetailSelectContextType {
   selectedLeadId: string | null;
   leadDetailInfo: LeadDetailType | null;
   leadSequenceActivity: LeadDetailActivityTimeline[] | null;
+  loading: boolean;
   selectLeadDetail: (leadID: string) => void;
   removeSelectedLeadDetail: () => void;
-  addingNewLeadActivity: (newLead: LeadDetailActivityTimeline) => void,
-  updateALeadDetail: (newLeadDetail: LeadDetailType) => void,
+  addingNewLeadActivity: (newLead: LeadDetailActivityTimeline) => void;
+  updateALeadDetail: (newLeadDetail: LeadDetailType) => void;
 }
 
 const LeadDetailSelectContext = createContext<LeadDetailSelectContextType | null>(null);
@@ -30,58 +35,73 @@ interface LeadDetailSelectProviderProps {
 }
 
 export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderProps) => {
-  const { leadStage, leadItemsInStage} = useLeadStageColumn();
-  const [listLeadDetail, setListLeadDetail] = useState<Record<string, LeadDetailType>>(leadDetailsSample);
+  const [listLeadDetail, setListLeadDetail] = useState<Record<string, LeadDetailType>>({});
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [leadDetailInfo, setLeadDetailInfo] = useState<LeadDetailType | null>(null);
   const [leadSequenceActivity, setLeadSequenceActivity] = useState<LeadDetailActivityTimeline[] | null>(null);
   const { showNotification } = useNotification();
-  // HANDLE CLICK ON A LEAD DETAIL
+
+  const { loading, data, error, getLeadDetailInformation } = useGetLeadDetail();
+  // HANDLE CLICK ON A LEAD
   const selectLeadDetail = (leadID: string) => {
-    // RETRIEVE LEAD DETAIL INFOMATION
-    const selectedLeadDetailInfo: LeadDetailType = listLeadDetail[leadID];
-    // RETRIEVE LEAD DETAIL ACTIVITY SEQUENCE
-    const sequenceActivity: LeadDetailActivityTimeline[] = leadActivitySequences[leadID] ? leadActivitySequences[leadID].sequenceActivities : [];
-    setLeadSequenceActivity(sequenceActivity);
-    setLeadDetailInfo(selectedLeadDetailInfo)
     setSelectedLeadId(leadID);
   };
 
-  //HANDLE CLICK OUT LEAD DETAIL WINDOW
+  // HANDLE CLOSE LEAD DETAIL
   const removeSelectedLeadDetail = () => {
     setSelectedLeadId(null);
     setLeadDetailInfo(null);
     setLeadSequenceActivity(null);
   };
 
-  // HANDLE ADDING A NEW LEAD ACTIVITY 
+  // ASYNC FETCH LEAD DETAIL WHEN selectedLeadId CHANGES
+  const fetchLeadDetail = useCallback(async (leadID: string) => {
+    if (!leadID) return;
+
+    try {
+      const response = await getLeadDetailInformation(leadID);
+
+      if (!response) return;
+      
+      setLeadDetailInfo(response);
+
+      // // Map sequence activities from local sample or API if exists
+      // const sequenceActivity: LeadDetailActivityTimeline[] = response.sequenceActivities || leadActivitySequences[leadID]?.sequenceActivities || [];
+      // setLeadSequenceActivity(sequenceActivity);
+
+    } catch (err) {
+      console.log(err);
+      showNotification("Failed to get lead detail", true);
+    }
+  }, [getLeadDetailInformation, showNotification]);
+
+  useEffect(() => {
+    if (selectedLeadId) {
+      fetchLeadDetail(selectedLeadId);
+    } else {
+      setLeadDetailInfo(null);
+      setLeadSequenceActivity(null);
+    }
+  }, [selectedLeadId]);
+
+  // ADD NEW LEAD ACTIVITY
   const addingNewLeadActivity = (newLeadActivity: LeadDetailActivityTimeline) => {
-    setLeadSequenceActivity((prev) => [
-      newLeadActivity,
-      ...(prev || [])
-    ]
-    )
-    showNotification("Successfully adding a new lead activity");
-  }
-
-  // HANDLE UPDATE A LEAD DETAIL 
-  const updateALeadDetail = (newLeadDetail: LeadDetailType) => {
-    setListLeadDetail(prev => {
-      const updated = { ...prev };             
-      updated[newLeadDetail.leadID] = newLeadDetail;
-      return updated;                           
-    });
-
-    setLeadDetailInfo(newLeadDetail);
-
-    showNotification("Update lead information successfully");
+    setLeadSequenceActivity(prev => [newLeadActivity, ...(prev || [])]);
+    showNotification("Successfully added a new lead activity");
   };
 
+  // UPDATE LEAD DETAIL
+  const updateALeadDetail = (newLeadDetail: LeadDetailType) => {
+    setListLeadDetail(prev => ({ ...prev, [newLeadDetail.leadID]: newLeadDetail }));
+    setLeadDetailInfo(newLeadDetail);
+    showNotification("Lead information updated successfully");
+  };
 
   const value: LeadDetailSelectContextType = {
     selectedLeadId,
     leadDetailInfo,
     leadSequenceActivity,
+    loading,
     selectLeadDetail,
     removeSelectedLeadDetail,
     addingNewLeadActivity,
