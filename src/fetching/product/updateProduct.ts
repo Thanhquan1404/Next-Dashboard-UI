@@ -40,7 +40,7 @@ const useUpdateProduct = () => {
 
   // FETCHING FUNCTIOn
   const updateProduct = async (updateProductDetail: any, productID: string) => {
-    const path = `${URL}/crm/products/${productID}`;
+    const path = `${URL}/products/${productID}`;
     setError(null);
     setLoading(true);
 

@@ -4,7 +4,7 @@ import axios, { AxiosError } from 'axios';
 import { getToken } from '@/service/localStorageService';
 
 // INITIALIZE THE URL PATH 
-const path = `${URL}/crm/products`;
+const path = `${URL}/products`;
 
 // API CONTENT TYPE
 interface ApiContentResponseType {

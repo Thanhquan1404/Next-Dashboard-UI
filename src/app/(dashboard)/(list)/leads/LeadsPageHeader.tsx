@@ -15,12 +15,12 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
   const { addingNewLeadColum } = useLeadStageColumn();
   const { showNotification } = useNotification();
   // ADDING NEW COLUMN STATE 
-  const [selectedColor, setSelectedColor] = useState<string>("#000");
+  const [selectedColor, setSelectedColor] = useState<string>("#000000");
   const [newColumnTitle, setNewColumnTitle] = useState<string>("");
   const [isOpenAddingNewColumnWindow, setIsOpenAddingNewColumnWindow] = useState<boolean>(false);
 
   const resetAllState = () => {
-    setSelectedColor("#000");
+    setSelectedColor("#000000");
     setNewColumnTitle("");
   }
   const handleAddingNewColumn = () => {
@@ -36,7 +36,7 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
     }
   }
   return (
-    <div className="w-full h-[120px] px-4 py-4 bg-white">
+    <div className="w-full h-[15%] px-4 py-4 bg-white">
       <div className="w-full h-1/2 flex justify-between items-center">
         <div className="text-xl font-bold tracking-wide">
           Leads

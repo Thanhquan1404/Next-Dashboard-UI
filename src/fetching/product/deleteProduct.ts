@@ -3,7 +3,7 @@ import { useState } from "react";
 import { URL } from "@/lib/data";
 import { getToken } from "@/service/localStorageService";
 
-const path = `${URL}/crm/products/`;
+const path = `${URL}/products/`;
 
 // ERROR REPONSE 
 interface ErrorResponse {

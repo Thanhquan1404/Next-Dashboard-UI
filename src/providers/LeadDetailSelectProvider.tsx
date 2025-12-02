@@ -3,6 +3,7 @@
 import { leadActivitySequences, LeadDetailActivitySequenceTimeline, LeadDetailActivityTimeline, leadDetailsSample, LeadDetailType } from "@/lib/data.leads";
 import { createContext, useContext, useState } from "react";
 import { useNotification } from "./NotificationProvider";
+import { useLeadStageColumn } from "./LeadStageColumnProvider";
 
 interface LeadDetailSelectContextType {
   selectedLeadId: string | null;
@@ -29,6 +30,7 @@ interface LeadDetailSelectProviderProps {
 }
 
 export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderProps) => {
+  const { leadStage, leadItemsInStage} = useLeadStageColumn();
   const [listLeadDetail, setListLeadDetail] = useState<Record<string, LeadDetailType>>(leadDetailsSample);
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [leadDetailInfo, setLeadDetailInfo] = useState<LeadDetailType | null>(null);

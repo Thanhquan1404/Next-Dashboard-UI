@@ -69,12 +69,12 @@ const LeadStageColumn = ({
         borderColor: isBeingDragged ? `${leadColor}` : "transparent",
       }}
       className={`
-        min-w-[320px] max-w-[320px] flex-shrink-0 h-full flex flex-col gap-4 p-2 rounded-xl border
-        transition-all duration-200 ease-out
-        ${isBeingDragged
-          ? `shadow-lg scale-[1.01]`
-          : "bg-white/30 border-transparent"
-        }
+        min-w-[340px] w-[340px] flex-shrink-0 
+        flex flex-col gap-4 
+        bg-white rounded-xl shadow-sm border border-gray-200
+        p-4
+        ${isBeingDragged ? 'ring-4 ring-blue-300 ring-opacity-30 scale-[1.02]' : ''}
+        transition-all duration-200
       `}
       onDrop={(e) => {
         e.preventDefault();
@@ -107,7 +107,8 @@ const LeadStageColumn = ({
       </div>
 
       {/* LEAD CARDS */}
-      {leadItems.map((leadItem) => (
+      <div className="flex flex-col gap-3 flex-1 min-h-0">
+        {leadItems.map((leadItem) => (
         <div
           key={leadItem.leadID}
           draggable
@@ -223,6 +224,7 @@ const LeadStageColumn = ({
           </div>
         </div>
       ))}
+      </div>
       {
         addingLeadToggle ? (
           <div className="w-full flex flex-col gap-2">

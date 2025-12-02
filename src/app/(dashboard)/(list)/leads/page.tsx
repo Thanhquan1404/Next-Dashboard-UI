@@ -8,6 +8,7 @@ import LeadDetailWindow from "./LeadDetailWindow";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 import { useLeadStageColumn } from "@/providers/LeadStageColumnProvider";
 import LeadStageColumn from "./LeadStageColumn";
+import LoadingOverlay from "@/components/LoadingOverlay";
 
 const Page = () => {
   // INITIALIZE NOTIFICATION PROVIDER 
@@ -18,7 +19,7 @@ const Page = () => {
   const [leadDraggingID, setLeadDraggingID] = useState<string>("");
 
   // LEAD ITEMS IN STAGE 
-  const { leadItemsInStage, updateLeadStage, addingNewLead, leadStage } = useLeadStageColumn();
+  const { leadItemsInStage, updateLeadStage, addingNewLead, leadStage, loading } = useLeadStageColumn();
 
   // DRAG START
   const dragStartEvent = (
@@ -48,40 +49,50 @@ const Page = () => {
   // LEAD DETAIL ID SELECTED
   const { selectedLeadId, removeSelectedLeadDetail } = useLeadDetailSelect();
 
-  return (
-    <div className={`flex flex-col bg-gray-50 ${selectedLeadId && "h-full"}`}>
-      {
-        selectedLeadId ?
-          // LEAD DETAIL WINDOW 
-          <>
-            <LeadDetailWindow />
-          </>
-          :
-          // LEAD KANBAN 
-          <>
-            <LeadsPageHeader
-              selectedStatus={selectedStatus}
-              setSelectedStatus={setSelectedStatus}
-              selectedCompany={selectedCompany}
-              setSelectedCompany={setSelectedCompany}
-            />
+  if (loading){
+    return (
+      <LoadingOverlay isLoading={true}/>
+    )
+  }
 
-            <div className="flex gap-2 overflow-x-auto p-2">
-              {leadStage.map((leadStage) => (
-                <LeadStageColumn
-                  handleAddingNewLead={handleAddingNewLead}
-                  dropEvent={dropEvent}
-                  dragOverEvent={dragOverEvent}
-                  dragStartEvent={dragStartEvent}
-                  key={leadStage.status}
-                  leadItems={leadItemsInStage[leadStage.status]}
-                  leadStage={leadStage.status}
-                  leadColor={leadStage.color}
-                />
-              ))}
+  return (
+    <div className="flex flex-col bg-gray-50 h-screen"> 
+      {selectedLeadId ? (
+        <LeadDetailWindow />
+      ) : (
+        
+        <>
+          <LeadsPageHeader
+            selectedStatus={selectedStatus}
+            setSelectedStatus={setSelectedStatus}
+            selectedCompany={selectedCompany}
+            setSelectedCompany={setSelectedCompany}
+          />
+
+          {/* KANBAN CONTAINER */}
+          <div className="flex-1 bg-gray-100"> 
+            <div
+              className="h-full overflow-x-auto overflow-y-hidden pb-4"  
+              style={{ scrollbarGutter: "stable" }} 
+            >
+              <div className="flex gap-4 p-4 h-full items-start"> 
+                {leadStage.map((stage: any) => (
+                  <LeadStageColumn
+                    key={stage.status}
+                    leadStage={stage.status}
+                    leadColor={stage.color}
+                    leadItems={leadItemsInStage[stage.status]}
+                    dragStartEvent={dragStartEvent}
+                    dropEvent={dropEvent}
+                    dragOverEvent={dragOverEvent}
+                    handleAddingNewLead={handleAddingNewLead}
+                  />
+                ))}
+              </div>
             </div>
-          </>
-      }
+          </div>
+        </>
+      )}
     </div>
   );
 };

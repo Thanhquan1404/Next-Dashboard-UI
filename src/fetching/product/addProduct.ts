@@ -4,7 +4,7 @@ import { ProductDetailType, ProductDetailRequestType } from "@/lib/data.product"
 import {URL} from "@/lib/data";
 import { getToken } from "@/service/localStorageService";
 
-const path = `${URL}/crm/products`;
+const path = `${URL}/products`;
 // DATA TYPE 
 export interface ResponseDataType {
   productId: string,
@@ -89,7 +89,6 @@ export const useAddProduct = () => {
 
       const resData: ApiResponse = response.data;
       setData(resData.data);
-      console.log("Send new product data successfully")
       return resData;
     } catch (err) {
       const errAxios = err as AxiosError<any>;

@@ -1,15 +1,17 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import { leadType, lead, LeadStage, leadStageType } from "@/lib/data.leads";
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from "react";
+import { leadType, leadStageType } from "@/lib/data.leads";
+import useGetListLeads from "@/fetching/lead/getListLeads";
 
 // CONTEXT VALUE TYPE
 interface LeadStageColumnContextType {
   leadStage: leadStageType[],
-  leadItemsInStage: Record<string, leadType[]>;
-  updateLeadStage: (leadId: string, newStage: string) => void;
-  addingNewLead: (newLead: leadType, targetColumn: string) => void;
-  addingNewLeadColum: (columnName: string, columnColor: string) => void;
+  loading: boolean,
+  leadItemsInStage: Record<string, leadType[]>,
+  updateLeadStage: (leadId: string, newStage: string) => void,
+  addingNewLead: (newLead: leadType, targetColumn: string) => void,
+  addingNewLeadColum: (columnName: string, columnColor: string) => void,
 }
 
 // CREATE CONTEXT
@@ -30,17 +32,59 @@ interface LeadStageColumnProviderProps {
 }
 
 export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = ({ children }) => {
-  const [leadStage, setLeadStage] = useState<leadStageType[]>(LeadStage);
+  // INITIALIZE GET LIST LEADS REQUEST
+  const { loading, data, error, requestGetListLeads } = useGetListLeads();
   // LEAD ITEMS IN SPECIFIC COLUMN INITIALIZE
-  const [leadItemsInStage, setLeadItemsInStage] = useState<Record<string, leadType[]>>(() => {
-    const initial: Record<string, leadType[]> = {};
+  const [leadItemsInStage, setLeadItemsInStage] = useState<Record<string, leadType[]>>({});
+  const [leadStage, setLeadStage] = useState<leadStageType[]>([]);
+  // ACTIVATE API REQUEST 
+  const getListLeads = useCallback(async () => {
+    try {
+      const { data, leadStage } = await requestGetListLeads();
 
-    leadStage.forEach((stage) => {
-      initial[stage.status] = lead.filter((item) => item.status === stage.status);
-    });
+      if (!data || !leadStage) {
+        setLeadStage([]);
+        setLeadItemsInStage({});
+        return;
+      }
 
-    return initial;
-  });
+      setLeadStage(leadStage);
+
+      const initial: Record<string, leadType[]> = {};
+
+      leadStage.forEach((stageColumn) => {
+        const stageData = data.find(item => item.id === stageColumn.id);
+
+        const leadsInThisStage: leadType[] = stageData?.leads.map((item) => ({
+          leadID: item.id,
+          avatarURL: "", 
+          name: item.fullName,
+          createdDate: item.createdAt, 
+          phone: item.phoneNumber || "",
+          email: item.email || "",
+          rating: item.rating ?? 0,
+          source: "Facebook", 
+          status: stageColumn.status,
+        })) ?? []; 
+
+        initial[stageColumn.status] = leadsInThisStage;
+      });
+
+      setLeadItemsInStage(initial);
+    } catch (err) {
+      console.error("Error fetching leads:", err);
+      setLeadItemsInStage({});
+      setLeadStage([]);
+    }
+  }, [requestGetListLeads]);
+
+  const didFetch = useRef(false);
+  useEffect(() => {
+    if (!didFetch.current) {
+      getListLeads();
+      didFetch.current = true;
+    }
+  }, []);
 
   // UPDATE LEAD IN STAGE WHEN DRAG AND DROP
   const updateLeadStage = (leadId: string, newStage: string) => {
@@ -84,25 +128,26 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
 
   // ADDING NEW COLUMN 
   const addingNewLeadColum = (columnName: string, columnColor: string) => {
-    if (columnName === "" ){
+    if (columnName === "") {
       throw new Error("Fill in column name")
     }
-    setLeadStage((prev) => [...prev, 
-      {
-        status: columnName,
-        color: columnColor
-      }
+    setLeadStage((prev) => [...prev,
+    {
+      status: columnName,
+      color: columnColor,
+      id: crypto.randomUUID(),
+    }
     ]);
 
     setLeadItemsInStage((prev) => ({
       ...prev,
-      [columnName]: [] 
+      [columnName]: []
     }));
   };
 
 
   return (
-    <LeadStageColumnContext.Provider value={{ leadStage,leadItemsInStage, updateLeadStage, addingNewLead, addingNewLeadColum }}>
+    <LeadStageColumnContext.Provider value={{ loading, leadStage, leadItemsInStage, updateLeadStage, addingNewLead, addingNewLeadColum }}>
       {children}
     </LeadStageColumnContext.Provider>
   );

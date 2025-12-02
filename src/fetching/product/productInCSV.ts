@@ -3,7 +3,7 @@ import axios from "axios";
 import { URL } from "@/lib/data";
 import { getToken } from "@/service/localStorageService";
 
-const path = `${URL}/crm/products/csv`;
+const path = `${URL}/products/csv`;
 // CONVERT TO REQUEST BODY
 const requestBody = (csvFile: File, fileHeader: string[], productProperty: string[]) => {
   const body = new FormData();

@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { URL, userLoginType } from '@/lib/data';
+import { userLoginType } from '@/lib/data.user';
+import {URL} from '@/lib/data'
 import axios, { AxiosError } from 'axios';
 
 // FETCHING URL PATH
-const path = `${URL}/crm/auth/login`;
+const path = `${URL}/authentication/login`;
 
 // FETCHING DATA TYPE
 interface ApiResquest {

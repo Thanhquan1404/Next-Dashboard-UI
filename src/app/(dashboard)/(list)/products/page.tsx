@@ -243,12 +243,12 @@ const Page = () => {
   return (
     <div className="w-full h-full relative overflow-hidden">
       <div className="bg-transparent w-full h-full flex flex-col gap-1">
-        {/* PAGE HEADER */}
+        {/* PAGE HEADER */} 
         <ProductsPageHeader handleWindowToggle={handleWindowToggle} />
         {/* CATEGORY FILTER */}
         <CategoryOptions detailProducts={detailProducts} setDetailProducts={setDetailProducts} />
         {/* PRODUCT TABLE */}
-        <ProductsTable
+        <ProductsTable 
           loadingDeleteProduct={loadingDeleteProduct}
           handleDeleteProductButtonToggle={handleDeleteProductButtonToggle}
           sampleProducts={products}
@@ -325,10 +325,6 @@ const Page = () => {
           </div>
         </>
       )}
-
-
-
-
     </div>
   );
 };

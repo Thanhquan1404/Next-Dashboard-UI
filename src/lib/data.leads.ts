@@ -18,7 +18,7 @@ export interface leadType {
   phone: string;
   email: string;
   rating: number;
-  source: leadSourceType;        
+  source: leadSourceType;
   status: string;
 }
 export const lead: leadType[] = [
@@ -249,8 +249,8 @@ export interface LeadDetailType {
   avatarURL: string;
   name: string;
   jobTitle: string;
-  company: string;     
-  nation: string;      
+  company: string;
+  nation: string;
   createdDate: string;
   phone: string;
   email: string;
@@ -386,11 +386,11 @@ export const leadDetailsSample: Record<string, LeadDetailType> = {
 export interface LeadDetailActivityTimeline {
   title: string,
   assignTo: string,
-  closingDate: string, 
-  rate: number;  
+  closingDate: string,
+  rate: number;
 }
 export interface LeadDetailActivitySequenceTimeline {
-  leadID: string, 
+  leadID: string,
   sequenceActivities: LeadDetailActivityTimeline[],
 }
 
@@ -454,43 +454,31 @@ export const leadActivitySequences: Record<string, LeadDetailActivitySequenceTim
     ]
   }
 };
+
+
 //---------------------------------------- LEAD KEY ---------------------------------------- 
+
 // LEAD PROCESSING STATUS 
 export interface leadStageType {
+  id: string,
   status: string;
   color: string;
 }
 
-export const LeadStage: leadStageType[] = [
-  {
-    status: "New",
-    color: "#3498db" // xanh dương
-  },
-  {
-    status: "Contacted",
-    color: "#2ecc71" // xanh lá
-  },
-  {
-    status: "Interested",
-    color: "#9b59b6" // tím
-  },
-  {
-    status: "Qualified",
-    color: "#f1c40f" // vàng
-  },
-  {
-    status: "Negotiation",
-    color: "#e67e22" // cam
-  },
-  {
-    status: "Won",
-    color: "#27ae60" // xanh thắng
-  },
-  {
-    status: "Lost",
-    color: "#e74c3c" // đỏ
+//---------------------------------------- GET LIST LEADS REQUEST ---------------------------------------- 
+export interface ApiResponseDataLeadType {
+  id: string,
+  fullName: string,
+  expectedRevenue: number,
+  rating: number,
+  phoneNumber: string,
+  email: string,
+  createdAt: string,
+  updatedAt: string,
+  responsibleBy: {
+    id: string,
+    firstName: string,
+    lastName: string,
+    email: string
   }
-];
-
-
-
+}
