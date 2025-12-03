@@ -1,5 +1,7 @@
+"use client";
+
 import axios, { AxiosError } from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { URL } from "@/lib/data";
 import { getToken } from "@/service/localStorageService";
 
@@ -19,8 +21,13 @@ interface ApiResponse {
 const useDeleteProduct = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<ErrorResponse | null>();
-    const accessToken = getToken();
-  
+
+  const [accessToken, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(getToken() || null);
+  }, []);
+
   const deleteProduct = async (productID: string) => {
     const pathWithProductID = path + productID;
     setError(null);
@@ -39,11 +46,11 @@ const useDeleteProduct = () => {
       const errMess = errData.message;
       setError(errData);
       throw new Error(errMess);
-    } finally{
+    } finally {
       setLoading(false);
     }
   }
-  return {loading, error, deleteProduct};
+  return { loading, error, deleteProduct };
 }
 
 export default useDeleteProduct;

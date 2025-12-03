@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import { userLoginType } from '@/lib/data.user';
 import {URL} from '@/lib/data'
@@ -54,7 +56,7 @@ const useSignInFetching = () => {
       });
 
       setData(response?.data);
-      return response; // ALLOW USER TO MAKE FURTHER ACTION
+      return response; 
     } catch (err) {
       const axiosErr = err as AxiosError<any>;
       const errData: ErrorResponse = axiosErr.response?.data?.error;

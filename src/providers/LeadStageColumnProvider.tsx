@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback, useRef } from "react";
-import { leadType, leadStageType } from "@/lib/data.leads";
+import { leadType, leadStageType, LeadDetailType } from "@/lib/data.leads";
 import useGetListLeads from "@/fetching/lead/getListLeads";
 import useAddLead from "@/fetching/lead/addLead";
 import { useNotification } from "./NotificationProvider";

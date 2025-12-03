@@ -1,7 +1,5 @@
 //************************************************ CUSTOMER PAGE ****************************************************/
 
-import { subjectsData } from "./data";
-
 interface ActivityType {
   subject: string, 
   verb: string, 

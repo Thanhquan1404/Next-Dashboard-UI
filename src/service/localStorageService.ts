@@ -2,15 +2,15 @@ export const KEY_TOKEN = "accessToken";
 
 // SET ACCESS TOKEN 
 export const setToken = (token: string) => {
-  localStorage.setItem(KEY_TOKEN, token);
+  if (typeof window === "undefined") return;
+  localStorage.setItem("accessToken", token);
 };
 
 // GET ACCESS TOKEN 
-export const getToken = (): string | null => {
-  const token = localStorage.getItem(KEY_TOKEN);
-
-  return token || null;
-}
+export const getToken = () => {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("accessToken");
+};
 
 // REMOVE ACCESS TOKEN 
 export const removeToken = () => {

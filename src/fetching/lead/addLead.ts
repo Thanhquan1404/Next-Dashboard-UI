@@ -1,5 +1,7 @@
+"use client";
+
 import axios, { AxiosError } from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { leadType } from "@/lib/data.leads";
 import { getToken } from "@/service/localStorageService";
 import { URL, ApiResponseError, ApiResponse } from "@/lib/data";
@@ -11,11 +13,15 @@ const useAddLead = () => {
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [accessToken, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(getToken() || null);
+  }, []);
+
   const addLead = async (newLead: leadType, stageID: string): Promise<boolean> => {
     setLoading(true);
     setError(null);
-
-    const accessToken = getToken();
 
     try {
       const payload = makePayload(newLead);
@@ -43,7 +49,7 @@ const useAddLead = () => {
         errAxios.message ||
         "Unknown error";
 
-      throw new Error(errMessage); 
+      throw new Error(errMessage);
     } finally {
       setLoading(false);
     }

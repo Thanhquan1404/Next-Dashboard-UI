@@ -1,5 +1,7 @@
+"use client";
+
 import { URL} from '@/lib/data';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import { getToken } from '@/service/localStorageService';
 
@@ -48,7 +50,12 @@ export const useGetListProducts = () => {
   const [data, setData] = useState<any | null>();
   const [error, setError] = useState<any | null>();
   const [loading, setLoading] = useState<boolean>(false);
-  const accessToken = getToken();
+  
+  const [accessToken, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(getToken() || null);
+  }, []);
 
   // FETCHING FUNCTION
   const getListProducts = async () => {

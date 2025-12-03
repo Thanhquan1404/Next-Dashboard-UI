@@ -1,7 +1,9 @@
+"use client";
+
 import axios, { AxiosError } from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProductDetailType, ProductDetailRequestType } from "@/lib/data.product";
-import {URL} from "@/lib/data";
+import { URL } from "@/lib/data";
 import { getToken } from "@/service/localStorageService";
 
 const path = `${URL}/products`;
@@ -11,14 +13,14 @@ export interface ResponseDataType {
   sku: string,
   productName: string,
   description: string,
-  productSubtitle: string, 
+  productSubtitle: string,
   productBrand: string,
-  productCategory: string, 
+  productCategory: string,
   quantity: number,
-  status: string, 
+  status: string,
   purchaseUnitPrice: number,
   discount: number,
-  discountType: string, 
+  discountType: string,
   imageUrl: string,
 }
 // ERROR TYPE 
@@ -31,8 +33,8 @@ interface ResponseErrorType {
 interface ApiResponse {
   code: number,
   message: string,
-  data? : ResponseDataType,
-  errors? : ResponseErrorType[],
+  data?: ResponseDataType,
+  errors?: ResponseErrorType[],
 }
 // FUNCTION TO CONVERT USER INPUT INTO DATA REQUEST TYPE
 interface DataConvertProps {
@@ -73,7 +75,12 @@ export const useAddProduct = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ResponseDataType | undefined>();
   const [error, setError] = useState<string | null>(null);
-  const accessToken = getToken();
+
+  const [accessToken, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(getToken() || null);
+  }, []);
 
   const requestAddingProduct = async ({ newDetailProduct, imageFile1, imageFile2, imageFile3 }: DataConvertProps) => {
     const formData = dataConvert({ newDetailProduct, imageFile1, imageFile2, imageFile3 });

@@ -1,4 +1,6 @@
-import { useState } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { URL } from "@/lib/data";
 import { getToken } from "@/service/localStorageService";
@@ -7,8 +9,8 @@ const path = `${URL}/products/csv`;
 // CONVERT TO REQUEST BODY
 const requestBody = (csvFile: File, fileHeader: string[], productProperty: string[]) => {
   const body = new FormData();
-  body.append("userHeader", new Blob([JSON.stringify(fileHeader)], { type: "application/json"}))
-  body.append("systemHeader", new Blob([JSON.stringify(productProperty)], {type: "application/json"}))
+  body.append("userHeader", new Blob([JSON.stringify(fileHeader)], { type: "application/json" }))
+  body.append("systemHeader", new Blob([JSON.stringify(productProperty)], { type: "application/json" }))
   body.append("file", csvFile);
 
   return body;
@@ -18,7 +20,12 @@ const useBrowseCSVFile = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<any>();
   const [error, setError] = useState<any>();
-  const accessToken = getToken();
+
+  const [accessToken, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(getToken() || null);
+  }, []);
 
   const sendCSV = async (csvFile: File, fileHeader: string[], productProperty: string[]) => {
     const formData = requestBody(csvFile, fileHeader, productProperty);
@@ -32,10 +39,10 @@ const useBrowseCSVFile = () => {
       });
       console.log(response);
     } catch (err: any) {
-      
+
     }
   }
 
-  return {loading, data, error, sendCSV};
+  return { loading, data, error, sendCSV };
 }
 export default useBrowseCSVFile;

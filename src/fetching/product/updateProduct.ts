@@ -1,7 +1,9 @@
+"use client";
+
 import { URL } from "@/lib/data";
 import { getToken } from "@/service/localStorageService";
 import axios, { AxiosError } from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // API DATA RESPONSE 
 interface ApiDataResponseType {
@@ -36,7 +38,12 @@ const useUpdateProduct = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<ApiDataResponseType>();
   const [error, setError] = useState<ApiErrorResponseType | null>();
-  const accessToken = getToken();
+
+  const [accessToken, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(getToken() || null);
+  }, []);
 
   // FETCHING FUNCTIOn
   const updateProduct = async (updateProductDetail: any, productID: string) => {

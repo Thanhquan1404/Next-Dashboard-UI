@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { UserSignUpType } from "@/lib/data.user";

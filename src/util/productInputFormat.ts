@@ -1,4 +1,4 @@
-import { ProductDataType, ProductDetailType } from "@/lib/data";
+import { ProductDataType, ProductDetailType } from "@/lib/data.product";
 
 // REQUIRED FIELDS:
 // * PRODUCT_NAME: string

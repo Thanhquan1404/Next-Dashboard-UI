@@ -1,4 +1,6 @@
-import { useState } from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import { ApiResponse, ApiResponseError, URL } from "@/lib/data";
 import axios, { AxiosError } from "axios";
 import { getToken } from "@/service/localStorageService";
@@ -10,7 +12,11 @@ const useUpdateLeadStage = () => {
   const [data, setData] = useState<any>();
   const [error, setError] = useState<any>();
 
-  const accessToken = getToken();
+  const [accessToken, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(getToken() || null);
+  }, []);
   const updateLeadStage = async (leadID: string, forwardStageID: string) => {
     setError(null);
     setLoading(true);
@@ -40,7 +46,7 @@ const useUpdateLeadStage = () => {
     }
   }
 
-  return {loading, data, error, updateLeadStage};
+  return { loading, data, error, updateLeadStage };
 }
 
 export default useUpdateLeadStage;

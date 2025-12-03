@@ -1,7 +1,9 @@
+"use client";
+
 import { getToken } from "@/service/localStorageService";
-import {URL} from "@/lib/data";
-import axios, {AxiosError} from "axios";
-import { useState } from "react";
+import { URL } from "@/lib/data";
+import axios, { AxiosError } from "axios";
+import { useState, useEffect } from "react";
 import { ApiResponse } from "@/lib/data";
 import { leadStageType, AssignedUser, LeadDetailType } from "@/lib/data.leads";
 const path = `${URL}/leads`;
@@ -9,11 +11,11 @@ const path = `${URL}/leads`;
 export interface ApiResponseDataType {
   id: string;
   fullName: string;
-  dateOfBirth: string; 
+  dateOfBirth: string;
   email: string;
   phoneNumber: string;
   company: string;
-  closingDate: string; 
+  closingDate: string;
   rating: number;
   expectedRevenue: number;
   note: string;
@@ -24,11 +26,11 @@ export interface ApiResponseDataType {
     color: string,
   };
   createdAt: string;
-  updatedAt: string; 
+  updatedAt: string;
   assignTo: AssignedUser;
 }
 
-const mappingResponseData = (responseLeadDetail: ApiResponseDataType): LeadDetailType =>{
+const mappingResponseData = (responseLeadDetail: ApiResponseDataType): LeadDetailType => {
   const leadDetail: LeadDetailType = {
     leadID: responseLeadDetail.id,
     avatarURL: responseLeadDetail.avatarUrl,
@@ -45,7 +47,7 @@ const mappingResponseData = (responseLeadDetail: ApiResponseDataType): LeadDetai
     assignTo: responseLeadDetail.assignTo.lastName + " " + responseLeadDetail.assignTo.firstName,
   }
 
-  return leadDetail; 
+  return leadDetail;
 }
 
 const useGetLeadDetail = () => {
@@ -53,7 +55,11 @@ const useGetLeadDetail = () => {
   const [data, setData] = useState<any>();
   const [error, setError] = useState<any>();
 
-  const accessToken = getToken();
+  const [accessToken, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(getToken() || null);
+  }, []);
   const getLeadDetailInformation = async (leadID: string) => {
     setLoading(true);
     setError(null);
@@ -68,15 +74,15 @@ const useGetLeadDetail = () => {
       const responseData: ApiResponse = response.data;
       const data: ApiResponseDataType = responseData.data;
       return mappingResponseData(data);
-    } catch (err) { 
+    } catch (err) {
       console.log(err);
     }
-    finally{
+    finally {
       setLoading(false);
     }
   }
 
-  return {loading, data, error, getLeadDetailInformation}
+  return { loading, data, error, getLeadDetailInformation }
 }
 
 export default useGetLeadDetail;

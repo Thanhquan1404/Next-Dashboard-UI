@@ -1,7 +1,9 @@
+"use client";
+
 import { getToken } from "@/service/localStorageService";
 import { URL } from "@/lib/data";
 import axios, { AxiosError } from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ApiResponseDataLeadType, leadStageType } from "@/lib/data.leads";
 
 const path = `${URL}/leads`;
@@ -30,7 +32,11 @@ const useGetListLeads = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
-  const accessToken = getToken();
+  const [accessToken, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(getToken() || null);
+  }, []);
   const requestGetListLeads = async () => {
     setLoading(true);
     setError(null);
@@ -45,7 +51,7 @@ const useGetListLeads = () => {
       const responseData: ApiResponse = response.data;
       const data: ApiReponseData[] = responseData.data ?? [];
       const leadStage = extractLeadStages(data);
-      return {leadStage, data};
+      return { leadStage, data };
     } catch (err) {
       const axiosErr = err as AxiosError<any>;
       const errData: ApiResponseError = axiosErr.response?.data?.error;
