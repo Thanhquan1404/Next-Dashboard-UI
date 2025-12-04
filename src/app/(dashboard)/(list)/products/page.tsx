@@ -4,7 +4,7 @@ import CategoryOptions from "./CategoryOptions";
 import ProductsPageHeader from "./ProductsPageHeader";
 import ProductsTable from "./ProductsTable";
 import { useEffect, useState, useRef } from "react";
-import { ProductDataType, ProductDetailType } from "@/lib/data.product";
+import { ProductDataType, ProductDetailResponseType, ProductDetailType } from "@/lib/data.product";
 import ProductDetailWindow from "./ProductDetailWindow";
 import { useGetListProducts, useGetListProductWithPageNo } from "@/fetching/product/getListProducts";
 import useDeleteProduct from "@/fetching/product/deleteProduct";
@@ -86,65 +86,18 @@ const Page = () => {
   // PAGENAVIGATION STATE
   const [totalPages, setTotalPages] = useState<number>(-1);
   const [currentPage, setCurrentPage] = useState<number>(-1);
+
   useEffect(() => {
     const fetchProducts = async () => {
       if (!hasFetched.current) {
         try {
           const response = await getListProducts();
-          const resData = response.data;
+
+          const resData: ProductDetailResponseType[]  = response.data;          
+          const pagination = response.pagination;   
 
           if (resData) {
-            const listDetailProduct: ProductDetailType[] = resData.map((item) => {
-              const result: ProductDetailType = {
-                PRODUCT_ID: item.productId,
-                PRODUCT_BRAND: item.productBrand,
-                PRODUCT_CATEGORY: item.productCategory,
-                PRODUCT_NAME: item.productName,
-                DESCRIPTION: item.description,
-                PRODUCT_SUBTITLE: item.productSubtitle,
-                PURCHASE_UNIT_PRICE: item.purchaseUnitPrice,
-                PRODUCTS: item.quantity,
-                SKU: item.sku,
-                STATUS: item.status,
-                IMAGE1_URL: item.imageUrl,
-                IMAGE2_URL: "",
-                IMAGE3_URL: "",
-                TAG: "",
-                DISCOUNT: item.discount,
-                DISCOUNT_TYPE: item.discountType,
-                COLOR: "",
-              };
-              return result;
-            });
-            setDetailProducts(listDetailProduct);
-            if (response.pagination?.totalPages && response.pagination.pageNumber) {
-              setTotalPages(response.pagination.totalPages);
-              setCurrentPage(response.pagination.pageNumber);
-            }
-
-          }
-          isInitialPageSet.current = true;
-        } catch (error) {
-          alert(`List product fetching data error \n${error}`);
-        } finally {
-          hasFetched.current = true;
-        }
-      }
-    };
-
-    fetchProducts();
-  }, []);
-  // FUNCTION TO HANDLE PAGENAVIGATION 
-  useEffect(() => {
-    const fetchProductsWithPageNo = async () => {
-      if (!isInitialPageSet.current) { return }
-      try {
-        const response = await getListProductsWithPageNo(currentPage);
-        const resData = response.data;
-
-        if (resData) {
-          const listDetailProduct: ProductDetailType[] = resData.map((item) => {
-            const result: ProductDetailType = {
+            const listDetailProduct: ProductDetailType[] = resData.map((item) => ({
               PRODUCT_ID: item.productId,
               PRODUCT_BRAND: item.productBrand,
               PRODUCT_CATEGORY: item.productCategory,
@@ -162,27 +115,79 @@ const Page = () => {
               DISCOUNT: item.discount,
               DISCOUNT_TYPE: item.discountType,
               COLOR: "",
-            };
-            return result;
-          });
-          setDetailProducts(listDetailProduct);
-          if (response.pagination?.totalPages && response.pagination.pageNumber) {
-            setCurrentPage(response.pagination.pageNumber);
+            }));
+
+            setDetailProducts(listDetailProduct);
           }
 
+          // SET PAGINATION
+          if (pagination) {
+            setTotalPages(pagination.totalPages);
+            setCurrentPage(pagination.pageNumber);
+          }
+
+          isInitialPageSet.current = true;
+        } catch (error) {
+          alert(`List product fetching data error \n${error}`);
+        } finally {
+          hasFetched.current = true;
         }
-        else {
-          alert("Fail to get list of products");
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // FUNCTION TO HANDLE PAGENAVIGATION 
+  useEffect(() => {
+    const fetchProductsWithPageNo = async () => {
+      if (!isInitialPageSet.current) return;
+
+      try {
+        const response = await getListProductsWithPageNo(currentPage);
+
+        const resData: ProductDetailResponseType[] = response.data;
+        const pagination = response.pagination;
+
+        if (resData) {
+          const listDetailProduct: ProductDetailType[] = resData.map((item) => ({
+            PRODUCT_ID: item.productId,
+            PRODUCT_BRAND: item.productBrand,
+            PRODUCT_CATEGORY: item.productCategory,
+            PRODUCT_NAME: item.productName,
+            DESCRIPTION: item.description,
+            PRODUCT_SUBTITLE: item.productSubtitle,
+            PURCHASE_UNIT_PRICE: item.purchaseUnitPrice,
+            PRODUCTS: item.quantity,
+            SKU: item.sku,
+            STATUS: item.status,
+            IMAGE1_URL: item.imageUrl,
+            IMAGE2_URL: "",
+            IMAGE3_URL: "",
+            TAG: "",
+            DISCOUNT: item.discount,
+            DISCOUNT_TYPE: item.discountType,
+            COLOR: "",
+          }));
+
+          setDetailProducts(listDetailProduct);
+        }
+
+        if (pagination) {
+          setCurrentPage(pagination.pageNumber);
+          setTotalPages(pagination.totalPages);
         }
       } catch (error) {
         alert(`List product fetching data error \n${error}`);
       } finally {
         hasFetched.current = true;
       }
+    };
 
-    }
     fetchProductsWithPageNo();
-  }, [currentPage])
+  }, [currentPage]);
+
+
   // FUNCTION TO HANDLE EVEN IF THE PRODUCT DETAILS ARRAY CHANGED
   useEffect(() => {
     const data = productTableData(detailProducts);
@@ -243,12 +248,12 @@ const Page = () => {
   return (
     <div className="w-full h-full relative overflow-hidden">
       <div className="bg-transparent w-full h-full flex flex-col gap-1">
-        {/* PAGE HEADER */} 
+        {/* PAGE HEADER */}
         <ProductsPageHeader handleWindowToggle={handleWindowToggle} />
         {/* CATEGORY FILTER */}
         <CategoryOptions detailProducts={detailProducts} setDetailProducts={setDetailProducts} />
         {/* PRODUCT TABLE */}
-        <ProductsTable 
+        <ProductsTable
           loadingDeleteProduct={loadingDeleteProduct}
           handleDeleteProductButtonToggle={handleDeleteProductButtonToggle}
           sampleProducts={products}

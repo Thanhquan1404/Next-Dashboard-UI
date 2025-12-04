@@ -179,3 +179,20 @@ export interface ProductDetailRequestType {
   discount: number;
   discountType: "PERCENT" | "AMOUNT" | string;
 }
+
+export interface ProductDetailResponseType {
+  productId: string,
+  sku: string,
+  productName: string,
+  description: string,
+  productSubtitle: string,
+  productBrand: string,
+  productCategory: string,
+  quantity: number,
+  status: string,
+  purchaseUnitPrice: number
+  discount: number,
+  discountType: string,
+  imageUrl: string,
+  tag: string | null
+}

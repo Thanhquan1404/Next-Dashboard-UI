@@ -1,134 +1,69 @@
 "use client";
 
-import { URL} from '@/lib/data';
-import { useState, useEffect } from 'react';
-import axios, { AxiosError } from 'axios';
-import { getToken } from '@/service/localStorageService';
-
-// INITIALIZE THE URL PATH 
-const path = `${URL}/products`;
-
-// API CONTENT TYPE
-interface ApiContentResponseType {
-  productId: string;
-  sku: string;
-  productName: string;
-  description: string;
-  productSubtitle: string;
-  productBrand: string;
-  productCategory: string;
-  quantity: number;
-  status: string;
-  purchaseUnitPrice: number;
-  discount: number;
-  discountType: string;
-  imageUrl: string;
-}
-// API ERROR TYPE
-interface ApiErrorResponseType {
-  code: number;
-  message: string;
-}
-// API PAGINATION TYPE
-interface pagination {
-  hasPre: boolean,
-  hasNext: boolean,
-  pageNumber: number,
-  totalPages: number,
-}
-// API RESPONSE TYPE 
-interface ApiResponse {
-  code: string;
-  message: string;
-  data?: ApiContentResponseType[];
-  error?: ApiErrorResponseType;
-  pagination?: pagination;
-}
+import { useState } from "react";
+import axios, { AxiosError } from "axios";
 
 export const useGetListProducts = () => {
-  // STATE 
   const [data, setData] = useState<any | null>();
   const [error, setError] = useState<any | null>();
   const [loading, setLoading] = useState<boolean>(false);
-  
-  const [accessToken, setToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    setToken(getToken() || null);
-  }, []);
-
-  // FETCHING FUNCTION
   const getListProducts = async () => {
-    setError(null);
     setLoading(true);
+    setError(null);
 
     try {
-      const response = await axios.get<ApiResponse>(path, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken}`,
-        },
-      });
+      const response = await axios.get(`/api/product/getList`);
 
-      const resData: ApiResponse = response.data;
-      const resContent: ApiContentResponseType[] | undefined = resData.data;
-
-      setData(resContent);
+      const resData = response.data;
+      setData(resData.data);
       return resData;
     } catch (err) {
       const axiosErr = err as AxiosError<any>;
-      const errData: ApiErrorResponseType = axiosErr.response?.data.error;
-      const errMess: string = errData.message;
+      const errMess =
+        axiosErr.response?.data?.error?.message ||
+        axiosErr.response?.data?.message ||
+        axiosErr.message;
 
       throw new Error(errMess);
     } finally {
       setLoading(false);
     }
+  };
 
-  }
-
-  return { loading, data, error, getListProducts };
-}
+  return { data, error, loading, getListProducts };
+};
 
 export const useGetListProductWithPageNo = () => {
-  // STATE 
   const [data, setData] = useState<any | null>();
   const [error, setError] = useState<any | null>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  // FETCHING FUNCTION
   const getListProductsWithPageNo = async (pageNumber: number) => {
-    setError(null);
     setLoading(true);
-    const accessToken = getToken();
+    setError(null);
 
     try {
-
-      const response = await axios.get<ApiResponse>(path, {
+      const response = await axios.get(`/api/product/getList`, {
         params: { pageNo: pageNumber },
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${accessToken}`,
-        },
       });
 
-      const resData: ApiResponse = response.data;
-      const resContent: ApiContentResponseType[] | undefined = resData.data;
+      const resData = response.data;
+      setData(resData.data);
 
-      setData(resContent);
       return resData;
     } catch (err) {
       const axiosErr = err as AxiosError<any>;
-      const errData: ApiErrorResponseType = axiosErr.response?.data.error;
-      const errMess: string = errData.message;
+      const errMess =
+        axiosErr.response?.data?.error?.message ||
+        axiosErr.response?.data?.message ||
+        axiosErr.message;
 
       throw new Error(errMess);
     } finally {
       setLoading(false);
     }
+  };
 
-  }
-
-  return { loading, data, error, getListProductsWithPageNo };
-}
-
+  return { data, error, loading, getListProductsWithPageNo };
+};

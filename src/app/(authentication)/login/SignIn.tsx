@@ -48,7 +48,13 @@ const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
         const accessToken = resData.data.accessToken;
         showNotification("Welcome to our website");
         resetStateField();
+        // store in local storage
         setToken(accessToken);
+
+        await fetch("api/set-token", {
+          method: "POST",
+          body: JSON.stringify({token: accessToken})
+        })
         router.push('/dashboard');
       } else {
         const errMessage = resData?.message || "Invalid credentials";

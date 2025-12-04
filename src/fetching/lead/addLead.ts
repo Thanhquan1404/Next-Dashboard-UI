@@ -1,54 +1,41 @@
 "use client";
 
-import axios, { AxiosError } from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { leadType } from "@/lib/data.leads";
-import { getToken } from "@/service/localStorageService";
-import { URL, ApiResponseError, ApiResponse } from "@/lib/data";
-
-const path = `${URL}/leads`;
 
 const useAddLead = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const [accessToken, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    setToken(getToken() || null);
-  }, []);
-
   const addLead = async (newLead: leadType, stageID: string): Promise<boolean> => {
     setLoading(true);
     setError(null);
 
     try {
-      const payload = makePayload(newLead);
+      const payload = makePayload(newLead, stageID);
 
-      const response = await axios.post(
-        `${path}/${stageID}/stage`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const res = await fetch("/api/leads/add", {
+        method: "POST",
+        body: payload,
+      });
 
-      const resData: ApiResponse = response.data;
-      return resData.code === 200;
+      const resData = await res.json();
+
+      if (!res.ok) {
+        const errMessage =
+          (resData?.error && Array.isArray(resData.error) && resData.error[0]?.message) ||
+          resData?.message ||
+          "Unknown error";
+        throw new Error(errMessage);
+      }
+
+      setData(resData);
+      return (resData?.code ?? 200) === 200;
     } catch (err) {
-      const errAxios = err as AxiosError<any>;
-      const errList: ApiResponseError[] = errAxios.response?.data?.error;
-
-      const errMessage =
-        errList?.[0]?.message ||
-        errAxios.response?.data?.message ||
-        errAxios.message ||
-        "Unknown error";
-
+      const errAny = err as Error;
+      const errMessage = errAny.message || "Unknown error";
+      setError(errMessage);
       throw new Error(errMessage);
     } finally {
       setLoading(false);
@@ -58,12 +45,13 @@ const useAddLead = () => {
   return { loading, data, error, addLead };
 };
 
-const makePayload = (newLead: leadType) => {
+const makePayload = (newLead: leadType, stageID: string) => {
   const payload = new FormData();
   payload.append("fullName", newLead.name);
   payload.append("email", newLead.email);
   payload.append("phoneNumber", newLead.phone);
   payload.append("rating", String(newLead.rating));
+  payload.append("stageID", stageID); // thêm stageID để route có thể đọc
   return payload;
 };
 
