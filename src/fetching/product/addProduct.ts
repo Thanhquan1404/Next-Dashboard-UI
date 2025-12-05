@@ -64,8 +64,6 @@ const dataConvert = ({ newDetailProduct, imageFile1 }: DataConvertProps): FormDa
   return form;
 };
 
-
-
 export const useAddProduct = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ResponseDataType | undefined>();

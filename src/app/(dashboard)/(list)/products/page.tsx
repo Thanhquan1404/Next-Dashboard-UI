@@ -10,6 +10,8 @@ import { useGetListProducts, useGetListProductWithPageNo } from "@/fetching/prod
 import useDeleteProduct from "@/fetching/product/deleteProduct";
 import ProductInCSVFile from "./ProductInCSVFile";
 import { useNotification } from "@/providers/NotificationProvider";
+import { useSearchParams } from "next/navigation";
+import useSearchProduct from "@/fetching/lead/searchProduct";
 
 // FUNCTION TO ASSIGN PRODUCT DETAIL INTO PRODUCT IN TABLE
 const productTableData = (listProductDetail: ProductDetailType[]): ProductDataType[] => {
@@ -50,6 +52,13 @@ const deleteProductDetailArray = (
 
 const Page = () => {
   const { showNotification } = useNotification();
+
+  // INITALIZE SEARCH PRODUCT FETCHING FUNCTION 
+  const {
+    loading: loadingSearchProducts,
+    searchProduct
+  } = useSearchProduct();
+
   // INITIALIZE GET PRODUCT FETCHING FUNCTION 
   const {
     loading: loadingGetListProducts,
@@ -89,14 +98,15 @@ const Page = () => {
   const [totalPages, setTotalPages] = useState<number>(-1);
   const [currentPage, setCurrentPage] = useState<number>(-1);
 
+  // INITIAL LOADING PRODUCT PAGE
   useEffect(() => {
     const fetchProducts = async () => {
       if (!hasFetched.current) {
         try {
           const response = await getListProducts();
 
-          const resData: ProductDetailResponseType[]  = response.data;          
-          const pagination = response.pagination;   
+          const resData: ProductDetailResponseType[] = response.data;
+          const pagination = response.pagination;
 
           if (resData) {
             const listDetailProduct: ProductDetailType[] = resData.map((item) => ({
@@ -198,6 +208,55 @@ const Page = () => {
       return same ? prev : data;
     });
   }, [detailProducts]);
+
+  // FUNCTION TO HANDLE 'DEARCH PRODUCT` ACTION 
+  const handleSearchProductEvent = async (query: string) => {
+
+    
+    try {
+      const response = await searchProduct(query);
+      const resData: ProductDetailResponseType[] = response.data;
+      const pagination = response.pagination;
+
+      if (resData) {
+        const listDetailProduct: ProductDetailType[] = resData.map((item) => ({
+          PRODUCT_ID: item.productId,
+          PRODUCT_BRAND: item.productBrand,
+          PRODUCT_CATEGORY: item.productCategory,
+          PRODUCT_NAME: item.productName,
+          DESCRIPTION: item.description,
+          PRODUCT_SUBTITLE: item.productSubtitle,
+          PURCHASE_UNIT_PRICE: item.purchaseUnitPrice,
+          PRODUCTS: item.quantity,
+          SKU: item.sku,
+          STATUS: item.status,
+          IMAGE1_URL: item.imageUrl,
+          IMAGE2_URL: "",
+          IMAGE3_URL: "",
+          TAG: "",
+          DISCOUNT: item.discount,
+          DISCOUNT_TYPE: item.discountType,
+          COLOR: "",
+        }));
+
+        setDetailProducts(listDetailProduct);
+      }
+
+      // SET PAGINATION
+      if (pagination) {
+        setTotalPages(pagination.totalPages);
+        setCurrentPage(pagination.pageNumber);
+      }
+
+      isInitialPageSet.current = true;
+
+    } catch (error) {
+      alert(`List product fetching data error \n${error}`);
+    } finally {
+      hasFetched.current = true;
+    }
+
+  }
   // FUNCTION TO HANDLE 'ADDING PRODUCT' ACTION
   const handleAddingProductEvent = (newProduct: ProductDataType): void => {
     const arr = [...products];
@@ -252,7 +311,7 @@ const Page = () => {
     <div className="w-full h-full relative overflow-hidden">
       <div className="bg-transparent w-full h-full flex flex-col gap-1">
         {/* PAGE HEADER */}
-        <ProductsPageHeader handleWindowToggle={handleWindowToggle} />
+        <ProductsPageHeader handleWindowToggle={handleWindowToggle} handleSearchProductEvent={handleSearchProductEvent} />
         {/* CATEGORY FILTER */}
         <CategoryOptions detailProducts={detailProducts} setDetailProducts={setDetailProducts} />
         {/* PRODUCT TABLE */}

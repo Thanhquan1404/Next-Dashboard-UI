@@ -6,8 +6,8 @@ import { NotificationProvider } from "@/providers/NotificationProvider"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Lama Dev School Management Dashboard",
-  description: "Next.js School Management System",
+  title: "Vera CRM",
+  description: "CRM System",
 };
 
 export default function RootLayout({

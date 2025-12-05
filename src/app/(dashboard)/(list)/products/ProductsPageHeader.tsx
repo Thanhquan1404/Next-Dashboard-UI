@@ -10,8 +10,9 @@ const showOptions = ["All Products", "New Arrivals", "Top Rated"];
 const sortByOptions: string[] = ["Default", "Product Name"];
 interface Props {
   handleWindowToggle: () => void,
+  handleSearchProductEvent: (query: string) => void,
 }
-const ProductsPageHeader = ({ handleWindowToggle }: Props) => {
+const ProductsPageHeader = ({ handleWindowToggle, handleSearchProductEvent }: Props) => {
   const [showOptionSelect, setShowOptionSelect] = useState(showOptions[0]);
   const [sortByOptionSelect, setSortByOptionSelect] = useState(sortByOptions[0]);
 
@@ -29,11 +30,18 @@ const ProductsPageHeader = ({ handleWindowToggle }: Props) => {
           </div>
         </div>
         {/* SEARCH BAR  */}
-        <div className="bg-gray-100  hidden md:flex items-center w-fit justify-center gap-2 ring-[1.0px] ring-gray-300 rounded-md px-2 text-xs transition-all duration-300 focus-within:ring-purple-400 hover:ring-purple-300">
+        <div
+          className="bg-gray-100  hidden md:flex items-center w-fit justify-center gap-2 ring-[1.0px] ring-gray-300 rounded-md px-2 text-xs transition-all duration-300 focus-within:ring-purple-400 hover:ring-purple-300">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 opacity-80">
             <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
           </svg>
           <input
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearchProductEvent(e.currentTarget.value);
+                e.currentTarget.value = "";
+              }
+            }}
             type="text"
             placeholder="Search products..."
             className="w-[220px] p-[4.5px] bg-transparent outline-none font-semibold"
