@@ -1,56 +1,46 @@
 "use client";
 
-import axios, { AxiosError } from "axios";
-import { useState, useEffect } from "react";
-import { URL } from "@/lib/data";
-import { getToken } from "@/service/localStorageService";
+import { useState } from "react";
 
-const path = `${URL}/products/`;
-
-// ERROR REPONSE 
-interface ErrorResponse {
-  code: number,
-  message: string,
-}
-// API RESPONSE
 interface ApiResponse {
-  code: number,
-  message: string,
-  error?: ErrorResponse,
+  code: number;
+  message: string;
 }
+
 const useDeleteProduct = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<ErrorResponse | null>();
-
-  const [accessToken, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    setToken(getToken() || null);
-  }, []);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>("");
 
   const deleteProduct = async (productID: string) => {
-    const pathWithProductID = path + productID;
-    setError(null);
+    setError("");
     setLoading(true);
+
     try {
-      const reponse = await axios.delete(pathWithProductID, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
+      const res = await fetch(`/api/product/deleteProduct?productID=${productID}`, {
+        method: "DELETE",
+        credentials: "include"
       });
-      const resData: ApiResponse = reponse.data;
-      return resData;
+
+      const resData: ApiResponse = await res.json();
+
+      if (!res.ok || resData.code !== 200) {
+        throw new Error(resData.message);
+      }
+
+      return true;
+
     } catch (err) {
-      const axiosErr = err as AxiosError<any>
-      const errData: ErrorResponse = axiosErr.response?.data.error;
-      const errMess = errData.message;
-      setError(errData);
-      throw new Error(errMess);
+      const errAny = err as Error;
+      const errMessage = errAny.message || "Unknown error";
+      setError(errMessage);
+      throw new Error(errMessage);
+
     } finally {
       setLoading(false);
     }
-  }
+  };
+
   return { loading, error, deleteProduct };
-}
+};
 
 export default useDeleteProduct;

@@ -9,6 +9,7 @@ import ProductDetailWindow from "./ProductDetailWindow";
 import { useGetListProducts, useGetListProductWithPageNo } from "@/fetching/product/getListProducts";
 import useDeleteProduct from "@/fetching/product/deleteProduct";
 import ProductInCSVFile from "./ProductInCSVFile";
+import { useNotification } from "@/providers/NotificationProvider";
 
 // FUNCTION TO ASSIGN PRODUCT DETAIL INTO PRODUCT IN TABLE
 const productTableData = (listProductDetail: ProductDetailType[]): ProductDataType[] => {
@@ -48,6 +49,7 @@ const deleteProductDetailArray = (
 };
 
 const Page = () => {
+  const { showNotification } = useNotification();
   // INITIALIZE GET PRODUCT FETCHING FUNCTION 
   const {
     loading: loadingGetListProducts,
@@ -231,17 +233,18 @@ const Page = () => {
       try {
         const response = await deleteProduct(productId);
 
-        if (response && response.code === 200) {
+        if (response) {
           const newDetailProductArray = deleteProductDetailArray(productId, detailProducts);
           setDetailProducts(newDetailProductArray);
+          showNotification("Delete product successfully");
         } else {
-          alert("Delete failed!");
+          showNotification("Delete failed!", true);
         }
       } catch (error) {
-        alert(`Delete failed ${error}`);
+        showNotification(`Delete failed ${error}`, true);
       }
     } else {
-      alert("Invalid product ID!");
+      showNotification("Invalid product ID!", true);
     }
   };
 
