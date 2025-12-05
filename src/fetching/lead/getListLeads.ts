@@ -39,13 +39,12 @@ const useGetListLeads = () => {
     setError(null);
 
     try {
-      const response = await axios.get(path, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      });
-
-      const responseData: ApiResponse = response.data;
+      const response = await fetch("api/lead/getListLead", {
+        method: "GET",
+      })
+      
+      const res = await response.json();
+      const responseData: ApiResponse = res;
       const data: ApiReponseData[] = responseData.data ?? [];
       const leadStage = extractLeadStages(data);
       return { leadStage, data };
