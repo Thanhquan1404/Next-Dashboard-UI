@@ -32,11 +32,8 @@ const useGetListLeads = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
-  const [accessToken, setToken] = useState<string | null>(null);
+  const accessToken = getToken();
 
-  useEffect(() => {
-    setToken(getToken() || null);
-  }, []);
   const requestGetListLeads = async () => {
     setLoading(true);
     setError(null);

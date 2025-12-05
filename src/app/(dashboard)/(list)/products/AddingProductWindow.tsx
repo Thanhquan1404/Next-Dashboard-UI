@@ -12,6 +12,7 @@ import UploadImageIcon from "@/components/UploadImageIcon";
 import { productInputFormat } from "@/util/productInputFormat";
 import useAddProduct, { ResponseDataType } from "@/fetching/product/addProduct";
 import UpLoadFileCSV from "@/components/UpLoadFileCSV";
+import { useNotification } from "@/providers/NotificationProvider";
 
 interface Props {
   handleWindowToggle: () => void,
@@ -47,6 +48,7 @@ const convertData = (responseProductData: ResponseDataType): ProductDetailType =
 const AddingProductWindow = ({setSelectedCSVFile, handleWindowToggle, handleAddingProductEvent, handleAddingDetailProductEvent }: Props) => {
   //MAKE REQUEST TO DATABASE
   const { loading, data, error, requestAddingProduct } = useAddProduct();
+  const {showNotification} = useNotification();
   //IMAGE CATEGORY 
   const [image1, setImage1] = useState<string>("");
   const [image2, setImage2] = useState<string>("");
@@ -131,13 +133,12 @@ const AddingProductWindow = ({setSelectedCSVFile, handleWindowToggle, handleAddi
     try {
       const response = await requestAddingProduct({ newDetailProduct, imageFile1, imageFile2, imageFile3 });
 
-      if (response?.code === 200 && response.data) {
+      
+      if (response?.code === 200 && response.data) {  
         const resData: ResponseDataType = response.data;
         newDetailProduct = convertData(resData);
-        console.log(newDetailProduct);
         // DATA FORMATTING BEFORE DISPLAYING ON TABLE (INCLUDE: CALCULATE PUBLIC PRICE)
         const newProductLine = productInputFormat(newDetailProduct);
-        console.log(newProductLine);
 
         // Adding product to current hook to reduce the activate time
         if (newProductLine !== null) {
@@ -147,12 +148,12 @@ const AddingProductWindow = ({setSelectedCSVFile, handleWindowToggle, handleAddi
 
         resetAllFields();
         handleWindowToggle();
-        alert("✅ Adding new product successfully");
+        showNotification("Adding new product successfully");
       } else {
-        console.log("Failed to add a new product");
+        showNotification("Failed to add a new product", true);
       }
     } catch (error) {
-      console.log(`Adding new product failed: \n${error}`);
+      showNotification(`Adding new product failed: \n${error}`, true);
     }
   }
 

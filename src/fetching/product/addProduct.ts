@@ -44,32 +44,27 @@ interface DataConvertProps {
   imageFile3: File | null;
 }
 
-const dataConvert = ({ newDetailProduct, imageFile1, imageFile2, imageFile3 }: DataConvertProps): FormData => {
-  const data: ProductDetailRequestType = {
-    sku: newDetailProduct.SKU || `SP-${Date.now()}`,
-    name: newDetailProduct.PRODUCT_NAME,
-    description: newDetailProduct.DESCRIPTION,
-    subtitle: newDetailProduct.PRODUCT_SUBTITLE,
-    brand: newDetailProduct.PRODUCT_BRAND,
-    category: newDetailProduct.PRODUCT_CATEGORY,
-    quantity: newDetailProduct.PRODUCTS,
-    status: newDetailProduct.STATUS,
-    price: newDetailProduct.PURCHASE_UNIT_PRICE,
-    discount: newDetailProduct.DISCOUNT,
-    discountType: newDetailProduct.DISCOUNT_TYPE,
-  };
+const dataConvert = ({ newDetailProduct, imageFile1 }: DataConvertProps): FormData => {
+  const form = new FormData();
 
-  const requestBody = new FormData();
-  const jsonBlob = new Blob([JSON.stringify(data)], { type: "application/json" });
-  requestBody.append("data", jsonBlob);
+  form.append("sku", newDetailProduct.SKU || `SP-${Date.now()}`);
+  form.append("name", newDetailProduct.PRODUCT_NAME);
+  form.append("description", newDetailProduct.DESCRIPTION);
+  form.append("subtitle", newDetailProduct.PRODUCT_SUBTITLE);
+  form.append("brand", newDetailProduct.PRODUCT_BRAND);
+  form.append("category", newDetailProduct.PRODUCT_CATEGORY);
+  form.append("quantity", String(newDetailProduct.PRODUCTS));
+  form.append("status", newDetailProduct.STATUS);
+  form.append("price", String(newDetailProduct.PURCHASE_UNIT_PRICE));
+  form.append("discount", String(newDetailProduct.DISCOUNT));
+  form.append("discountType", newDetailProduct.DISCOUNT_TYPE);
 
+  if (imageFile1) form.append("image", imageFile1);
 
-  if (imageFile1) requestBody.append("image", imageFile1);
-  // if (imageFile2) requestBody.append("image", imageFile2);
-  // if (imageFile3) requestBody.append("image", imageFile3);
-
-  return requestBody;
+  return form;
 };
+
+
 
 export const useAddProduct = () => {
   const [loading, setLoading] = useState(false);
@@ -84,25 +79,38 @@ export const useAddProduct = () => {
 
   const requestAddingProduct = async ({ newDetailProduct, imageFile1, imageFile2, imageFile3 }: DataConvertProps) => {
     const formData = dataConvert({ newDetailProduct, imageFile1, imageFile2, imageFile3 });
+    
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axios.post(path, formData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+      const res = await fetch("/api/product/addProduct", {
+        method: "POST",
+        body: formData,
+        credentials: "include", 
       });
 
-      const resData: ApiResponse = response.data;
-      setData(resData.data);
-      return resData;
-    } catch (err) {
-      const errAxios = err as AxiosError<any>;
-      const errData: ResponseErrorType[] = errAxios.response?.data.error;
-      const errMes = errData[0].message;
+      const resData = await res.json();
 
-      throw new Error(errMes);
+
+      if (!res.ok) {
+        const errMessage =
+          resData?.errors?.[0]?.message ||
+          resData?.message ||
+          "Unknown error";
+        throw new Error(errMessage);
+      }
+
+      if (resData.code === 200) {
+        setData(resData.data);
+        return resData;
+      }
+
+    } catch (err) {
+      const errAny = err as Error;
+      const errMessage = errAny.message || "Unknown error";
+      setError(errMessage);
+      throw new Error(errMessage);
     } finally {
       setLoading(false);
     }
