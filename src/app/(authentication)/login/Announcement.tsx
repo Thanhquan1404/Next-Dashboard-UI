@@ -4,46 +4,36 @@ const Announcement = ({ handleToggle, isSignIn }: { handleToggle: any, isSignIn:
           w-1/2 h-full 
           flex flex-col items-center justify-center 
           px-10 text-center space-y-6 
-          bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-400 
-          text-white shadow-xl
+          bg-gradient-to-br from-[#1e88e5] to-[#1565c0] 
+          text-white shadow-2xl
           absolute
-          left-[50%]
-          transition-all duration-700 ease-in-out
+          transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1) // Cải thiện transition
         "
       style={{
-        left: isSignIn ? "50%" : "25%",
-        transform: isSignIn ? "translateX(0%)" : "translateX(-50%)",
-        zIndex: 1000,
-        borderTopRightRadius: isSignIn ? "0px" : "60px",
-        borderBottomRightRadius: isSignIn ? "0px" : "60px",
-        borderTopLeftRadius: isSignIn ? "60px" : "0px",
-        borderBottomLeftRadius: isSignIn ? "60px" : "0px",
-        transition: `
-          left 0.8s ease-in-out,
-          transform 0.8s ease-in-out,
-          border-top-right-radius 1s ease-in-out,
-          border-bottom-right-radius 1s ease-in-out,
-          border-top-left-radius 1s ease-in-out,
-          border-bottom-left-radius 1s ease-in-out
-        `,
-      }}
 
+        left: isSignIn ? "50%" : "0%",
+        zIndex: 1000,
+        borderRadius: isSignIn ? "0 48px 48px 0" : "48px 0 0 48px",
+      }}
     >
-      {/* Heading */}
-      <h1 className="text-4xl font-bold tracking-wide drop-shadow-md animate-fadeIn">
-        {isSignIn ? "Hello, Friend!" : "Welcome back"}
+      {/* Title */}
+      <h1 className="text-4xl font-extrabold tracking-wide drop-shadow-md">
+        {isSignIn ? "New Here?" : "Welcome Back!"}
       </h1>
 
       {/* Subtext */}
       <h3 className="text-base font-light text-white/90 leading-relaxed max-w-[300px]">
-        Register with your personal details to use all of our site features.
+        {isSignIn 
+            ? "Sign up to begin your journey with our top-tier CRM solution." 
+            : "To keep managing your sales pipeline, please sign in."
+        }
       </h3>
 
-      {/* Sign Up Button */}
+      {/* Button */}
       <button className="
-            mt-4 px-8 py-3 bg-white text-purple-600 font-semibold rounded-full
-            shadow-lg hover:shadow-2xl hover:scale-105 hover:bg-purple-100
-            transition-all duration-300 ease-in-out
+            mt-6 px-10 py-3 bg-white text-[#1e88e5] font-bold rounded-full
+            shadow-xl hover:shadow-2xl hover:scale-[1.05] 
+            transition-all duration-300 ease-in-out border-2 border-white
           "
         onClick={handleToggle}
       >

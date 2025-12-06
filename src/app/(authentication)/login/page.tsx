@@ -11,14 +11,23 @@ const LoginPage = () => {
   const handleToggle = (): void => {setIsSignIn(prev => !prev)};
 
   return (
-    // GENERAL CSS
-    <div className="relative w-[100wh] h-[100vh] bg-cover bg-no-repeat bg-center bg-[url('/loginBackground.jpg')]"
+    <div className="relative w-full min-h-screen 
+                    bg-gradient-to-br from-[#121820] via-[#1E2734] to-[#121820] 
+                    flex items-center justify-center p-6"
     >
-      <div className="w-[800px] h-[500px] bg-white/30 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-md backdrop-blur-xl">
-        <div className="w-full h-full bg-transparent flex flex-row gap-6 relative overflow-hidden ">
-          <SignIn isSignIn={isSignIn} />
-          <Announcement handleToggle={handleToggle} isSignIn={isSignIn}/>
-          <SignUp isSignIn={isSignIn} handleToggle={handleToggle}/>
+      <div className="w-full max-w-[950px] h-[600px] 
+                      bg-white/5 
+                      rounded-3xl 
+                      shadow-[0_25px_50px_rgba(0,0,0,0.7)] 
+                      backdrop-blur-xl 
+                      border border-white/10
+                      relative overflow-hidden 
+                      p-0"
+      >
+        <div className="w-full h-full relative">
+            <SignIn isSignIn={isSignIn} />
+            <Announcement handleToggle={handleToggle} isSignIn={isSignIn}/>
+            <SignUp isSignIn={isSignIn} handleToggle={handleToggle}/>
         </div>
       </div>
     </div>

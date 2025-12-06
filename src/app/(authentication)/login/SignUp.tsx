@@ -6,7 +6,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { useState } from 'react';
 import { UserSignUpType } from '@/lib/data.user';
 import { useSignUpFetching } from '@/fetching/user/signUpFetching';
-import FetchingLoadingStatus from '../../../components/FetchingLoadingStatus';
+import FetchingLoadingStatus from '@/components/FetchingLoadingStatus';
 
 interface Props {
   isSignIn: boolean;
@@ -16,42 +16,34 @@ interface Props {
 // CHECK SIGN UP DATA FIELDS
 const checkSignUpInput = (newSignUp: UserSignUpType): boolean => {
   const { firstName, lastName, userName, phone, email, password } = newSignUp;
-
-  // Helper regex patterns
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^[0-9]{9,11}$/; // allow 9–11 digits
+  const phoneRegex = /^[0-9]{9,11}$/; 
   const usernameRegex = /^[a-zA-Z0-9._-]{3,20}$/;
 
-  // Check required fields are not empty
   if (!firstName.trim() || !lastName.trim() || !userName.trim() || !phone.trim() || !email.trim() || !password.trim()) {
     alert("Some fields are empty.");
     return false;
   }
 
-  // Validate username format
   if (!usernameRegex.test(userName)) {
     alert("Invalid username format. Only letters, numbers, dot, underscore, and hyphen allowed (3–20 chars).");
     return false;
   }
 
-  // Validate phone format
   if (!phoneRegex.test(phone)) {
     alert("Invalid phone number. Must be 9–11 digits.");
     return false;
   }
 
-  // Validate email format
   if (!emailRegex.test(email)) {
     alert("Invalid email format.");
     return false;
   }
 
-  // Validate password length
   if (password.length < 6) {
     alert("Password too short. Must be at least 6 characters.");
     return false;
   }
-
   return true;
 };
 
@@ -61,8 +53,6 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
 
   const [visible, setVisible] = useState(false);
   const handleVisible = () => setVisible((prev) => !prev);
-  // SIGN UP FETCHING PROCESS
-  const [isSignUpProcess, setIsSignUpProcess] = useState<boolean>(false);
 
   // STATE 
   const [inputFirstName, setInputFirstName] = useState<string>("");
@@ -94,7 +84,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
 
     if (!checkSignUpInput(newSignUpInput)) {
       return;
-    } 
+    }
 
     try {
       await userRegister(newSignUpInput);
@@ -102,7 +92,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
       if (data?.code === 200) {
         alert("You have signed up successfully!");
         resetStateField();
-        handleToggle();
+        handleToggle(); 
       } else {
         alert("Registration failed. Please try again.");
       }
@@ -111,106 +101,111 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
     }
   }
 
+  const inputContainerStyle = "w-full h-10 bg-white/10 rounded-lg px-4 flex items-center gap-4 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#1e88e5] focus-within:bg-white/20";
+  const inputStyle = "w-full bg-transparent outline-none placeholder-gray-300 text-white";
+  const iconStyle = { fontSize: '20px' };
+
   return (
     <div
-      className="w-1/2 h-full px-10 flex flex-col justify-center space-y-5 absolute transition-all duration-700 ease-in-out"
+      className="w-1/2 h-full px-12 flex flex-col justify-center space-y-3 absolute transition-all duration-700 cubic-bezier(0.4, 0, 0.2, 1)"
       style={{
-        left: isSignIn ? "-100%" : "50%",
-        opacity: isSignIn ? 0 : 1,
-        transition:
-          `left 0.8s ease-in-out, transform 0.8s ease-in-out, ${isSignIn ? 'opacity 0.15s ease-in-out' : 'opacity 1.5s ease-in-out'}`,
+        left: isSignIn ? "100%" : "50%",
+        opacity: isSignIn ? 0.2 : 1, 
+        zIndex: isSignIn ? 800 : 900,
       }}
     >
-      <h1 className="font-michroma text-[28px] text-center text-white tracking-wide mb-2">
-        Sign Up
+      <h1 className="text-3xl font-bold text-center text-white tracking-wide mb-1 drop-shadow-md">
+        Create Your Account
       </h1>
-      <p className="text-xs text-gray-300 text-center opacity-80 mb-4">
-        or use your email for registration
+      <p className="text-xs text-white/70 text-center mb-4">
+        Enter your details to register
       </p>
 
       {/* FIRST + LAST NAME */}
-      <div className="flex flex-row gap-4">
-        <div className="w-1/2 h-[40px] bg-white rounded-md px-3 py-2 flex items-center gap-3">
+      <div className="flex flex-row gap-3">
+        <div className={inputContainerStyle}>
           <input
             disabled={loading}
             type="text"
-            placeholder="First name"
+            placeholder="First Name"
             value={inputFirstName}
             onChange={(e) => setInputFirstName(e.target.value)}
-            className="w-full bg-transparent outline-none placeholder-gray-400 text-gray-700"
+            className={inputStyle}
           />
         </div>
-        <div className="w-1/2 h-[40px] bg-white rounded-md px-3 py-2 flex items-center gap-3">
+        <div className={inputContainerStyle}>
           <input
             disabled={loading}
             type="text"
-            placeholder="Last name"
+            placeholder="Last Name"
             value={inputLastName}
             onChange={(e) => setInputLastName(e.target.value)}
-            className="w-full bg-transparent outline-none placeholder-gray-400 text-gray-700"
+            className={inputStyle}
           />
         </div>
       </div>
 
       {/* USERNAME */}
-      <div className="w-full h-[40px] bg-white rounded-md px-3 py-2 flex items-center gap-3">
-        <PersonIcon className="text-gray-500" />
+      <div className={inputContainerStyle}>
+        <PersonIcon className="text-white/70" style={iconStyle} />
         <input
           disabled={loading}
           type="text"
           placeholder="Username"
           value={inputUserName}
           onChange={(e) => setInputUserName(e.target.value)}
-          className="w-full bg-transparent outline-none placeholder-gray-400 text-gray-700"
+          className={inputStyle}
         />
       </div>
 
       {/* PHONE */}
-      <div className="w-full h-[40px] bg-white rounded-md px-3 py-2 flex items-center gap-3">
-        <PhoneIphoneIcon className="text-gray-500" />
+      <div className={inputContainerStyle}>
+        <PhoneIphoneIcon className="text-white/70" style={iconStyle} />
         <input
           disabled={loading}
           type="text"
-          placeholder="Phone"
+          placeholder="Phone Number"
           value={inputPhone}
           onChange={(e) => setInputPhone(e.target.value)}
-          className="w-full bg-transparent outline-none placeholder-gray-400 text-gray-700"
+          className={inputStyle}
         />
       </div>
 
       {/* EMAIL */}
-      <div className="w-full h-[40px] bg-white rounded-md px-3 py-2 flex items-center gap-3">
-        <EmailIcon className="text-gray-500" />
+      <div className={inputContainerStyle}>
+        <EmailIcon className="text-white/70" style={iconStyle} />
         <input
           disabled={loading}
           type="text"
-          placeholder="Email"
+          placeholder="Email Address"
           value={inputEmail}
           onChange={(e) => setInputEmail(e.target.value)}
-          className="w-full bg-transparent outline-none placeholder-gray-400 text-gray-700"
+          className={inputStyle}
         />
       </div>
 
       {/* PASSWORD */}
-      <div className="w-full h-[40px] bg-white/90 rounded-md px-3 py-2 flex items-center gap-3">
+      <div className={inputContainerStyle}>
         {visible ? (
           <VisibilityIcon
-            className="text-gray-500 cursor-pointer"
+            className="text-white/70 cursor-pointer"
             onClick={handleVisible}
+            style={iconStyle}
           />
         ) : (
           <VisibilityOffIcon
-            className="text-gray-500 cursor-pointer"
+            className="text-white/70 cursor-pointer"
             onClick={handleVisible}
+            style={iconStyle}
           />
         )}
         <input
           disabled={loading}
           type={visible ? "text" : "password"}
-          placeholder="Password"
+          placeholder="Password (min 6 chars)"
           value={inputPassword}
           onChange={(e) => setInputPassword(e.target.value)}
-          className="w-full bg-transparent outline-none placeholder-gray-400 text-gray-700"
+          className={inputStyle}
         />
       </div>
 
@@ -218,15 +213,17 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
       {loading ? (
         <FetchingLoadingStatus loading={loading} />
       ) : (
-        <button
-          disabled={loading}
-          className={`mt-3 bg-white/30 text-white rounded-xl w-[120px] h-[40px]
-                     ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-white hover:text-black"}
-                     mx-auto shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 font-semibold`}
-          onClick={handleSubmitButton}
-        >
-          Sign Up
-        </button>
+        <div className='flex justify-center'>
+          <button
+            disabled={loading}
+            className={`mt-100 bg-[#1e88e5] text-white rounded-full w-[150px] h-11
+                     ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#1565c0]"}
+                     mx-auto shadow-xl hover:shadow-2xl hover:scale-[1.05] transition-all duration-300 font-bold`}
+            onClick={handleSubmitButton}
+          >
+            Sign Up
+          </button>
+        </div>
       )}
     </div>
   );
