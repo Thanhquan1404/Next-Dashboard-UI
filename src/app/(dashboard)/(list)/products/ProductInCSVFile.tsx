@@ -1,6 +1,7 @@
 import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 import PropertySelectorComponent from "@/components/PropertySelectorComponent";
 import useBrowseCSVFile from "@/fetching/product/productInCSV";
+import { useNotification } from "@/providers/NotificationProvider";
 import Papa from 'papaparse';
 import { useEffect, useState } from "react";
 
@@ -11,6 +12,7 @@ interface Props {
 };
 
 const ProductInCSVFile = ({ selectedCSVFile, setSelectedCSVFile, handleWindowToggle }: Props) => {
+  const { showNotification, showCSVNotification } = useNotification();
   // INITIALIZE FETCHING UPLOAD FILE CSV
   const { loading, data, error, sendCSV } = useBrowseCSVFile();
   // STATE 
@@ -61,11 +63,22 @@ const ProductInCSVFile = ({ selectedCSVFile, setSelectedCSVFile, handleWindowTog
 
   // HANDLE IMPORT BUTTON TOGGLE 
   const handleImportToggle = async () => {
-    const res = await sendCSV(selectedCSVFile, propertyMapping);
+    try {
+      const res = await sendCSV(selectedCSVFile, propertyMapping);
 
-    if (res && res.code === 200) {
-      handleCancelToggle();
+      if (res && res.code === 200) {
+        console.log(res.error);
+        if (res.error){
+          showCSVNotification(res.error, true);
+        }else{
+          showNotification("Upload CSV successfully");
+        }
+        handleCancelToggle();
+      }
+    } catch (err) {
+      showNotification(String(err), true);
     }
+
   }
 
   const handleMappingChange = (row: string, selectedProperty: string) => {
@@ -199,7 +212,7 @@ const ProductInCSVFile = ({ selectedCSVFile, setSelectedCSVFile, handleWindowTog
             {
               loading
                 ?
-                <FetchingLoadingStatus loading={loading} color="#3366CC"/>
+                <FetchingLoadingStatus loading={loading} color="#3366CC" />
                 :
                 <button className={`px-4 py-2 rounded-lg text-xs text-white/90 transition-all duration-300 shadow-sm
                       ${allMapping
