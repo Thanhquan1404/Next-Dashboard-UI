@@ -22,7 +22,7 @@ export default function RootLayout({
         {/* Navbar Logo */}
         <Link className="flex items-center justify-center lg:justify-start gap-2" href="/" >
           <Image src="/logo.png" alt="logo" width={32} height={32} />
-          <span className="hidden lg:block">CRM</span>
+          <span className="hidden lg:block">Vera CRM</span>
         </Link>
         {/* Navbar menu */}
         <Menu />

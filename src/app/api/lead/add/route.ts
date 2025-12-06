@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { URL, ApiResponse, ApiResponseError } from "@/lib/data";
-import { leadType } from "@/lib/data.leads";
 
 const path = `${URL}/leads`;
 

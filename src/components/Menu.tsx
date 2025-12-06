@@ -64,8 +64,8 @@ export const Menu = () => {
               >
                 <Image
                   src={item.icon}
-                  width={15}
-                  height={15}
+                  width={20}
+                  height={20}
                   alt={item.label}
                   className={`
                     transition-transform duration-300 ease-in-out

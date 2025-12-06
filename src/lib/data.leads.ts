@@ -18,6 +18,7 @@ export interface leadType {
   phone: string;
   email: string;
   rating: number;
+  expectedRevenue: number;
   source: leadSourceType;
   status: string;
 }

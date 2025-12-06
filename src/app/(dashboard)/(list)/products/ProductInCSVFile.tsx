@@ -67,7 +67,6 @@ const ProductInCSVFile = ({ selectedCSVFile, setSelectedCSVFile, handleWindowTog
       const res = await sendCSV(selectedCSVFile, propertyMapping);
 
       if (res && res.code === 200) {
-        console.log(res.error);
         if (res.error){
           showCSVNotification(res.error, true);
         }else{

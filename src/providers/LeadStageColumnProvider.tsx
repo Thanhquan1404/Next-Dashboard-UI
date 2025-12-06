@@ -71,6 +71,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
           rating: item.rating ?? 0,
           source: "Facebook", 
           status: stageColumn.status,
+          expectedRevenue: item.expectedRevenue,
         })) ?? []; 
 
         initial[stageColumn.status] = leadsInThisStage;
@@ -131,7 +132,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
       
       if (!success) {
         showNotification("Failed to add lead", true);
-        return;
+        return false;
       }
 
       setLeadItemsInStage((prev) => ({
@@ -139,6 +140,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
         [targetColumn]: [...prev[targetColumn], newLead]
       }));
       showNotification("Successfully add a new lead");
+      return true;
     } catch (err) {
       showNotification(String(err), true);
     }

@@ -19,7 +19,7 @@ const Page = () => {
   const [leadDraggingID, setLeadDraggingID] = useState<string>("");
 
   // LEAD ITEMS IN STAGE 
-  const { leadItemsInStage, updateLeadStage, addingNewLead, leadStage, getListLeadLoading } = useLeadStageColumn();
+  const { addLeadLoading, leadItemsInStage, updateLeadStage, addingNewLead, leadStage, getListLeadLoading } = useLeadStageColumn();
 
   // DRAG START
   const dragStartEvent = (
@@ -42,7 +42,7 @@ const Page = () => {
 
   // HANDLE ADDING NEW LEAD 
   const handleAddingNewLead = (newLead: leadType, targetColumn: string, stageID: string) => {
-    addingNewLead(newLead, targetColumn, stageID);
+    return addingNewLead(newLead, targetColumn, stageID);
   }
 
   // LEAD DETAIL ID SELECTED
@@ -82,6 +82,7 @@ const Page = () => {
                     leadStage={stage.status}
                     leadColor={stage.color}
                     leadItems={leadItemsInStage[stage.status]}
+                    addLeadLoading={addLeadLoading}
                     dragStartEvent={dragStartEvent}
                     dropEvent={dropEvent}
                     dragOverEvent={dragOverEvent}

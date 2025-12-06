@@ -15,7 +15,7 @@ const useAddLead = () => {
     try {
       const payload = makePayload(newLead, stageID);
 
-      const res = await fetch("/api/leads/add", {
+      const res = await fetch("/api/lead/add", {
         method: "POST",
         body: payload,
       });
@@ -51,7 +51,8 @@ const makePayload = (newLead: leadType, stageID: string) => {
   payload.append("email", newLead.email);
   payload.append("phoneNumber", newLead.phone);
   payload.append("rating", String(newLead.rating));
-  payload.append("stageID", stageID); // thêm stageID để route có thể đọc
+  payload.append("expectedRevenue", String(newLead.expectedRevenue))
+  payload.append("stageID", stageID); 
   return payload;
 };
 

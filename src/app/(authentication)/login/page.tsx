@@ -17,7 +17,7 @@ const LoginPage = () => {
     >
       <div className="w-full max-w-[950px] h-[600px] 
                       bg-white/5 
-                      rounded-3xl 
+                      rounded-[48px] 
                       shadow-[0_25px_50px_rgba(0,0,0,0.7)] 
                       backdrop-blur-xl 
                       border border-white/10
