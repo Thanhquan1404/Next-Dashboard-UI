@@ -166,7 +166,6 @@ const ProductDetailWindow = ({ productID, detailProductArray, updateProductDetai
       discountType: selectedDiscountType,
     }
     const productChanges = getValueChanged(originalMapping, updatedDetailProduct);
-    console.log(productChanges);
     try {
       const response = await updateProduct(productChanges, retrievedProduct.PRODUCT_ID);
 

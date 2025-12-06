@@ -82,17 +82,17 @@ const useUpdateProduct = () => {
 const dataConvert = (updateProductDetail: any, imageFile1?: File): FormData => {
   const form = new FormData();
 
-  form.append("sku", updateProductDetail.sku || `SP-${Date.now()}`);
-  form.append("name", updateProductDetail.name);
-  form.append("description", updateProductDetail.description);
-  form.append("subtitle", updateProductDetail.subtitle);
-  form.append("brand", updateProductDetail.brand);
-  form.append("category", updateProductDetail.category);
-  form.append("quantity", String(updateProductDetail.quantity));
-  form.append("status", updateProductDetail.status);
-  form.append("price", String(updateProductDetail.price));
-  form.append("discount", String(updateProductDetail.discount));
-  form.append("discountType", updateProductDetail.discountType);
+  if (updateProductDetail.sku) form.append("sku", updateProductDetail.sku || `SP-${Date.now()}`);
+  if (updateProductDetail.name) form.append("name", updateProductDetail.name);
+  if (updateProductDetail.description)form.append("description", updateProductDetail.description);
+  if (updateProductDetail.subtitle) form.append("subtitle", updateProductDetail.subtitle);
+  if (updateProductDetail.brand) form.append("brand", updateProductDetail.brand);
+  if (updateProductDetail.category) form.append("category", updateProductDetail.category);
+  if (updateProductDetail.quantity) form.append("quantity", updateProductDetail.quantity);
+  if (updateProductDetail.status) form.append("status", updateProductDetail.status);
+  if (updateProductDetail.price) form.append("price", updateProductDetail.price);
+  if (updateProductDetail.discount) form.append("discount", updateProductDetail.discount);
+  if (updateProductDetail.discountType) form.append("discountType", updateProductDetail.discountType);
 
   if (imageFile1) form.append("image", imageFile1);
 
