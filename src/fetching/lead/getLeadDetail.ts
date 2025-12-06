@@ -60,22 +60,25 @@ const useGetLeadDetail = () => {
   useEffect(() => {
     setToken(getToken() || null);
   }, []);
+
   const getLeadDetailInformation = async (leadID: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axios.get(`${path}/${leadID}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      });
+      const response = await fetch(`api/lead/getLeadDetail?leadID=${leadID}`, {
+        method: "GET",
+        credentials: "include",
+      })
 
-      const responseData: ApiResponse = response.data;
-      const data: ApiResponseDataType = responseData.data;
-      return mappingResponseData(data);
+      const resData = await response.json();
+      const leadDetail: LeadDetailType = mappingResponseData(resData.data);
+      return leadDetail;
     } catch (err) {
-      console.log(err);
+      const errAny = err as Error;
+      const errMessage = errAny.message || "Unknown error";
+      setError(errMessage);
+      throw new Error(errMessage);
     }
     finally {
       setLoading(false);

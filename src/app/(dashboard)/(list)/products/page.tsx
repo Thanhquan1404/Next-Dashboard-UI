@@ -11,7 +11,7 @@ import useDeleteProduct from "@/fetching/product/deleteProduct";
 import ProductInCSVFile from "./ProductInCSVFile";
 import { useNotification } from "@/providers/NotificationProvider";
 import { useSearchParams } from "next/navigation";
-import useSearchProduct from "@/fetching/lead/searchProduct";
+import useSearchProduct from "@/fetching/product/searchProduct";
 
 // FUNCTION TO ASSIGN PRODUCT DETAIL INTO PRODUCT IN TABLE
 const productTableData = (listProductDetail: ProductDetailType[]): ProductDataType[] => {

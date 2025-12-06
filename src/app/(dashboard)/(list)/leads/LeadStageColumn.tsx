@@ -170,25 +170,6 @@ const LeadStageColumn = ({
               transition-all duration-200 cursor-pointer
             "
           >
-            {/* DELETE BUTTON */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                // handleDeleteLead(leadItem.leadID);
-              }}
-              className="
-                absolute top-2 right-2 
-                p-1 rounded-md 
-                active:scale-95
-                transition duration-500
-              "
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-                className="size-5 hover:text-red-400 transition duration-500"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-              </svg>
-            </button>
             {/* PERSONAL INFO */}
             <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
               <Image
@@ -209,6 +190,27 @@ const LeadStageColumn = ({
                 <span className="text-xs text-gray-400">
                   {new Date(leadItem.createdDate).toLocaleString("vi-VN")}
                 </span>
+              </div>
+
+              <div className="hover:opacity-100 opacity-0 transition-all duration-500">
+                {/* DELETE BUTTON */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // handleDeleteLead(leadItem.leadID);
+                  }}
+                  className="
+                    p-1 rounded-md 
+                    active:scale-95
+                    transition duration-500
+                  "
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+                    className="size-5 hover:text-red-400 transition duration-500"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                </button>
               </div>
             </div>
 
@@ -295,7 +297,7 @@ const LeadStageColumn = ({
           <div className="flex gap-2 w-full">
 
             {addLeadLoading ?
-              <FetchingLoadingStatus loading={addLeadLoading} color="#3366CC"/>
+              <FetchingLoadingStatus loading={addLeadLoading} color="#3366CC" />
               :
               <button
                 disabled={!leadName || !leadPhone || !leadEmail || !leadRate || leadExpectedRevenue === 0}
