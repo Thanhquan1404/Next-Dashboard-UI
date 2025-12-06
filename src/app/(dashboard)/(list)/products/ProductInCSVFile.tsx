@@ -1,4 +1,6 @@
+import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 import PropertySelectorComponent from "@/components/PropertySelectorComponent";
+import useBrowseCSVFile from "@/fetching/product/productInCSV";
 import Papa from 'papaparse';
 import { useEffect, useState } from "react";
 
@@ -9,13 +11,20 @@ interface Props {
 };
 
 const ProductInCSVFile = ({ selectedCSVFile, setSelectedCSVFile, handleWindowToggle }: Props) => {
+  // INITIALIZE FETCHING UPLOAD FILE CSV
+  const { loading, data, error, sendCSV } = useBrowseCSVFile();
   // STATE 
   const [fileHeader, setFileHeader] = useState<string[]>([]);
   const [filefirstDataRow, setFilefirstDataRow] = useState<string[]>([]);
   const [fileName, setFileName] = useState<string>("");
   const [propertyMapping, setPropertyMapping] = useState<Record<string, string>>({});
-  // CHECK ALL PROPERTY HAVE CHOOSEN
-  const allMapping: boolean = fileHeader.every((row) => propertyMapping[row]);
+
+  const [ignoredColumns, setIgnoredColumns] = useState<string[]>([]);
+
+  const allMapping: boolean = fileHeader.every((row) =>
+    propertyMapping[row] || ignoredColumns.includes(row)
+  );
+
   // SET UP THE MAPPING PROPERTY
   useEffect(() => {
     if (selectedCSVFile) {
@@ -29,6 +38,8 @@ const ProductInCSVFile = ({ selectedCSVFile, setSelectedCSVFile, handleWindowTog
             setFilefirstDataRow(secondRow);
             setFileName(selectedCSVFile.name);
             setFileHeader(firstRow);
+            setPropertyMapping({});
+            setIgnoredColumns([]);
           }
         },
         error: (error) => {
@@ -40,18 +51,46 @@ const ProductInCSVFile = ({ selectedCSVFile, setSelectedCSVFile, handleWindowTog
   // HANDLE CANCEL BUTTON TOGGLE
   const handleCancelToggle = () => {
     setSelectedCSVFile(null);
-    handleWindowToggle()
+    setFileHeader([]);
+    setFilefirstDataRow([]);
+    setFileName("");
+    setPropertyMapping({});
+    setIgnoredColumns([]);
+    handleWindowToggle();
   }
+
   // HANDLE IMPORT BUTTON TOGGLE 
-  const handleImportToggle = () => {
-    console.log(propertyMapping);
+  const handleImportToggle = async () => {
+    const res = await sendCSV(selectedCSVFile, propertyMapping);
+
+    if (res && res.code === 200) {
+      handleCancelToggle();
+    }
   }
-  // HANDLE PROPERTY CHANGE 
+
   const handleMappingChange = (row: string, selectedProperty: string) => {
-    setPropertyMapping((prev) => ({
-      ...prev,
-      [row]: selectedProperty,
-    }));
+    const formatSelectedProperty = selectedProperty.trim();
+    const isIgnored = formatSelectedProperty === "Do not choose this column";
+
+    setPropertyMapping((prev) => {
+      const newMapping = { ...prev };
+
+      if (isIgnored) {
+        delete newMapping[row];
+      } else {
+        newMapping[row] = formatSelectedProperty;
+      }
+
+      return newMapping;
+    });
+
+    setIgnoredColumns((prev) => {
+      const newIgnored = prev.filter(c => c !== row);
+      if (isIgnored) {
+        newIgnored.push(row);
+      }
+      return newIgnored;
+    });
   };
 
   return (
@@ -86,66 +125,91 @@ const ProductInCSVFile = ({ selectedCSVFile, setSelectedCSVFile, handleWindowTog
 
 
               {/* MAPPED ROWS */}
-              {fileHeader.map((row, index) => (
-                <div key={index} className="flex justify-between items-center gap-4 px-2">
-                  <div className="bg-gray-100 rounded-lg text-sm py-3 px-3 w-1/2 flex items-center gap-2 text-gray-700 font-medium">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-green-400">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 1.5v-1.5m0 0c0-.621.504-1.125 1.125-1.125m0 0h7.5" />
-                    </svg>
-                    <span className="text-md font-semibold ">{row}</span>
-                    <span className="text-xs text-gray-400">({filefirstDataRow[index]})</span>
-                  </div>
+              {fileHeader.map((row, index) => {
+                // Sửa: Xác định giá trị hiện tại. Nếu key không tồn tại trong mapping, kiểm tra xem nó có trong ignoredColumns không.
+                let currentValue = propertyMapping[row];
 
-                  <div className="flex justify-center items-center w-1/12">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-5 h-5 text-gray-400"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+                if (currentValue === undefined && ignoredColumns.includes(row)) {
+                  // Nếu cột này bị bỏ qua, set giá trị hiển thị trong selector là "Do not choose this column"
+                  currentValue = "Do not choose this column";
+                }
+
+                // Yêu cầu 2: Logic Icon. Icon hiển thị nếu cột đó có mapping HOẶC nằm trong ignoredColumns
+                const isMappedOrIgnored = propertyMapping[row] !== undefined || ignoredColumns.includes(row);
+
+                return (
+                  <div key={index} className="flex justify-between items-center gap-4 px-2">
+                    <div className="bg-gray-100 rounded-lg text-sm py-3 px-3 w-1/2 flex items-center gap-2 text-gray-700 font-medium">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-green-400">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125-.504 1.125-1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 1.5v-1.5m0 0c0-.621.504-1.125 1.125-1.125m0 0h7.5" />
+                      </svg>
+                      <span className="text-md font-semibold ">{row}</span>
+                      <span className="text-xs text-gray-400">({filefirstDataRow[index]})</span>
+                    </div>
+
+                    <div className="flex justify-center items-center w-1/12">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-5 h-5 text-gray-400"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+                        />
+                      </svg>
+                    </div>
+
+                    <div className="text-blue-700 text-sm rounded-lg px-3 w-1/2 text-center font-medium flex items-center gap-4">
+                      {/* SỬA: Dùng currentValue để hiển thị giá trị đã chọn */}
+                      <PropertySelectorComponent
+                        selectedValue={currentValue || ""}
+                        onChange={(selectedValue) => handleMappingChange(row, selectedValue)}
+                        width="flex-1"
                       />
-                    </svg>
+                      {
+                        // SỬA: Logic Icon mới
+                        isMappedOrIgnored ?
+                          <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-green-500">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                          </div>
+                          :
+                          <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-500">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                            </svg>
+                          </div>
+                      }
+                    </div>
                   </div>
-
-                  <div className="text-blue-700 text-sm rounded-lg px-3 w-1/2 text-center font-medium flex items-center gap-4">
-                    <PropertySelectorComponent selectedValue={propertyMapping[row] || ""} onChange={(selectedValue) => handleMappingChange(row, selectedValue)} width="flex-1" />
-                    {
-                      propertyMapping[row] ?
-                        <div>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-green-500">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                          </svg>
-                        </div>
-                        :
-                        <div>
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-gray-500">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-                          </svg>
-                        </div>
-                    }
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
           <div className="w-full h-fit flex justify-between mt-4">
             <button className="border-[1px] px-4 py-2 rounded-lg text-xs hover:bg-gray-100 transition-all duration-200" onClick={() => handleCancelToggle()}>
               Cancel
             </button>
-            <button className={`px-4 py-2 rounded-lg text-xs text-white/90 transition-all duration-300 shadow-sm
+            {
+              loading
+                ?
+                <FetchingLoadingStatus loading={loading} color="#3366CC"/>
+                :
+                <button className={`px-4 py-2 rounded-lg text-xs text-white/90 transition-all duration-300 shadow-sm
                       ${allMapping
-                ? "bg-blue-500 hover:bg-blue-600 hover:scale-[1.02] active:scale-95"
-                : "bg-gray-300 text-gray-400 cursor-not-allowed filter grayscale blur-[0.5px]"
-              }`}
-              onClick={() => handleImportToggle()} disabled={!allMapping}>
-              Import file
-            </button>
+                    ? "bg-blue-500 hover:bg-blue-600 hover:scale-[1.02] active:scale-95"
+                    : "bg-gray-300 text-gray-400 cursor-not-allowed filter grayscale blur-[0.5px]"
+                  }`}
+                  onClick={() => handleImportToggle()} disabled={!allMapping}>
+                  Import file
+                </button>
+            }
           </div>
         </div>
       </div>

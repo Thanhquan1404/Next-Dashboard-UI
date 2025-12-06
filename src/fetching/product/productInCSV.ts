@@ -7,12 +7,21 @@ import { getToken } from "@/service/localStorageService";
 
 const path = `${URL}/products/csv`;
 // CONVERT TO REQUEST BODY
-const requestBody = (csvFile: File, fileHeader: string[], productProperty: string[]) => {
+// CONVERT TO REQUEST BODY
+const requestBody = (csvFile: File, matching: Object) => {
+  // APPEND FILE TO FORM DATA
   const body = new FormData();
-  body.append("userHeader", new Blob([JSON.stringify(fileHeader)], { type: "application/json" }))
-  body.append("systemHeader", new Blob([JSON.stringify(productProperty)], { type: "application/json" }))
   body.append("file", csvFile);
 
+  const wrappedMatching = {
+    matching: matching
+  };
+
+  const jsonString = JSON.stringify(wrappedMatching, null, 2);
+  const blob = new Blob([jsonString], { type: "application/json" });
+  const fileJSON = new File([blob], "matching.json", { type: "application/json" });
+
+  body.append("matching", fileJSON);
   return body;
 }
 const useBrowseCSVFile = () => {
@@ -27,19 +36,28 @@ const useBrowseCSVFile = () => {
     setToken(getToken() || null);
   }, []);
 
-  const sendCSV = async (csvFile: File, fileHeader: string[], productProperty: string[]) => {
-    const formData = requestBody(csvFile, fileHeader, productProperty);
+  const sendCSV = async (csvFile: File, matching: Object) => {
     setLoading(true);
     setError(null);
-    try {
-      const response = await axios.post(path, formData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        }
-      });
-      console.log(response);
-    } catch (err: any) {
 
+    const formData = requestBody(csvFile, matching);
+    try {
+      const response = await fetch("api/product/addProductByCSV", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      })
+
+      const resBackend = await response.json();
+
+      return resBackend;
+    } catch (err) {
+      const errAny = err as Error;
+      const errMessage = errAny.message || "Unknown error";
+      setError(errMessage);
+      throw new Error(errMessage);
+    } finally{
+      setLoading(false);
     }
   }
 

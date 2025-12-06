@@ -7,50 +7,67 @@ import React, { useState } from "react";
 const options = [
   { 
     icon: "/product_property_productID.png",
+    key: "sku",
     title: "Internal Product ID" 
   },
   { 
     icon: "/product_property_name.png",
+    key: "name",
     title: "Product Name" 
   },
   { 
     icon: "/product_property_quantity.png",
+    key: "quantity",
     title: "Quantity" 
   },
   { 
     icon: "/product_property_description.png",
+    key: "description",
     title: "Description" 
   },
   {
     icon: "/product_property_productSubtitle.png",
+    key: "subtitle",
     title: "Product Subtitle"
   },
   {
     icon: "/product_property_status.png",
+    key: "status",
     title: "Status",
   },
   {
     icon: "/product_property_productCategory.png",
+    key: "category",
     title: "Product Category"
   },
   {
     icon: "/product_property_productBrand.png",
+    key: "brand",
     title: "Product Brand",
   },
   {
     icon: "/product_property_price.png",
+    key: "price",
     title: "Price",
   },
   {
     icon: "/product_property_discount.png",
+    key: "discount",
     title: "Discount"
   },
   {
     icon: "/product_property_discountType.png",
+    key: "discountType",
     title: "Discount Type",
   },
   {
+    icon: "/image_gallery.png",
+    key: "imageUrl",
+    title: "Image (public URL)",
+  },
+  {
     icon: "/product_property_ignore.png",
+    key: "Do not choose this column",
     title: "Do not choose this column"
   }
 ];
@@ -109,7 +126,7 @@ const PropertySelectorComponent: React.FC<PropertySelectorProps> = ({
             {options.map((option) => (
               <Listbox.Option
                 key={option.title}
-                value={option.title}
+                value={option.key}
                 className={({ active, selected }) =>
                   `cursor-pointer px-4 py-2 text-sm truncate transition-all duration-200 flex items-center gap-5
                   ${active ? "bg-blue-100 text-blue-700" : "text-gray-700"}
