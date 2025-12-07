@@ -42,19 +42,19 @@ const LeadDetailWindow = () => {
 
     const newLeadDetail: LeadDetailType = {
       leadID: leadDetailInfo.leadID ?? "",
-      avatarURL: updateAvatar || leadDetailInfo.avatarURL || "",
-      name: updateName || leadDetailInfo.name || "",
-      expectedValue: updateExpectedValue || leadDetailInfo.expectedValue || 0,
-      company: updateCompany || leadDetailInfo.company || "",
-      phone: updatePhone || leadDetailInfo.phone || "",
-      email: updateEmail || leadDetailInfo.email || "",
-      status: updateStatus || leadDetailInfo.status || "",
-      source: updateSource || leadDetailInfo.source || "",
-      nation: leadDetailInfo.nation ?? "",
-      createdDate: leadDetailInfo.createdDate ?? "",
-      rating: updateRating || leadDetailInfo.rating || 1,
-      assignTo: leadDetailInfo.assignTo || "not assign",
-    };
+      avatarURL: updateAvatar  === leadDetailInfo.avatarURL ? "" : updateAvatar,
+      name: updateName === leadDetailInfo.name ? "" : updateName,
+      expectedValue: updateExpectedValue === leadDetailInfo.expectedValue ? 0 : updateExpectedValue,
+      company: updateCompany === leadDetailInfo.company ? "" : updateCompany,
+      phone: updatePhone === leadDetailInfo.phone ? "" : updatePhone,
+      email: updateEmail === leadDetailInfo.email ? "" : updateEmail,
+      status: "",
+      source: updateSource  ===  leadDetailInfo.source ? "" : updateSource,
+      nation: "",
+      createdDate: "",
+      rating: updateRating === leadDetailInfo.rating ? 0 : updateRating,
+      assignTo: "",
+    };  
 
     updateALeadDetail(newLeadDetail);
     resetAllUpdatestate();
@@ -177,7 +177,7 @@ const LeadDetailWindow = () => {
 
 
   // HEADER SECTION
-  const sectionHeader = ["Activity Timeline", "Deals"];
+  const sectionHeader = ["Activity Timeline", "Note"];
   const [selectedSectionHeader, setSelectedSectionHeader] =
     useState("Activity Timeline");
 
@@ -203,6 +203,9 @@ const LeadDetailWindow = () => {
             <p className="text-[18px] font-semibold">{leadDetailInfo?.name}</p>
             {/* LEAD COMPANY  */}
             <p className="text-[12px] text-gray-500/80">{leadDetailInfo?.company}</p>
+          </div>
+          <div>
+            
           </div>
         </div>
 

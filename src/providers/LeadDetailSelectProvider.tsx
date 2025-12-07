@@ -1,14 +1,15 @@
 "use client";
 
-import { 
-  leadActivitySequences, 
-  LeadDetailActivityTimeline,  
-  LeadDetailType 
+import {
+  leadActivitySequences,
+  LeadDetailActivityTimeline,
+  LeadDetailType
 } from "@/lib/data.leads";
 import { createContext, useCallback, useContext, useState, useEffect } from "react";
 import { useNotification } from "./NotificationProvider";
 import useGetLeadDetail from "@/fetching/lead/getLeadDetail";
 import useUpdateLeadStage from "@/fetching/lead/updateLeadStage";
+import useUpdateLeadDetail from "@/fetching/lead/updateLeadDetail";
 
 interface LeadDetailSelectContextType {
   selectedLeadId: string | null;
@@ -43,8 +44,9 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
   const [leadSequenceActivity, setLeadSequenceActivity] = useState<LeadDetailActivityTimeline[] | null>(null);
   const { showNotification } = useNotification();
 
-  const { loading: loadingGetLeadDetail,  getLeadDetailInformation } = useGetLeadDetail();
-  const { loading: loadingUpdateLeadStage, updateLeadStage: updateStage} = useUpdateLeadStage();
+  const { loading: loadingUpdateLeadDetail, updateLeadDetail } = useUpdateLeadDetail();
+  const { loading: loadingGetLeadDetail, getLeadDetailInformation } = useGetLeadDetail();
+  const { loading: loadingUpdateLeadStage, updateLeadStage: updateStage } = useUpdateLeadStage();
   // HANDLE CLICK ON A LEAD
   const selectLeadDetail = (leadID: string) => {
     setSelectedLeadId(leadID);
@@ -65,7 +67,7 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
       const response = await getLeadDetailInformation(leadID);
 
       if (!response) return;
-      
+
       setLeadDetailInfo(response);
 
       // // Map sequence activities from local sample or API if exists
@@ -73,7 +75,6 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
       // setLeadSequenceActivity(sequenceActivity);
 
     } catch (err) {
-      console.log(err);
       showNotification("Failed to get lead detail", true);
     }
   }, [getLeadDetailInformation, showNotification]);
@@ -94,19 +95,28 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
   };
 
   // UPDATE LEAD DETAIL
-  const updateALeadDetail = (newLeadDetail: LeadDetailType) => {
-    setListLeadDetail(prev => ({ ...prev, [newLeadDetail.leadID]: newLeadDetail }));
-    setLeadDetailInfo(newLeadDetail);
-    showNotification("Lead information updated successfully");
+  const updateALeadDetail = async (newLeadDetail: LeadDetailType) => {
+
+    try {
+      const { resData: response, updatedLead: UpdatedLeadDetail } = await updateLeadDetail(newLeadDetail);
+
+      if (response && response.code === 200) {
+        setListLeadDetail(prev => ({ ...prev, [newLeadDetail.leadID]: UpdatedLeadDetail }));
+        setLeadDetailInfo(UpdatedLeadDetail);
+        showNotification("Lead information updated successfully");
+      }
+    } catch (err) {
+      showNotification(String(err), true);
+    }
   };
   // UPDATE LEAD STAGE 
   const updateLeadStage = async (leadID: string, forwardStageID: string) => {
     try {
-      const success  = await updateStage(leadID, forwardStageID);
+      const success = await updateStage(leadID, forwardStageID);
 
-      if (success){
+      if (success) {
         showNotification("Successfully update lead stage")
-      } else{
+      } else {
         showNotification("Error in update lead stage", true);
       }
     } catch (err) {
