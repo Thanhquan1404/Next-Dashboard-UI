@@ -6,6 +6,7 @@ import useGetListLeads from "@/fetching/lead/getListLeads";
 import useAddLead from "@/fetching/lead/addLead";
 import { useNotification } from "./NotificationProvider";
 import useDeleteLead from "@/fetching/lead/deleteLead";
+import useUpdateLeadStage from "@/fetching/lead/updateLeadStage";
 
 // CONTEXT VALUE TYPE
 interface LeadStageColumnContextType {
@@ -13,6 +14,7 @@ interface LeadStageColumnContextType {
   getListLeadLoading: boolean,
   addLeadLoading: boolean,
   deleteLeadLoading: boolean,
+  updateDropStageLoading: boolean,
   leadItemsInStage: Record<string, leadType[]>,
   updateLeadStage: (leadId: string, newStage: string) => void,
   addingNewLead: (newLead: leadType, targetColumn: string, stageID: string) => void,
@@ -45,6 +47,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
   const { loading: deleteLeadLoading, deleteLead } = useDeleteLead();
   const { loading: getListLeadLoading, requestGetListLeads } = useGetListLeads();
   const { loading: addLeadLoading, addLead } = useAddLead();
+  const { loading: updateDropStageLoading, updateLeadStage: fetchUpdateLeadStage } = useUpdateLeadStage();
 
   // LEAD ITEMS IN SPECIFIC COLUMN INITIALIZE
   const [leadItemsInStage, setLeadItemsInStage] = useState<Record<string, leadType[]>>({});
@@ -101,35 +104,52 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
   }, []);
 
   // UPDATE LEAD IN STAGE WHEN DRAG AND DROP
-  const updateLeadStage = (leadId: string, newStage: string) => {
-    setLeadItemsInStage((prev) => {
-      let leadToMove: leadType | undefined = undefined;
-      let fromStage: string | null = null;
+  const updateLeadStage = async (leadId: string, newStage: string) => {
+    let forwardStageID = leadStage.find(stage => stage.status === newStage)?.id || "";
 
-      for (const stage in prev) {
-        const index = prev[stage].findIndex((item) => item.leadID === leadId);
-        if (index !== -1) {
-          leadToMove = prev[stage][index];
-          fromStage = stage;
-          break;
-        }
+    if (!forwardStageID) {
+      showNotification("The forward stage is not exist", true);
+      return;
+    }
+    try {
+      const response = await fetchUpdateLeadStage(leadId, forwardStageID);
+
+      if (response) {
+        showNotification("Successfully stage change");
+        setLeadItemsInStage((prev) => {
+          let leadToMove: leadType | undefined = undefined;
+          let fromStage: string | null = null;
+
+          for (const stage in prev) {
+            const index = prev[stage].findIndex((item) => item.leadID === leadId);
+            if (index !== -1) {
+              leadToMove = prev[stage][index];
+              fromStage = stage;
+              break;
+            }
+          }
+
+          if (!leadToMove || !fromStage || fromStage === newStage) {
+            return prev;
+          }
+
+          const newColumns: Record<string, leadType[]> = { ...prev };
+
+          newColumns[fromStage] = prev[fromStage].filter((item) => item.leadID !== leadId);
+
+          newColumns[newStage] = [
+            ...(prev[newStage] || []),
+            { ...leadToMove, status: newStage }
+          ];
+
+          return newColumns;
+        });
+      }else{
+        showNotification("There is error in drag drop stage changing", true);
       }
-
-      if (!leadToMove || !fromStage || fromStage === newStage) {
-        return prev;
-      }
-
-      const newColumns: Record<string, leadType[]> = { ...prev };
-
-      newColumns[fromStage] = prev[fromStage].filter((item) => item.leadID !== leadId);
-
-      newColumns[newStage] = [
-        ...(prev[newStage] || []),
-        { ...leadToMove, status: newStage }
-      ];
-
-      return newColumns;
-    });
+    } catch (err) {
+      showNotification(String(err), true);
+    }
   };
 
   // ADDING A NEW LEAD 
@@ -180,7 +200,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
       if (success) {
         setLeadItemsInStage(prev => {
           const newLead: Record<string, leadType[]> = prev;
-          for (const stage in newLead){
+          for (const stage in newLead) {
             newLead[stage] = newLead[stage].filter((item) => item.leadID !== leadID)
           }
 
@@ -264,6 +284,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
       getListLeadLoading,
       addLeadLoading,
       deleteLeadLoading,
+      updateDropStageLoading,
       leadStage,
       leadItemsInStage,
       updateLeadStage,

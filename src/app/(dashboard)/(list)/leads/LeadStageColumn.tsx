@@ -38,7 +38,7 @@ const LeadStageColumn = ({
   onDeleteColumn,
 }: Props) => {
   // LEAD STAGE PROVIDER
-  const { deleteALead, deleteLeadLoading } = useLeadStageColumn();
+  const { deleteALead, deleteLeadLoading, updateDropStageLoading } = useLeadStageColumn();
 
   const [isBeingDragged, setIsBeingDragged] = useState(false);
   const [addingLeadToggle, setAddingLeadToggle] = useState(false);
