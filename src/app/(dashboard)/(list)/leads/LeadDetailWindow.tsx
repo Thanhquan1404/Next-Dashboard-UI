@@ -38,6 +38,7 @@ const LeadDetailWindow = () => {
 
     if (forwardStageID){
       updateLeadStage(leadDetailInfo.leadID, forwardStageID);
+      setIsUpdated(false);
     }
 
     const newLeadDetail: LeadDetailType = {
@@ -67,7 +68,7 @@ const LeadDetailWindow = () => {
     setUpdateEmail(leadDetailInfo?.email || "");
     setUpdateExpectedValue(leadDetailInfo?.expectedValue || 0);
     setUpdatePhone(leadDetailInfo?.phone || "");
-    setUpdateStatus(leadDetailInfo?.status || null);
+    setUpdateStatus(leadDetailInfo?.status || "");
     setIsUpdated(false);
   };
 

@@ -17,27 +17,25 @@ const useUpdateLeadStage = () => {
   useEffect(() => {
     setToken(getToken() || null);
   }, []);
+  
   const updateLeadStage = async (leadID: string, forwardStageID: string) => {
     setError(null);
     setLoading(true);
 
     try {
-      const payload = {
-        stageId: forwardStageID,
-      };
-      // console.log("payload: ", payload);
-      // console.log(`${path}/leads/${leadID}/stage`);
-      const res = await axios.patch(`${path}/${leadID}/stage`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        }
-      );
+      const formData = new FormData();
+      formData.append("leadID", leadID);
+      formData.append("forwardStageID", forwardStageID);
 
-      const response: ApiResponse = res.data;
-      return response.code === 200;
+      const res = await fetch("api/lead/updateLeadStage", {
+        method: "PATCH",
+        body: formData,
+        credentials: "include"
+      })
+
+      const result = await res.json()
+
+      return result.code === 200;
     } catch (err) {
       const errAxios = err as AxiosError<any>;
       const errData = errAxios.response?.data;

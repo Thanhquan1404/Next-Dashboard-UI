@@ -38,7 +38,7 @@ const LeadStageColumn = ({
   onDeleteColumn,
 }: Props) => {
   // LEAD STAGE PROVIDER
-  const { deleteALead } = useLeadStageColumn();
+  const { deleteALead, deleteLeadLoading } = useLeadStageColumn();
 
   const [isBeingDragged, setIsBeingDragged] = useState(false);
   const [addingLeadToggle, setAddingLeadToggle] = useState(false);
@@ -198,23 +198,30 @@ const LeadStageColumn = ({
 
               <div className="hover:opacity-100 opacity-0 transition-all duration-500">
                 {/* DELETE BUTTON */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteALead(leadItem.leadID);
-                  }}
-                  className="
+                {
+                  deleteLeadLoading ?
+                    (<FetchingLoadingStatus loading={deleteLeadLoading} color={"#FF0000"} />)
+                    :
+                    (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteALead(leadItem.leadID);
+                        }}
+                        className="
                     p-1 rounded-md 
                     active:scale-95
                     transition duration-500
                   "
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
-                    className="size-5 hover:text-red-400 transition duration-500"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                  </svg>
-                </button>
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"
+                          className="size-5 hover:text-red-400 transition duration-500"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                      </button>
+                    )
+                }
               </div>
             </div>
 

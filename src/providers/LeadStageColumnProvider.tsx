@@ -12,11 +12,14 @@ interface LeadStageColumnContextType {
   leadStage: leadStageType[],
   getListLeadLoading: boolean,
   addLeadLoading: boolean,
+  deleteLeadLoading: boolean,
   leadItemsInStage: Record<string, leadType[]>,
   updateLeadStage: (leadId: string, newStage: string) => void,
   addingNewLead: (newLead: leadType, targetColumn: string, stageID: string) => void,
   addingNewLeadColum: (columnName: string, columnColor: string) => void,
   deleteALead: (leadID: string) => void,
+  syncLeadDetail: (lead: LeadDetailType) => void;
+  syncLeadStage: (leadID: string, stage: string) => void;
 }
 
 // CREATE CONTEXT
@@ -37,15 +40,16 @@ interface LeadStageColumnProviderProps {
 }
 
 export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = ({ children }) => {
-  const {showNotification} = useNotification();
+  const { showNotification } = useNotification();
   // INITIALIZE GET LIST LEADS REQUEST
-  const { loading: deleteLeadLoading, deleteLead} = useDeleteLead();
+  const { loading: deleteLeadLoading, deleteLead } = useDeleteLead();
   const { loading: getListLeadLoading, requestGetListLeads } = useGetListLeads();
-  const { loading: addLeadLoading, addLead} = useAddLead();
+  const { loading: addLeadLoading, addLead } = useAddLead();
 
   // LEAD ITEMS IN SPECIFIC COLUMN INITIALIZE
   const [leadItemsInStage, setLeadItemsInStage] = useState<Record<string, leadType[]>>({});
   const [leadStage, setLeadStage] = useState<leadStageType[]>([]);
+
   // GET LIST LEAD REQUEST
   const getListLeads = useCallback(async () => {
     try {
@@ -66,16 +70,16 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
 
         const leadsInThisStage: leadType[] = stageData?.leads.map((item) => ({
           leadID: item.id,
-          avatarURL: "", 
+          avatarURL: "",
           name: item.fullName,
-          createdDate: item.createdAt, 
+          createdDate: item.createdAt,
           phone: item.phoneNumber || "",
           email: item.email || "",
           rating: item.rating ?? 0,
-          source: "Facebook", 
+          source: "Facebook",
           status: stageColumn.status,
           expectedRevenue: item.expectedRevenue,
-        })) ?? []; 
+        })) ?? [];
 
         initial[stageColumn.status] = leadsInThisStage;
       });
@@ -132,7 +136,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
   const addingNewLead = async (newLead: leadType, targetColumn: string, stageID: string) => {
     try {
       const success: boolean = await addLead(newLead, stageID);
-      
+
       if (!success) {
         showNotification("Failed to add lead", true);
         return false;
@@ -172,10 +176,18 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
   const deleteALead = async (leadID: string) => {
     try {
       const success: boolean = await deleteLead(leadID);
-      
-      if (success){
+
+      if (success) {
+        setLeadItemsInStage(prev => {
+          const newLead: Record<string, leadType[]> = prev;
+          for (const stage in newLead){
+            newLead[stage] = newLead[stage].filter((item) => item.leadID !== leadID)
+          }
+
+          return newLead;
+        })
         showNotification("Successfully delete a lead")
-      }else{
+      } else {
         showNotification("There is error in delete lead", true);
       }
     } catch (err) {
@@ -183,8 +195,84 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
     }
   }
 
+  // MAKE ASYNC WHEN UPDATE LEAD DETAIL 
+  const syncLeadDetail = (updatedLead: LeadDetailType) => {
+    setLeadItemsInStage(prev => {
+      const newStage = updatedLead.status;
+      if (!newStage) return prev;
+
+      const newColumns = { ...prev };
+
+      for (const stage in prev) {
+        newColumns[stage] = prev[stage].map(lead =>
+          lead.leadID === updatedLead.leadID
+            ? {
+              ...lead,
+              name: updatedLead.name,
+              phone: updatedLead.phone,
+              email: updatedLead.email,
+              rating: updatedLead.rating,
+              expectedRevenue: updatedLead.expectedValue,
+            }
+            : lead
+        );
+      }
+
+      return newColumns;
+    });
+  };
+
+  const syncLeadStage = (leadID: string, forwardStageID: string) => {
+    setLeadItemsInStage(prev => {
+      let movingLead: leadType | null = null;
+      let fromStage: string | null = null;
+
+      const stageObj = leadStage.find(stage => stage.id === forwardStageID);
+      const newStage = stageObj?.status;
+
+      if (!newStage) return prev;
+
+      for (const stage in prev) {
+        const found = prev[stage].find(l => l.leadID === leadID);
+        if (found) {
+          movingLead = found;
+          movingLead.status = newStage;
+          fromStage = stage;
+          break;
+        }
+      }
+
+      if (!movingLead || !fromStage || fromStage === newStage) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        [fromStage]: prev[fromStage].filter(l => l.leadID !== leadID),
+        [newStage]: [
+          ...(prev[newStage] || []),
+          { ...movingLead, status: newStage }
+        ],
+      };
+    });
+  };
+
+
+
   return (
-    <LeadStageColumnContext.Provider value={{ getListLeadLoading, addLeadLoading,leadStage, leadItemsInStage, updateLeadStage, addingNewLead, addingNewLeadColum, deleteALead }}>
+    <LeadStageColumnContext.Provider value={{
+      getListLeadLoading,
+      addLeadLoading,
+      deleteLeadLoading,
+      leadStage,
+      leadItemsInStage,
+      updateLeadStage,
+      addingNewLead,
+      addingNewLeadColum,
+      deleteALead,
+      syncLeadDetail,
+      syncLeadStage,
+    }}>
       {children}
     </LeadStageColumnContext.Provider>
   );

@@ -10,6 +10,7 @@ import { useNotification } from "./NotificationProvider";
 import useGetLeadDetail from "@/fetching/lead/getLeadDetail";
 import useUpdateLeadStage from "@/fetching/lead/updateLeadStage";
 import useUpdateLeadDetail from "@/fetching/lead/updateLeadDetail";
+import { useLeadStageColumn } from "./LeadStageColumnProvider";
 
 interface LeadDetailSelectContextType {
   selectedLeadId: string | null;
@@ -47,6 +48,7 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
   const { loading: loadingUpdateLeadDetail, updateLeadDetail } = useUpdateLeadDetail();
   const { loading: loadingGetLeadDetail, getLeadDetailInformation } = useGetLeadDetail();
   const { loading: loadingUpdateLeadStage, updateLeadStage: updateStage } = useUpdateLeadStage();
+
   // HANDLE CLICK ON A LEAD
   const selectLeadDetail = (leadID: string) => {
     setSelectedLeadId(leadID);
@@ -94,35 +96,42 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
     showNotification("Successfully added a new lead activity");
   };
 
+
   // UPDATE LEAD DETAIL
+  const { syncLeadDetail } = useLeadStageColumn();
+
   const updateALeadDetail = async (newLeadDetail: LeadDetailType) => {
-
     try {
-      const { resData: response, updatedLead: UpdatedLeadDetail } = await updateLeadDetail(newLeadDetail);
+      const { resData, updatedLead } =
+        await updateLeadDetail(newLeadDetail);
 
-      if (response && response.code === 200) {
-        setListLeadDetail(prev => ({ ...prev, [newLeadDetail.leadID]: UpdatedLeadDetail }));
-        setLeadDetailInfo(UpdatedLeadDetail);
-        showNotification("Lead information updated successfully");
+      if (resData.code === 200) {
+        setLeadDetailInfo(updatedLead);
+        syncLeadDetail(updatedLead);
+        showNotification("Lead updated successfully");
       }
     } catch (err) {
       showNotification(String(err), true);
     }
   };
+
+
   // UPDATE LEAD STAGE 
+  const { syncLeadStage } = useLeadStageColumn();
+
   const updateLeadStage = async (leadID: string, forwardStageID: string) => {
     try {
       const success = await updateStage(leadID, forwardStageID);
 
       if (success) {
-        showNotification("Successfully update lead stage")
-      } else {
-        showNotification("Error in update lead stage", true);
+        syncLeadStage(leadID, forwardStageID);
+        showNotification("Lead stage updated");
       }
     } catch (err) {
       showNotification(String(err), true);
     }
-  }
+  };
+
 
   const value: LeadDetailSelectContextType = {
     selectedLeadId,
