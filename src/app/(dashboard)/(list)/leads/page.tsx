@@ -37,7 +37,6 @@ const Page = () => {
   // DROP
   const dropEvent = (statusColumnName: string) => {
     updateLeadStage(leadDraggingID, statusColumnName);
-    showNotification("Drag successfully");
   };
 
   // HANDLE ADDING NEW LEAD 

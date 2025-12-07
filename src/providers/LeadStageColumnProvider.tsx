@@ -107,8 +107,22 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
   const updateLeadStage = async (leadId: string, newStage: string) => {
     let forwardStageID = leadStage.find(stage => stage.status === newStage)?.id || "";
 
+    const currentStage = Object.keys(leadItemsInStage).find(stage =>
+      leadItemsInStage[stage].some(lead => lead.leadID === leadId)
+    ) || "";
+
+    if (!currentStage) {
+      showNotification("Current stage not found", true);
+      return;
+    }
+
+    if (currentStage === newStage) {
+      showNotification("The same stage");
+      return;
+    }
+
     if (!forwardStageID) {
-      showNotification("The forward stage is not exist", true);
+      showNotification("The forward stage does not exist", true);
       return;
     }
     try {
@@ -144,7 +158,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
 
           return newColumns;
         });
-      }else{
+      } else {
         showNotification("There is error in drag drop stage changing", true);
       }
     } catch (err) {

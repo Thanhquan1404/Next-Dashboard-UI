@@ -5,7 +5,7 @@ import { URL } from "@/lib/data";
 import axios, { AxiosError } from "axios";
 import { useState, useEffect } from "react";
 import { ApiResponse } from "@/lib/data";
-import { leadStageType, AssignedUser, LeadDetailType } from "@/lib/data.leads";
+import { leadStageType, AssignedUser, LeadDetailType, ApiResponseDataLeadActivity } from "@/lib/data.leads";
 const path = `${URL}/leads`;
 
 export interface ApiResponseDataType {
@@ -27,10 +27,16 @@ export interface ApiResponseDataType {
   };
   createdAt: string;
   updatedAt: string;
+  activities: ApiResponseDataLeadActivity[];
   assignTo: AssignedUser;
 }
 
-const mappingResponseData = (responseLeadDetail: ApiResponseDataType): LeadDetailType => {
+
+const mappingResponseData = (responseLeadDetail: ApiResponseDataType): 
+{
+  leadDetail: LeadDetailType,
+  leadActivity: ApiResponseDataLeadActivity[],
+} => {
   const leadDetail: LeadDetailType = {
     leadID: responseLeadDetail.id,
     avatarURL: responseLeadDetail.avatarUrl,
@@ -47,7 +53,14 @@ const mappingResponseData = (responseLeadDetail: ApiResponseDataType): LeadDetai
     assignTo: responseLeadDetail.assignTo.lastName + " " + responseLeadDetail.assignTo.firstName,
   }
 
-  return leadDetail;
+  const leadActivity: ApiResponseDataLeadActivity[] = responseLeadDetail.activities;
+
+  console.log(leadActivity)
+
+  return {
+    leadDetail: leadDetail,
+    leadActivity: leadActivity,
+  };
 }
 
 const useGetLeadDetail = () => {
@@ -72,8 +85,9 @@ const useGetLeadDetail = () => {
       })
 
       const resData = await response.json();
-      const leadDetail: LeadDetailType = mappingResponseData(resData.data);
-      return leadDetail;
+      const {leadDetail, leadActivity} = mappingResponseData(resData.data);
+
+      return {leadDetail, leadActivity};
     } catch (err) {
       const errAny = err as Error;
       const errMessage = errAny.message || "Unknown error";

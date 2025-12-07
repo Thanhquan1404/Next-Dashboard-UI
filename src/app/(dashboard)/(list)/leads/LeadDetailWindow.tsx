@@ -291,8 +291,8 @@ const LeadDetailWindow = () => {
         <LeadProcessingBar currentStage={updateStatus || ""} setCurrentStage={setUpdateStatus} setForwardStageId={setForwardStageID}/>
       </div>
       {/* LEAD ACTIVITY AND RECENT DEALS */}
-      <div className="w-full flex-1 flex px-4 py-4 gap-2">
-        <div className="w-[70%] h-full border border-gray-200 rounded-xl px-4 py-3 flex flex-col shadow-sm bg-white">
+      <div className="w-full flex-1 flex px-4 py-4 gap-2 min-h-0">
+        <div className="w-[70%] border border-gray-200 rounded-xl px-4 py-3 flex flex-col shadow-sm bg-white">
 
           {/* HEADER SECTION (tabs) */}
           <div className="w-full h-[35px] flex gap-4 border-b border-gray-200">

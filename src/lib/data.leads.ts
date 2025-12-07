@@ -149,3 +149,20 @@ export interface ApiResponseDataLeadType {
   }
 }
 
+//---------------------------------------- LEAD ACTIVITY REPONSE ---------------------------------------- 
+export interface ApiResponseDataLeadActivity {
+  id: string;
+  type: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string; 
+  validUntil: string; 
+  status: string; 
+  completed: boolean;
+}
+
+export interface RequestAddNewLeadActivity {
+  content: string, 
+  validUntil: string,
+  type: string,
+}

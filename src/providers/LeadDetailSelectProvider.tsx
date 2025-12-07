@@ -1,9 +1,11 @@
 "use client";
 
 import {
+  ApiResponseDataLeadActivity,
   leadActivitySequences,
   LeadDetailActivityTimeline,
-  LeadDetailType
+  LeadDetailType,
+  RequestAddNewLeadActivity
 } from "@/lib/data.leads";
 import { createContext, useCallback, useContext, useState, useEffect } from "react";
 import { useNotification } from "./NotificationProvider";
@@ -11,15 +13,16 @@ import useGetLeadDetail from "@/fetching/lead/getLeadDetail";
 import useUpdateLeadStage from "@/fetching/lead/updateLeadStage";
 import useUpdateLeadDetail from "@/fetching/lead/updateLeadDetail";
 import { useLeadStageColumn } from "./LeadStageColumnProvider";
+import useAddLeadActivity from "@/fetching/lead/addLeadActivity";
 
 interface LeadDetailSelectContextType {
   selectedLeadId: string | null;
   leadDetailInfo: LeadDetailType | null;
-  leadSequenceActivity: LeadDetailActivityTimeline[] | null;
+  leadSequenceActivity: ApiResponseDataLeadActivity[] | null;
   loadingGetLeadDetail: boolean;
   selectLeadDetail: (leadID: string) => void;
   removeSelectedLeadDetail: () => void;
-  addingNewLeadActivity: (newLead: LeadDetailActivityTimeline) => void;
+  addingNewLeadActivity: (newLead: RequestAddNewLeadActivity) => void;
   updateALeadDetail: (newLeadDetail: LeadDetailType) => void;
   updateLeadStage: (leadID: string, forwardStageID: string) => void;
 }
@@ -42,13 +45,13 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
   const [listLeadDetail, setListLeadDetail] = useState<Record<string, LeadDetailType>>({});
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [leadDetailInfo, setLeadDetailInfo] = useState<LeadDetailType | null>(null);
-  const [leadSequenceActivity, setLeadSequenceActivity] = useState<LeadDetailActivityTimeline[] | null>(null);
+  const [leadSequenceActivity, setLeadSequenceActivity] = useState<ApiResponseDataLeadActivity[] | null>(null);
   const { showNotification } = useNotification();
 
   const { loading: loadingUpdateLeadDetail, updateLeadDetail } = useUpdateLeadDetail();
   const { loading: loadingGetLeadDetail, getLeadDetailInformation } = useGetLeadDetail();
   const { loading: loadingUpdateLeadStage, updateLeadStage: updateStage } = useUpdateLeadStage();
-
+  const { loading: loadingAddLeadActivity, addLeadActivity } = useAddLeadActivity();
   // HANDLE CLICK ON A LEAD
   const selectLeadDetail = (leadID: string) => {
     setSelectedLeadId(leadID);
@@ -66,15 +69,15 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
     if (!leadID) return;
 
     try {
-      const response = await getLeadDetailInformation(leadID);
+      const { leadDetail, leadActivity } = await getLeadDetailInformation(leadID);
 
-      if (!response) return;
+      if (!leadDetail) return;
 
-      setLeadDetailInfo(response);
+      setLeadDetailInfo(leadDetail);
 
       // // Map sequence activities from local sample or API if exists
-      // const sequenceActivity: LeadDetailActivityTimeline[] = response.sequenceActivities || leadActivitySequences[leadID]?.sequenceActivities || [];
-      // setLeadSequenceActivity(sequenceActivity);
+      const sequenceActivity: ApiResponseDataLeadActivity[] = leadActivity || [];
+      setLeadSequenceActivity(sequenceActivity);
 
     } catch (err) {
       showNotification("Failed to get lead detail", true);
@@ -91,9 +94,22 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
   }, [selectedLeadId]);
 
   // ADD NEW LEAD ACTIVITY
-  const addingNewLeadActivity = (newLeadActivity: LeadDetailActivityTimeline) => {
-    setLeadSequenceActivity(prev => [newLeadActivity, ...(prev || [])]);
-    showNotification("Successfully added a new lead activity");
+  const addingNewLeadActivity = async (newLeadActivity: RequestAddNewLeadActivity) => {
+    try {
+      if (!selectedLeadId) { return; }
+
+      const response = await addLeadActivity(selectedLeadId, newLeadActivity);
+
+      if (response && response.code === 200) {
+        setLeadSequenceActivity(prev => {
+          if (!prev) return prev;
+          return [response.data, ...prev];
+        });
+        showNotification("Successfully added a new lead activity");
+      }
+    } catch (error) {
+      showNotification(String(error), true);
+    }
   };
 
 

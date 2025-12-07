@@ -1,4 +1,4 @@
-import { LeadDetailActivityTimeline } from "@/lib/data.leads";
+import { LeadDetailActivityTimeline, RequestAddNewLeadActivity } from "@/lib/data.leads";
 import { listUserSamples } from "@/lib/data.user"
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 import { useNotification } from "@/providers/NotificationProvider";
@@ -6,70 +6,52 @@ import { useState } from "react"
 
 // CREATE A NEW LEAD ACTIVITY 
 const createLeadActivity = (
-  inputTitle: string,
-  inputAssignTo: string,
-  inputRate: string,
+  inputContent: string,
+  inputType: string,
   inputClosingDate: string
-): LeadDetailActivityTimeline => {
-  const title = inputTitle.trim();
-  const assignToId = inputAssignTo.trim();
-  const rateStr = inputRate.trim();
-  const closingDate = inputClosingDate.trim();
+): RequestAddNewLeadActivity => {
+  const content = inputContent.trim();
+  const type = inputType.trim();
+  const validUntil = inputClosingDate.trim();
 
-  if (!title) throw new Error("Please enter a title");
-  if (!assignToId) throw new Error("Please select who to assign to");
-  if (!rateStr || isNaN(Number(rateStr)) || Number(rateStr) < 1 || Number(rateStr) > 5) throw new Error("Please select a valid rate (1-5)");
-  if (!closingDate) throw new Error("Please select a closing date");
-
-  const assignedUser = listUserSamples.find((item) => item.UserID === assignToId);
-  if (!assignedUser) throw new Error("Selected user not found");
-  const selectedDate = new Date(closingDate);
+  if (!content) throw new Error("Please enter a content");
+  if (!type) throw new Error("Please select activity type");
+  const selectedDate = new Date(validUntil);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   if (selectedDate <= today) {
     throw new Error("Closing date must be in the future (tomorrow or later)");
   }
   return {
-    title,
-    assignTo: assignedUser.username,
-    rate: Number(rateStr),
-    closingDate,
+    content,
+    type,
+    validUntil,
   };
 };
 
 const AddingLeadActivityTimeline = () => {
   const resetAllState = () => {
-    setInputTitle("");
-    setInputAssignTo("");
+    setInputContent("");
     setInputClosingDate("");
-    setInputRate("");
+    setInputType("");
   }
   // STATE
-  const { showNotification} = useNotification();
-  const [inputTitle, setInputTitle] = useState<string>("");
+  const { showNotification } = useNotification();
+  const [inputContent, setInputContent] = useState<string>("");
   const [inputClosingDate, setInputClosingDate] = useState<string>("");
-  const [inputRate, setInputRate] = useState<string>("");
-  const [inputAssignTo, setInputAssignTo] = useState<string>("");
+  const [inputType, setInputType] = useState<string>("");
 
-  const {addingNewLeadActivity} = useLeadDetailSelect();
+  const { addingNewLeadActivity } = useLeadDetailSelect();
 
   const handleAddingNewLead = () => {
     try {
-      const newActivity = createLeadActivity(
-        inputTitle,
-        inputAssignTo,
-        inputRate,
-        inputClosingDate,
-      );
-
+      const newActivity = createLeadActivity(inputContent, inputType, inputClosingDate);
       addingNewLeadActivity(newActivity);
-      showNotification("Activity added successfully!", false);
-
       resetAllState();
-    } catch (error: any) {
-      showNotification(error.message, true); 
-      resetAllState();
+    } catch (error) {
+      showNotification(String(error), true);
     }
+
   };
   return (
     <div className="w-full flex-1 px-2 pt-4 flex flex-col gap-4 text-[13px]">
@@ -77,8 +59,8 @@ const AddingLeadActivityTimeline = () => {
       {/* TEXTAREA */}
       <div className="w-full h-[200px] rounded-lg px-3 py-2 bg-gray-100 border border-gray-200">
         <textarea
-          onChange={(e) => setInputTitle(e.target.value)}
-          value={inputTitle ? inputTitle : ""}
+          onChange={(e) => setInputContent(e.target.value)}
+          value={inputContent ? inputContent : ""}
           className="w-full h-full bg-transparent resize-none outline-none text-gray-700"
           placeholder="Type new activities..."
         ></textarea>
@@ -86,28 +68,6 @@ const AddingLeadActivityTimeline = () => {
 
       {/* FORM ROW */}
       <div className="w-full flex flex-1 gap-6 items-start">
-
-        {/* Assign To */}
-        <div className="flex flex-col gap-1 w-[30%]">
-          <label className="text-gray-500 text-[12px]">Assign to</label>
-          <select
-            value={inputAssignTo ? inputAssignTo : ""}
-            onChange={(e) => setInputAssignTo(e.target.value)}
-            className="
-                    border border-gray-300 rounded-lg px-2 py-1 h-[35px] bg-white text-sm
-                    focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition-all outline-none
-                  "
-          >
-            <option value={""}>Assign to</option>
-            {
-              listUserSamples.map( (userInfo, index) => {
-                return (
-                  <option key={index} value={userInfo.UserID}>{userInfo.username}</option>
-                );
-              })
-            }
-          </select>
-        </div>
 
         {/* Closing date */}
         <div className="flex flex-col gap-1 w-[30%]">
@@ -126,21 +86,21 @@ const AddingLeadActivityTimeline = () => {
 
         {/* Rate */}
         <div className="flex flex-col gap-1 w-[20%]">
-          <label className="text-gray-500 text-[12px]">Rate</label>
+          <label className="text-gray-500 text-[12px]">Type</label>
           <select
-            value={inputRate ? inputRate : ""}
-            onChange={(e) => setInputRate(e.target.value)}
+            value={inputType ? inputType : ""}
+            onChange={(e) => setInputType(e.target.value)}
             className="
                     border border-gray-300 rounded-lg px-2 py-1 h-[35px] bg-white text-sm
                     focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition-all outline-none
                   "
           >
             <option value="">Select</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
+            <option value="SMS">SMS</option>
+            <option value="Email">Email</option>
+            <option value="Call">Call</option>
+            <option value="To Do">To Do</option>
+            <option value="Meeting">Meeting</option>
           </select>
         </div>
 
