@@ -10,6 +10,7 @@ import LeadSourceComponent from "@/components/LeadSourceComponent";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 import { moneyFormat } from "@/util/moneyFormat";
+import { useLeadStageColumn } from "@/providers/LeadStageColumnProvider";
 
 interface Props {
   stageID: string;
@@ -36,6 +37,9 @@ const LeadStageColumn = ({
   handleAddingNewLead,
   onDeleteColumn,
 }: Props) => {
+  // LEAD STAGE PROVIDER
+  const { deleteALead } = useLeadStageColumn();
+
   const [isBeingDragged, setIsBeingDragged] = useState(false);
   const [addingLeadToggle, setAddingLeadToggle] = useState(false);
   const [leadName, setLeadName] = useState("");
@@ -197,7 +201,7 @@ const LeadStageColumn = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    // handleDeleteLead(leadItem.leadID);
+                    deleteALead(leadItem.leadID);
                   }}
                   className="
                     p-1 rounded-md 

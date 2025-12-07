@@ -5,6 +5,7 @@ import { leadType, leadStageType, LeadDetailType } from "@/lib/data.leads";
 import useGetListLeads from "@/fetching/lead/getListLeads";
 import useAddLead from "@/fetching/lead/addLead";
 import { useNotification } from "./NotificationProvider";
+import useDeleteLead from "@/fetching/lead/deleteLead";
 
 // CONTEXT VALUE TYPE
 interface LeadStageColumnContextType {
@@ -15,6 +16,7 @@ interface LeadStageColumnContextType {
   updateLeadStage: (leadId: string, newStage: string) => void,
   addingNewLead: (newLead: leadType, targetColumn: string, stageID: string) => void,
   addingNewLeadColum: (columnName: string, columnColor: string) => void,
+  deleteALead: (leadID: string) => void,
 }
 
 // CREATE CONTEXT
@@ -37,6 +39,7 @@ interface LeadStageColumnProviderProps {
 export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = ({ children }) => {
   const {showNotification} = useNotification();
   // INITIALIZE GET LIST LEADS REQUEST
+  const { loading: deleteLeadLoading, deleteLead} = useDeleteLead();
   const { loading: getListLeadLoading, requestGetListLeads } = useGetListLeads();
   const { loading: addLeadLoading, addLead} = useAddLead();
 
@@ -165,9 +168,23 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
     }));
   };
 
+  // DELETE A LEAD
+  const deleteALead = async (leadID: string) => {
+    try {
+      const success: boolean = await deleteLead(leadID);
+      
+      if (success){
+        showNotification("Successfully delete a lead")
+      }else{
+        showNotification("There is error in delete lead", true);
+      }
+    } catch (err) {
+      showNotification(String(err), true);
+    }
+  }
 
   return (
-    <LeadStageColumnContext.Provider value={{ getListLeadLoading, addLeadLoading,leadStage, leadItemsInStage, updateLeadStage, addingNewLead, addingNewLeadColum }}>
+    <LeadStageColumnContext.Provider value={{ getListLeadLoading, addLeadLoading,leadStage, leadItemsInStage, updateLeadStage, addingNewLead, addingNewLeadColum, deleteALead }}>
       {children}
     </LeadStageColumnContext.Provider>
   );
