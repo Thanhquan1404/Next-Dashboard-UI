@@ -8,6 +8,7 @@ import { useLeadStageColumn } from "@/providers/LeadStageColumnProvider";
 import { LeadDetailType } from "@/lib/data.leads";
 import LeadProcessingBar from "@/components/LeadProcessingBar";
 import { moneyFormat } from "@/util/moneyFormat";
+import { useRouter } from "next/navigation";
 
 const LeadDetailWindow = () => {
   // LEAD DETAIL PROVIDER 
@@ -15,6 +16,9 @@ const LeadDetailWindow = () => {
     removeSelectedLeadDetail, leadDetailInfo, leadSequenceActivity, 
     updateALeadDetail, loadingGetLeadDetail, updateLeadStage
   } = useLeadDetailSelect();
+  // ROUTER 
+  const router = useRouter();
+
   // LEAD STAGE PROVIDER 
   const { leadStage } = useLeadStageColumn();
 
@@ -214,7 +218,12 @@ const LeadDetailWindow = () => {
 
         {/* PHONE AND EMAIL BUTTON  */}
         <div className="flex gap-2 items-center">
-          <div className="px-1 py-1 rounded-full border-blue-600/80 border-[1px] w-fit h-fit text-blue-600 hover:scale-[1.15] transition-all duration-500">
+          <div 
+            onClick={() => {
+              router.push(`/quotations/new/${leadDetailInfo?.leadID}`)
+            }}
+            className="px-1 py-1 rounded-full border-blue-600/80 border-[1px] w-fit h-fit text-blue-600 hover:scale-[1.15] transition-all duration-500"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
             </svg>

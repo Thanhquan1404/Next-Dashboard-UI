@@ -58,6 +58,7 @@ const dataConvertToQuotationRow = (
 
       return {
         QuotationID: item.id,
+        QuotationContent: item.content,
         CreatedAt: item.createdAt,
         CustomerName: item.lead.fullName,
         FinalAmount: item.finalAmount ?? undefined, 

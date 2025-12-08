@@ -22,8 +22,8 @@ type HeaderDataType = {
 const tableHeaders: HeaderDataType[] = [
   {
     id: 1,
-    key: "QuotationID",
-    label: "Quotation ID",
+    key: "QuotationContent",
+    label: "Quotation Content",
     width: "w-[20%]",
     justifyItems: "justify-start",
   },

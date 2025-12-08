@@ -43,13 +43,7 @@ export default function RootLayout({
         pl-4"
       >
         <Navbar />
-        <QuotationTableProvider>
-          <LeadStageColumnProvider>
-            <LeadDetailSelectProvider >
-              {children}
-            </LeadDetailSelectProvider>
-          </LeadStageColumnProvider>
-        </QuotationTableProvider>
+        {children}
       </div>
 
     </div>

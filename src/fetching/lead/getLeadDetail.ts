@@ -55,8 +55,6 @@ const mappingResponseData = (responseLeadDetail: ApiResponseDataType):
 
   const leadActivity: ApiResponseDataLeadActivity[] = responseLeadDetail.activities;
 
-  console.log(leadActivity)
-
   return {
     leadDetail: leadDetail,
     leadActivity: leadActivity,
@@ -79,7 +77,7 @@ const useGetLeadDetail = () => {
     setError(null);
 
     try {
-      const response = await fetch(`api/lead/getLeadDetail?leadID=${leadID}`, {
+      const response = await fetch(`/api/lead/getLeadDetail?leadID=${leadID}`, {
         method: "GET",
         credentials: "include",
       })
