@@ -9,6 +9,7 @@ import useDeleteLead from "@/fetching/lead/deleteLead";
 import useUpdateLeadStage from "@/fetching/lead/updateLeadStage";
 import useAddStage from "@/fetching/stage/addStage";
 import useDeleteStage from "@/fetching/stage/deleteStage";
+import useSearchLead from "@/fetching/lead/searchLead";
 
 // CONTEXT VALUE TYPE
 interface LeadStageColumnContextType {
@@ -19,6 +20,7 @@ interface LeadStageColumnContextType {
   updateDropStageLoading: boolean,
   addStageLoading: boolean,
   deleteStageLoading: boolean,
+  searchLeadLoading: boolean,
   leadItemsInStage: Record<string, leadType[]>,
   updateLeadStage: (leadId: string, newStage: string) => void,
   addingNewLead: (newLead: leadType, targetColumn: string, stageID: string) => void,
@@ -27,6 +29,7 @@ interface LeadStageColumnContextType {
   syncLeadDetail: (lead: LeadDetailType) => void;
   syncLeadStage: (leadID: string, stage: string) => void;
   deleteLeadColumn: (stageID: string) => void;
+  searchLead: (query: string) => void;
 }
 
 // CREATE CONTEXT
@@ -55,7 +58,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
   const { loading: updateDropStageLoading, updateLeadStage: fetchUpdateLeadStage } = useUpdateLeadStage();
   const { loading: addStageLoading, addStage } = useAddStage();
   const { loading: deleteStageLoading, deleteStage } = useDeleteStage();
-
+  const { loading: searchLeadLoading, searchListLead } = useSearchLead();
   // LEAD ITEMS IN SPECIFIC COLUMN INITIALIZE
   const [leadItemsInStage, setLeadItemsInStage] = useState<Record<string, leadType[]>>({});
   const [leadStage, setLeadStage] = useState<leadStageType[]>([]);
@@ -218,6 +221,48 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
     }
   }
 
+  // SEARCH LEAD
+  const searchLead = async (query: string) => {
+    try {
+      const { data, leadStage } = await searchListLead(query);
+
+      if (!data || !leadStage) {
+        setLeadStage([]);
+        setLeadItemsInStage({});
+        return;
+      }
+
+      setLeadStage(leadStage);
+
+      const initial: Record<string, leadType[]> = {};
+
+      leadStage.forEach((stageColumn) => {
+        const stageData = data.find(item => item.id === stageColumn.id);
+
+        const leadsInThisStage: leadType[] = stageData?.leads.map((item) => ({
+          leadID: item.id,
+          avatarURL: item.avatarUrl || "",
+          name: item.fullName,
+          createdDate: item.createdAt,
+          phone: item.phoneNumber || "",
+          email: item.email || "",
+          rating: item.rating ?? 0,
+          source: item.source || "Facebook",
+          status: stageColumn.status,
+          expectedRevenue: item.expectedRevenue,
+        })) ?? [];
+
+        initial[stageColumn.status] = leadsInThisStage;
+      });
+
+      setLeadItemsInStage(initial);
+    } catch (err) {
+      console.error("Error fetching leads:", err);
+      setLeadItemsInStage({});
+      setLeadStage([]);
+    }
+  }
+
   // ADDING NEW STAGE COLUMN 
   const addingNewLeadColum = async (columnName: string, columnColor: string) => {
     if (!columnName.trim()) {
@@ -241,7 +286,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
 
         const newStageItem = {
           id: newStage.id,
-          status: newStage.status,
+          status: newStage.name,
           color: newStage.color,
         };
 
@@ -365,6 +410,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
       deleteLeadLoading,
       deleteStageLoading,
       updateDropStageLoading,
+      searchLeadLoading,
       addStageLoading,
       leadStage,
       leadItemsInStage,
@@ -375,6 +421,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
       syncLeadDetail,
       syncLeadStage,
       deleteLeadColumn,
+      searchLead,
     }}>
       {children}
     </LeadStageColumnContext.Provider>

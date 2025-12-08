@@ -13,12 +13,13 @@ interface Props {
   setSelectedCompany: React.Dispatch<React.SetStateAction<string>>,
 }
 const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany, selectedCompany }: Props) => {
-  const { addingNewLeadColum, addStageLoading } = useLeadStageColumn();
+  const { addingNewLeadColum, addStageLoading, searchLeadLoading, searchLead } = useLeadStageColumn();
   const { showNotification } = useNotification();
   // ADDING NEW COLUMN STATE 
   const [selectedColor, setSelectedColor] = useState<string>("#000000");
   const [newColumnTitle, setNewColumnTitle] = useState<string>("");
   const [isOpenAddingNewColumnWindow, setIsOpenAddingNewColumnWindow] = useState<boolean>(false);
+
 
 
   const resetAllState = () => {
@@ -46,7 +47,11 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
           {/* ADD NEW COLUMN BUTTON */}
           {
             addStageLoading ?
-              (<FetchingLoadingStatus loading={addStageLoading} color={"#ffffff"} />)
+              (
+                <div className="bg-blue-500 px-2 py-1.5 rounded-xl shadow-sm">
+                  <FetchingLoadingStatus loading={addStageLoading} color={"#ffffff"} size={8} />
+                </div>
+              )
               :
               (
                 <button
@@ -117,22 +122,68 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
 
       <div className="w-full h-1/2 mt-2 flex justify-between items-center">
         <div className="w-1/3 flex gap-3">
-          <SelectorComponent
-            width="w-fit"
-            rounded="rounded-lg"
-            label=""
-            options={statusOptions}
-            optionSelector={selectedStatus}
-            setOptionSelector={setSelectedStatus}
-          />
-          <SelectorComponent
-            width="w-fit"
-            rounded="rounded-lg"
-            label=""
-            options={companyOptions}
-            optionSelector={selectedCompany}
-            setOptionSelector={setSelectedCompany}
-          />
+          <div className="w-1/3 min-w-[260px] flex">
+            <div
+                className={`
+                    flex items-center gap-2
+                    w-full h-[36px]
+                    px-3
+                    rounded-xl
+                    border
+                    bg-white
+                    transition
+                    ${searchLeadLoading
+                    ? `border-[${"#3B82F6"}] ring-2 ring-[${"#3B82F6"}]/20`
+                    : "border-gray-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20"
+                    }
+                `}
+            >
+              {/* Icon / Loading */}
+              {searchLeadLoading ? (
+                <FetchingLoadingStatus
+                  loading={true}
+                  color={"#3B82F6"}
+                  size={8}
+                />
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-5 text-gray-400"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m15.75 15.75-2.489-2.489m0 0a3.375 3.375 0 1 0-4.773-4.773 3.375 3.375 0 0 0 4.774 4.774ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+              )}
+
+              {/* Input */}
+              <input
+                type="text"
+                placeholder={searchLeadLoading ? "" : "Search lead name..."}
+                disabled={searchLeadLoading}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    searchLead(e.currentTarget.value);
+                    e.currentTarget.value = "";
+                  }
+                }}
+                className="
+                  w-full h-full
+                  text-sm text-gray-700
+                  placeholder:text-gray-400
+                  outline-none bg-transparent
+                  disabled:cursor-not-allowed
+                  disabled:opacity-70
+                "
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex gap-2 text-sm px-2 text-gray-500 hover:text-blue-600 transition-colors duration-200 cursor-pointer">
