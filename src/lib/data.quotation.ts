@@ -13,7 +13,23 @@ export type QuotationRow = {
 //---------------------------------------- QUOTATION STATISTIC -----------------------------------------
 export type QuotationStatisticType = Record<string, number>;
 
+//----------------------------------------- SAVE QUOTATION REQUEST TYPE -----------------------------------------
+export type QuotationItemType = {
+  id: string;
+  productName: string;
+  productID: string,
+  description: string;
+  quantity: number;
+  price: number;
+  total: number;
+};
 
+export type QuotationType = {
+  leadID: string;
+  title: string;
+  content: string;
+  items: QuotationItemType[];
+};
 
 //---------------------------------------- QUOTATION API RESPONSE -----------------------------------------
 export interface QuotationItem {

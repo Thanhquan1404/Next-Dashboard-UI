@@ -9,11 +9,13 @@ import { LeadDetailType } from "@/lib/data.leads";
 import { useNotification } from "@/providers/NotificationProvider";
 import useGetLeadDetail from "@/fetching/lead/getLeadDetail";
 import { useGetListProducts } from "@/fetching/product/getListProducts";
+import { useQuotationTable } from "@/providers/QuotationTableProvider";
 
 /* ================= TYPES ================= */
 
 type QuotationItemType = {
   id: string;
+  productID: string,
   productName: string;
   description: string;
   quantity: number;
@@ -48,6 +50,7 @@ const Page = () => {
     items: [
       {
         id: crypto.randomUUID(),
+        productID: "",
         productName: "",
         description: "",
         quantity: 1,
@@ -57,8 +60,10 @@ const Page = () => {
     ],
   });
 
-  /* ================= FETCH DATA ================= */
+  // QUOTATION PROVIDER 
+  const { saveQuotationLoading, saveAQuotation} = useQuotationTable();
 
+  // FETCH DATA
   const fetchLeadDetail = useCallback(async () => {
     if (!leadID) return;
     try {
@@ -81,6 +86,8 @@ const Page = () => {
           price: p.purchaseUnitPrice ?? 0,
           description: p.description ?? "",
         })) ?? [];
+
+      console.log(products);
       setListProduct(products);
     } catch (e: any) {
       showNotification(e.message, true);
@@ -95,8 +102,12 @@ const Page = () => {
     fetchProducts();
   }, [fetchLeadDetail, fetchProducts]);
 
-  /* ================= ACTIONS ================= */
+  // SAVE QUOTATION TOGGLE
+  const handleSaveQuotationToggle = () =>{
+    saveAQuotation(quotation, leadID);
+  }
 
+  // QUOTATION ACTION
   const updateItem = (
     id: string,
     field: keyof QuotationItemType,
@@ -127,6 +138,7 @@ const Page = () => {
         ...prev.items,
         {
           id: crypto.randomUUID(),
+          productID: "",
           productName: "",
           description: "",
           quantity: 1,
@@ -144,8 +156,6 @@ const Page = () => {
     }));
   };
 
-  /* ================= TOTAL ================= */
-
   const subtotal = useMemo(
     () => quotation.items.reduce((s, i) => s + i.total, 0),
     [quotation.items]
@@ -155,11 +165,12 @@ const Page = () => {
 
   const validToSendEmail = quotation.title.trim().length > 0;
 
-  /* ================= RENDER ================= */
 
   return (
     <div className="w-full min-h-screen">
       <PageHeader
+        saveQuotationLoading={saveQuotationLoading}
+        handleSaveQuotationToggle={handleSaveQuotationToggle}
         title={quotation.title}
         onChange={(t) => setQuotation((p) => ({ ...p, title: t }))}
         validToSendEmail={validToSendEmail}
@@ -197,6 +208,7 @@ const Page = () => {
                           (x) => x.productName === e.target.value
                         );
                         if (!p) return;
+                        updateItem(item.id, "productID", p.productID);
                         updateItem(item.id, "productName", p.productName);
                         updateItem(item.id, "price", p.price);
                         updateItem(item.id, "description", p.description);
