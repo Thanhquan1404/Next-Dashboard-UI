@@ -1,56 +1,64 @@
-import { useRef } from "react"
-import Image from "next/image"
+"use client";
+
+import { useRef } from "react";
+import Image from "next/image";
 
 interface Props {
-  setAvatarFile?: React.Dispatch<React.SetStateAction<File>>,
-  setAvatar?: React.Dispatch<React.SetStateAction<string>>,
-  avatar?: string,
+  setAvatarFile?: React.Dispatch<React.SetStateAction<File | undefined>>;
+  setAvatar?: React.Dispatch<React.SetStateAction<string>>;
+  avatar?: string;
 }
-const UpLoadAvatar = ({setAvatarFile, avatar, setAvatar}: Props) => {
+
+const UpLoadAvatar = ({ setAvatarFile, avatar, setAvatar }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // WHEN CLICK ON AVATAR COMPONENT
-  const handleClick = () => inputRef.current?.click();
+  const handleClick = () => {
+    inputRef.current?.click();
+  };
 
   const handleFile = (file: File) => {
-    if (!file || file.type !== "image/png") return;
+    if (!["image/png", "image/jpg", "image/jpeg"].includes(file.type)) return;
 
-    if (setAvatarFile) setAvatarFile(file);
+    setAvatarFile?.(file);
+
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64 = reader.result as string;
-      if (setAvatar) setAvatar(base64);
+      setAvatar?.(base64);
     };
     reader.readAsDataURL(file);
-  }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) handleFile(file);
-  }
+  };
 
   return (
-    <div 
-      className=''
-    >
+    <div>
       <input
         ref={inputRef}
         type="file"
-        accept=".png, .jpg"
+        accept="image/png, image/jpg, image/jpeg"
         onChange={handleFileChange}
         className="hidden"
+      />
+
+      <div
+        className="cursor-pointer"
+        onClick={handleClick}
+        aria-label="Upload avatar"
       >
-      </input>
-      <div className="cursor-pointer" onClick={() => handleClick()}>
-        <Image src={`${avatar ? avatar : "/profile.png"}`} 
-        alt="Lead avatar" 
-        width={35} 
-        height={35} 
-        className="rounded-full"
+        <Image
+          src={avatar || "/profile.png"}
+          alt="Lead avatar"
+          width={35}
+          height={35}
+          className="rounded-full object-cover"
         />
       </div>
-      
     </div>
-  )
-}
+  );
+};
 
-export default UpLoadAvatar
+export default UpLoadAvatar;

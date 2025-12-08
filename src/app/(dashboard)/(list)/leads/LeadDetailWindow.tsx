@@ -29,9 +29,11 @@ const LeadDetailWindow = () => {
   const [updateSource, setUpdateSource] = useState("");
   const [updateStatus, setUpdateStatus] = useState<string | null>(null);
   const [forwardStageID, setForwardStageID] = useState<string | null>(null);
+  const [avatarFile, setAvatarFile] = useState<File | undefined>();
 
   // UPDATED FLAG
   const [isUpdated, setIsUpdated] = useState(false);
+
   // HANDLE CLICK CONFIRM CHANGE BUTTON
   const handleConfirmChangeToggle = () => {
     if (!leadDetailInfo) return;
@@ -57,7 +59,7 @@ const LeadDetailWindow = () => {
       assignTo: "",
     };  
 
-    updateALeadDetail(newLeadDetail);
+    updateALeadDetail(newLeadDetail, avatarFile);
     resetAllUpdatestate();
   };
 
@@ -197,7 +199,7 @@ const LeadDetailWindow = () => {
             </svg>
           </div>
           <div className="w-[50px] h-[50px] flex justify-center items-center rounded-full overflow-hidden">
-            <UpLoadAvatar avatar={updateAvatar ? updateAvatar : leadDetailInfo?.avatarURL} setAvatar={setUpdateAvatar} />
+            <UpLoadAvatar avatar={updateAvatar ? updateAvatar : leadDetailInfo?.avatarURL} setAvatar={setUpdateAvatar} setAvatarFile={setAvatarFile}/>
           </div>
           <div>
             {/* LEAD NAME  */}

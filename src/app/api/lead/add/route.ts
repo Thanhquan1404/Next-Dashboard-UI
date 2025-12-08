@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { URL, ApiResponse, ApiResponseError } from "@/lib/data";
 
-const path = `${URL}/leads`;
+const path = `${URL}/stages`;
 
 export async function POST(req: Request) {
   try {
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ code: 400, message: "Missing stageID" }, { status: 400 });
     }
 
-    const backendRes = await fetch(`${path}/${stageID}/stage`, {
+    const backendRes = await fetch(`${path}/${stageID}/leads`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,

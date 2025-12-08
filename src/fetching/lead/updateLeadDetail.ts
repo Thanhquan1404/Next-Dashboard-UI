@@ -7,12 +7,12 @@ const useUpdateLeadDetail = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const updateLeadDetail = async (lead: LeadDetailType) => {
+  const updateLeadDetail = async (lead: LeadDetailType, avatarFile: File | undefined) => {
     setLoading(true);
     setError(null);
 
     try {
-      const formData = dataConvert(lead);
+      const formData = dataConvert(lead, avatarFile);
 
       const response = await fetch(
         `/api/lead/updateLeadDetail?leadID=${lead.leadID}`,
@@ -43,7 +43,7 @@ const useUpdateLeadDetail = () => {
   return { loading, error, updateLeadDetail };
 };
 
-const dataConvert = (lead: LeadDetailType) => {
+const dataConvert = (lead: LeadDetailType, avatarFile: File | undefined) => {
   const formData = new FormData();
 
   if (lead.email !== undefined && lead.email !== "")
@@ -63,6 +63,10 @@ const dataConvert = (lead: LeadDetailType) => {
 
   if (leafIsValidNumber(lead.expectedValue))
     formData.append("expectedRevenue", String(lead.expectedValue));
+
+  if (avatarFile){
+    formData.append("image", avatarFile)
+  }
 
   return formData;
 };

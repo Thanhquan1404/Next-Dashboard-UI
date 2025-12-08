@@ -26,7 +26,7 @@ interface LeadDetailSelectContextType {
   selectLeadDetail: (leadID: string) => void;
   removeSelectedLeadDetail: () => void;
   addingNewLeadActivity: (newLead: RequestAddNewLeadActivity) => void;
-  updateALeadDetail: (newLeadDetail: LeadDetailType) => void;
+  updateALeadDetail: (newLeadDetail: LeadDetailType, avatarFile: File | undefined) => void;
   updateLeadStage: (leadID: string, forwardStageID: string) => void;
   completeLeadActivity: (activityID: string) => void;
   deleteLeadActivity: (activityID: string) => void;
@@ -123,10 +123,10 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
   // UPDATE LEAD DETAIL
   const { syncLeadDetail } = useLeadStageColumn();
 
-  const updateALeadDetail = async (newLeadDetail: LeadDetailType) => {
+  const updateALeadDetail = async (newLeadDetail: LeadDetailType, avatarFile: File | undefined) => {
     try {
       const { resData, updatedLead } =
-        await updateLeadDetail(newLeadDetail);
+        await updateLeadDetail(newLeadDetail, avatarFile);
 
       if (resData.code === 200) {
         setLeadDetailInfo(updatedLead);

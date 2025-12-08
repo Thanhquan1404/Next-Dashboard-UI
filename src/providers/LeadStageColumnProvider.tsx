@@ -242,6 +242,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
           lead.leadID === updatedLead.leadID
             ? {
               ...lead,
+              avatarURL: updatedLead.avatarURL,
               name: updatedLead.name,
               phone: updatedLead.phone,
               email: updatedLead.email,
