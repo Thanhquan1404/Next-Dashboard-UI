@@ -2,6 +2,9 @@ import { ApiResponseListAllQuotation } from "@/lib/data.quotation";
 import QuotationStatusComponent from "../QuotationStatusComponent";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import useSendMailQuotation from "@/fetching/quotation/sendMailQuotation";
+import { useNotification } from "@/providers/NotificationProvider";
+import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 
 interface Props {
   quotationDetail: ApiResponseListAllQuotation,
@@ -9,6 +12,24 @@ interface Props {
 const QuotationDetailHeader = ({quotationDetail}: Props) => {
   // ROUTER
   const router = useRouter();
+  // NOTIFICATION
+  const { showNotification } = useNotification();
+  // API HOOKS
+  const {loading: sendMailQuotationLoading, sendMailQuotation} = useSendMailQuotation();
+
+  const handleSendMail = async () => {
+    try{
+      const success = await sendMailQuotation(quotationDetail.id);
+
+      if (success){
+        showNotification("Send mail successfully");
+      }else{
+        showNotification("There is error in send mail", true);
+      }
+    }catch(error){
+      showNotification(String(error), true);
+    }
+  };
 
   return (
     <div className="bg-white border-b border-gray-200">
@@ -40,7 +61,12 @@ const QuotationDetailHeader = ({quotationDetail}: Props) => {
                   <span>Download PDF</span>
                 </a>
               ) : (
-                <div className="text-xs bg-blue-600 px-2 py-1.5  text-white rounded-lg opacity-70 hover:opacity-100 hover:shadow-lg transition-all duration-350 cursor-pointer">
+                sendMailQuotationLoading ? 
+                  <FetchingLoadingStatus loading={sendMailQuotationLoading} color={"blue"} size={10} />
+                :
+                <div 
+                  onClick={() => handleSendMail()}
+                  className="text-xs bg-blue-600 px-2 py-1.5  text-white rounded-lg opacity-70 hover:opacity-100 hover:shadow-lg transition-all duration-350 cursor-pointer">
                   Send mail
                 </div>
               )}

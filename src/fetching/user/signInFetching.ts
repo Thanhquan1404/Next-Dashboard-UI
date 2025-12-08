@@ -55,7 +55,6 @@ const useSignInFetching = () => {
         }
       });
 
-      setData(response?.data);
       return response; 
     } catch (err) {
       const axiosErr = err as AxiosError<any>;

@@ -49,7 +49,7 @@ const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
       const response = await userLogin(userLoginInput);
       const resData = response.data;
 
-      if (resData?.code === 200 && resData?.data?.authenticated === true) {
+      if (resData?.code === 200 && resData?.data?.accessToken) {
         const accessToken = resData.data.accessToken;
         showNotification("Welcome to our website");
         resetStateField();
