@@ -1,3 +1,4 @@
+import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 import InputColorComponent from "@/components/InputColorComponent";
 import SelectorComponent from "@/components/SelectorComponent";
 import { statusOptions, companyOptions } from "@/lib/data.leads";
@@ -12,7 +13,7 @@ interface Props {
   setSelectedCompany: React.Dispatch<React.SetStateAction<string>>,
 }
 const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany, selectedCompany }: Props) => {
-  const { addingNewLeadColum } = useLeadStageColumn();
+  const { addingNewLeadColum, addStageLoading } = useLeadStageColumn();
   const { showNotification } = useNotification();
   // ADDING NEW COLUMN STATE 
   const [selectedColor, setSelectedColor] = useState<string>("#000000");
@@ -26,13 +27,12 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
   const handleAddingNewColumn = () => {
     try {
       addingNewLeadColum(newColumnTitle, selectedColor);
-      showNotification("Successfully adding a new stage");
     } catch (error: any) {
       showNotification(error.message, true);
     }
     finally {
       resetAllState();
-      setIsOpenAddingNewColumnWindow(prev => !prev); 
+      setIsOpenAddingNewColumnWindow(prev => !prev);
     }
   }
   return (
@@ -43,17 +43,23 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
         </div>
         <div className="relative inline-block">
           {/* ADD NEW COLUMN BUTTON */}
-          <button
-            onClick={() => setIsOpenAddingNewColumnWindow(prev => !prev)}
-            className="
+          {
+            addStageLoading ?
+              (<FetchingLoadingStatus loading={addStageLoading} color={"#ffffff"} />)
+              :
+              (
+                <button
+                  onClick={() => setIsOpenAddingNewColumnWindow(prev => !prev)}
+                  className="
               text-xs bg-blue-500/80 text-white px-3 py-1.5 rounded-lg 
               hover:bg-blue-500 hover:shadow-md hover:scale-[1.03]
               transition-all duration-300
             "
-          >
-            New Column
-          </button>
-
+                >
+                  New Column
+                </button>
+              )
+          }
           {/* Popup panel */}
           {
             <>

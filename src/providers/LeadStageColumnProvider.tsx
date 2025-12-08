@@ -7,6 +7,7 @@ import useAddLead from "@/fetching/lead/addLead";
 import { useNotification } from "./NotificationProvider";
 import useDeleteLead from "@/fetching/lead/deleteLead";
 import useUpdateLeadStage from "@/fetching/lead/updateLeadStage";
+import useAddStage from "@/fetching/stage/addStage";
 
 // CONTEXT VALUE TYPE
 interface LeadStageColumnContextType {
@@ -15,6 +16,7 @@ interface LeadStageColumnContextType {
   addLeadLoading: boolean,
   deleteLeadLoading: boolean,
   updateDropStageLoading: boolean,
+  addStageLoading: boolean,
   leadItemsInStage: Record<string, leadType[]>,
   updateLeadStage: (leadId: string, newStage: string) => void,
   addingNewLead: (newLead: leadType, targetColumn: string, stageID: string) => void,
@@ -48,6 +50,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
   const { loading: getListLeadLoading, requestGetListLeads } = useGetListLeads();
   const { loading: addLeadLoading, addLead } = useAddLead();
   const { loading: updateDropStageLoading, updateLeadStage: fetchUpdateLeadStage } = useUpdateLeadStage();
+  const { loading: addStageLoading, addStage } = useAddStage();
 
   // LEAD ITEMS IN SPECIFIC COLUMN INITIALIZE
   const [leadItemsInStage, setLeadItemsInStage] = useState<Record<string, leadType[]>>({});
@@ -96,6 +99,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
   }, [requestGetListLeads]);
 
   const didFetch = useRef(false);
+
   useEffect(() => {
     if (!didFetch.current) {
       getListLeads();
@@ -188,23 +192,60 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
   }
 
   // ADDING NEW COLUMN 
-  const addingNewLeadColum = (columnName: string, columnColor: string) => {
-    if (columnName === "") {
-      throw new Error("Fill in column name")
+  const addingNewLeadColum = async (columnName: string, columnColor: string) => {
+    if (!columnName.trim()) {
+      showNotification("Fill in column name", true);
+      return;
     }
-    setLeadStage((prev) => [...prev,
-    {
-      status: columnName,
-      color: columnColor,
-      id: crypto.randomUUID(),
-    }
-    ]);
 
-    setLeadItemsInStage((prev) => ({
-      ...prev,
-      [columnName]: []
-    }));
+    try {
+      const response = await addStage(columnName, columnColor);
+
+      if (!response || response.code !== 200) {
+        showNotification("There is error in add a new stage", true);
+        return;
+      }
+
+      const newStage = response.data;
+
+      setLeadStage((prev) => {
+        const lostIndex = prev.findIndex(s => s.status === "Lost");
+        const wonIndex = prev.findIndex(s => s.status === "Won");
+
+        const newStageItem = {
+          id: newStage.id,
+          status: newStage.status,
+          color: newStage.color,
+        };
+
+        if (lostIndex === -1 || wonIndex === -1) {
+          return [...prev, newStageItem];
+        }
+
+        const filtered = prev.filter(
+          s => s.status !== "Lost" && s.status !== "Won"
+        );
+
+        return [
+          ...filtered,
+          newStageItem,
+          prev[lostIndex],
+          prev[wonIndex],
+        ];
+      });
+
+      setLeadItemsInStage((prev) => ({
+        ...prev,
+        [newStage.status]: [],
+      }));
+
+      showNotification("Successfully add a new stage");
+
+    } catch (error) {
+      showNotification(String(error), true);
+    }
   };
+
 
   // DELETE A LEAD
   const deleteALead = async (leadID: string) => {
@@ -300,6 +341,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
       addLeadLoading,
       deleteLeadLoading,
       updateDropStageLoading,
+      addStageLoading,
       leadStage,
       leadItemsInStage,
       updateLeadStage,
