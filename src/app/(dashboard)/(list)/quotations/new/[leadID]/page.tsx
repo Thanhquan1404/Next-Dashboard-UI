@@ -2,8 +2,8 @@
 
 import { useParams } from "next/navigation";
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import PageHeader from "../PageHeader";
-import CustomerInformation from "../CustomerInformation";
+import PageHeader from "./PageHeader";
+import CustomerInformation from "./CustomerInformation";
 
 import { LeadDetailType } from "@/lib/data.leads";
 import { useNotification } from "@/providers/NotificationProvider";

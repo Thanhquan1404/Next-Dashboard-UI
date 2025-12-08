@@ -8,6 +8,7 @@ import { moneyFormat } from "@/util/moneyFormat";
 import { QuotationRow } from "@/lib/data.quotation";
 import { useQuotationTable } from "@/providers/QuotationTableProvider";
 import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
+import { useRouter } from "next/navigation";
 
 /* ---------------- HEADER TYPE ---------------- */
 type HeaderDataType = {
@@ -85,6 +86,8 @@ const QuotationTable = ({
   currentPage,
   setCurrentPage,
 }: Props) => {
+  // ROUTER 
+  const router = useRouter();
 
   // QUOTATION TABLE PROVIDER
   const {
@@ -92,7 +95,6 @@ const QuotationTable = ({
     quotationRows,
   } = useQuotationTable();
 
-  /* ---------------- SORT HANDLER ---------------- */
   const [sort, setSort] = useState<{
     columnName: keyof QuotationRow;
     direction: "asc" | "desc";
@@ -101,7 +103,6 @@ const QuotationTable = ({
     direction: "asc",
   });
 
-  /* ---------------- SORT HANDLER ---------------- */
   const sortFunction = (header: HeaderDataType) => {
     setSort((prev) => ({
       columnName: header.key,
@@ -114,7 +115,6 @@ const QuotationTable = ({
     }));
   };
 
-  /* ---------------- SORTED DATA ---------------- */
   const sortedData = useMemo(() => {
     const arr = [...quotationRows];
     arr.sort((a, b) => {
@@ -136,7 +136,6 @@ const QuotationTable = ({
     return arr;
   }, [quotationRows, sort]);
 
-  /* ======================================================= */
 
   return (
     <div className="h-full min-h-1 rounded-xl flex flex-col p-3">
@@ -174,13 +173,16 @@ const QuotationTable = ({
                 <tbody className="bg-white">
                   {quotationRows.map((row, rowIndex) => (
                     <tr
+                      onClick={() => {
+                        router.push(`/quotations/${row.QuotationID}`);
+                      }}
                       key={rowIndex}
                       className="
-                  h-[40px]                           
-                  text-sm text-gray-700
-                  hover:bg-gray-50
-                  transition
-                "
+                        h-[40px]                           
+                        text-sm text-gray-700
+                        hover:bg-gray-50
+                        transition
+                      "
                     >
                       {tableHeaders.map((column, colIndex) => {
                         const value = row[column.key] ?? "null";

@@ -4,7 +4,6 @@ import { useState } from "react"
 import QuotationPageHeader from "./QuotationPageHeader"
 import QuotationStatistic from "./QuotationStatistic"
 import QuotationTable from "./QuotationTable"
-import { quotationSamples } from "@/lib/data.quotation"
 const Page = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   return (
