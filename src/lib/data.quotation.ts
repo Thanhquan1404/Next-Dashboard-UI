@@ -1,7 +1,4 @@
 //---------------------------------------- QUOTATION TABLE -----------------------------------------
-
-
-// QUOTATION SAMPLE DATA 
 export type QuotationRow = {
   QuotationID?: string | null;
   CreatedAt?: string | null;
@@ -122,3 +119,49 @@ export const quotationSamples: QuotationRow[] = [
     ValidUntil: null,
   },
 ];
+
+//---------------------------------------- QUOTATION STATISTIC -----------------------------------------
+export type QuotationStatisticType = Record<string, number>;
+
+
+
+//---------------------------------------- QUOTATION API RESPONSE -----------------------------------------
+export interface QuotationItem {
+  productId: string;
+  name: string;
+  discount: number;
+  discountType: "PERCENT" | "AMOUNT" | string; 
+  unitPrice: number;
+  quantity: number;
+  subtotal: number;
+}
+
+export interface UserRef {
+  id: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  fullName?: string | null;
+  email: string;
+}
+
+export interface Lead {
+  id: string;
+  fullName: string;
+  email: string;
+}
+
+export interface ApiResponseListAllQuotation {
+  id: string;
+  lead: Lead;
+  title: string;
+  content: string;
+  validUntil: string; 
+  status: "Draft" | "Sent" | "Accepted" | "Rejected" | "Expired" | string; 
+  fileUrl: string | null;
+  items: QuotationItem[];
+  createdBy: UserRef;
+  createdAt: string; 
+  updatedAt: string; 
+  untaxedAmount: number;
+  finalAmount: number | null;
+}

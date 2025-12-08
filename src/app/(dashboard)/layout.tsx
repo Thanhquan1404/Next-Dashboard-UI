@@ -4,6 +4,7 @@ import { Menu } from '../../components/Menu';
 import Navbar from '@/components/Navbar';
 import { LeadDetailSelectProvider } from '@/providers/LeadDetailSelectProvider';
 import { LeadStageColumnProvider } from '@/providers/LeadStageColumnProvider';
+import { QuotationTableProvider } from '@/providers/QuotationTableProvider';
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -42,11 +43,13 @@ export default function RootLayout({
         pl-4"
       >
         <Navbar />
-        <LeadStageColumnProvider>
-          <LeadDetailSelectProvider >
-            {children}
-          </LeadDetailSelectProvider>
-        </LeadStageColumnProvider>
+        <QuotationTableProvider>
+          <LeadStageColumnProvider>
+            <LeadDetailSelectProvider >
+              {children}
+            </LeadDetailSelectProvider>
+          </LeadStageColumnProvider>
+        </QuotationTableProvider>
       </div>
 
     </div>

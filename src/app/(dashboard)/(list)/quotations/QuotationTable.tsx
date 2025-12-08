@@ -6,6 +6,8 @@ import QuotationStatusComponent from "./QuotationStatusComponent";
 import PageNavigationComponent from "@/components/PageNavigationComponent";
 import { moneyFormat } from "@/util/moneyFormat";
 import { QuotationRow } from "@/lib/data.quotation";
+import { useQuotationTable } from "@/providers/QuotationTableProvider";
+import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 
 /* ---------------- HEADER TYPE ---------------- */
 type HeaderDataType = {
@@ -71,7 +73,6 @@ const tableHeaders: HeaderDataType[] = [
 
 /* ---------------- PROPS ---------------- */
 interface Props {
-  sampleData: QuotationRow[];
   totalPages: number;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
@@ -80,11 +81,18 @@ interface Props {
 /* ======================================================= */
 
 const QuotationTable = ({
-  sampleData,
   totalPages,
   currentPage,
   setCurrentPage,
 }: Props) => {
+
+  // QUOTATION TABLE PROVIDER
+  const {
+    getAllQuotationLoading,
+    quotationRows,
+  } = useQuotationTable();
+
+  /* ---------------- SORT HANDLER ---------------- */
   const [sort, setSort] = useState<{
     columnName: keyof QuotationRow;
     direction: "asc" | "desc";
@@ -108,7 +116,7 @@ const QuotationTable = ({
 
   /* ---------------- SORTED DATA ---------------- */
   const sortedData = useMemo(() => {
-    const arr = [...sampleData];
+    const arr = [...quotationRows];
     arr.sort((a, b) => {
       const A = a[sort.columnName];
       const B = b[sort.columnName];
@@ -126,137 +134,143 @@ const QuotationTable = ({
         : String(B).localeCompare(String(A));
     });
     return arr;
-  }, [sampleData, sort]);
+  }, [quotationRows, sort]);
 
   /* ======================================================= */
 
   return (
-    <div className="h-full min-h-1 bg-white rounded-xl flex flex-col p-3">
-      {/* TABLE AREA */}
-      <div className="w-full flex-1 bg-white shadow-sm rounded-xl bg-gray-300/50 overflow-hidden border-[1px]">
-        <div className="h-full overflow-y-auto">
-          <table className="w-full h-full border-spacing-y-1">
-            {/* -------- TABLE HEADER -------- */}
-            <thead className="sticky top-0 z-10 bg-gray-100">
-              <tr className="text-gray-400 text-sm font-semibold h-[40px]">
-                {tableHeaders.map((header) => (
-                  <th
-                    key={header.id}
-                    className={`px-2 ${header.width}`}
-                    onClick={() => sortFunction(header)}
-                  >
-                    <div
-                      className={`flex ${header.justifyItems} items-center gap-1 cursor-pointer`}
-                    >
-                      {header.label}
-                      {sort.columnName === header.key && (
-                        <SortIcon direction={sort.direction} className="size-4" />
-                      )}
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
+    <div className="h-full min-h-1 rounded-xl flex flex-col p-3">
+      {getAllQuotationLoading ?
+        ""
+        :
+        <div className="h-fit max-h-full min-h-1 bg-white rounded-xl flex flex-col p-3">
+          {/* TABLE AREA */}
+          <div className="w-full flex-1 bg-white shadow-sm rounded-xl bg-gray-300/50 overflow-hidden border-[1px]">
+            <div className="h-full overflow-y-auto">
+              <table className="w-full h-full border-spacing-y-1">
+                {/* -------- TABLE HEADER -------- */}
+                <thead className="sticky top-0 z-10 bg-gray-100">
+                  <tr className="text-gray-400 text-sm font-semibold h-[40px]">
+                    {tableHeaders.map((header) => (
+                      <th
+                        key={header.id}
+                        className={`px-2 ${header.width}`}
+                        onClick={() => sortFunction(header)}
+                      >
+                        <div
+                          className={`flex ${header.justifyItems} items-center gap-1 cursor-pointer`}
+                        >
+                          {header.label}
+                          {sort.columnName === header.key && (
+                            <SortIcon direction={sort.direction} className="size-4" />
+                          )}
+                        </div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
 
-            {/* -------- TABLE BODY -------- */}
-            <tbody className="bg-white">
-              {sortedData.map((row, rowIndex) => (
-                <tr
-                  key={rowIndex}
-                  className="
+                {/* -------- TABLE BODY -------- */}
+                <tbody className="bg-white">
+                  {quotationRows.map((row, rowIndex) => (
+                    <tr
+                      key={rowIndex}
+                      className="
                   h-[40px]                           
                   text-sm text-gray-700
                   hover:bg-gray-50
                   transition
                 "
-                >
-                  {tableHeaders.map((column, colIndex) => {
-                    const value = row[column.key] ?? "null";
+                    >
+                      {tableHeaders.map((column, colIndex) => {
+                        const value = row[column.key] ?? "null";
 
-                    /* ---- STATUS ---- */
-                    if (column.key === "Status") {
-                      return (
-                        <td key={colIndex} className="py-[3px] px-2">
-                          <div
-                            className={`flex ${column.justifyItems} items-center h-full`}
-                          >
-                            {row.Status ? (
-                              <QuotationStatusComponent
-                                status={row.Status}
-                              />
-                            ) : (
-                              "null"
-                            )}
-                          </div>
-                        </td>
-                      );
-                    }
+                        /* ---- STATUS ---- */
+                        if (column.key === "Status") {
+                          return (
+                            <td key={colIndex} className="py-[3px] px-2">
+                              <div
+                                className={`flex ${column.justifyItems} items-center h-full`}
+                              >
+                                {row.Status ? (
+                                  <QuotationStatusComponent
+                                    status={row.Status}
+                                  />
+                                ) : (
+                                  "null"
+                                )}
+                              </div>
+                            </td>
+                          );
+                        }
 
-                    /* ---- FINAL AMOUNT ---- */
-                    if (column.key === "FinalAmount") {
-                      return (
-                        <td key={colIndex} className="py-[3px] px-2">
-                          <div
-                            className={`flex ${column.justifyItems} items-center h-full`}
-                          >
-                            {value === "null"
-                              ? "null"
-                              : moneyFormat(value as number) + "đ"}
-                          </div>
-                        </td>
-                      );
-                    }
+                        /* ---- FINAL AMOUNT ---- */
+                        if (column.key === "FinalAmount") {
+                          return (
+                            <td key={colIndex} className="py-[3px] px-2">
+                              <div
+                                className={`flex ${column.justifyItems} items-center h-full`}
+                              >
+                                {value === "null"
+                                  ? "null"
+                                  : moneyFormat(value as number) + "đ"}
+                              </div>
+                            </td>
+                          );
+                        }
 
-                    if (column.key === "ValidUntil") {
-                      return (
-                        <td key={colIndex} className="py-[3px] px-2">
-                          <div
-                            className={`flex ${column.justifyItems} items-center h-full`}
-                          >
-                            {new Date(value).toLocaleString("vi-VN")}
-                          </div>
-                        </td>
-                      );
-                    }
+                        if (column.key === "ValidUntil") {
+                          return (
+                            <td key={colIndex} className="py-[3px] px-2">
+                              <div
+                                className={`flex ${column.justifyItems} items-center h-full`}
+                              >
+                                {new Date(value).toLocaleString("vi-VN")}
+                              </div>
+                            </td>
+                          );
+                        }
 
-                    if (column.key === "CreatedAt") {
-                      return (
-                        <td key={colIndex} className="py-[3px] px-2">
-                          <div
-                            className={`flex ${column.justifyItems} items-center h-full`}
-                          >
-                            {new Date(value).toLocaleString("vi-VN")}
-                          </div>
-                        </td>
-                      );
-                    }
+                        if (column.key === "CreatedAt") {
+                          return (
+                            <td key={colIndex} className="py-[3px] px-2">
+                              <div
+                                className={`flex ${column.justifyItems} items-center h-full`}
+                              >
+                                {new Date(value).toLocaleString("vi-VN")}
+                              </div>
+                            </td>
+                          );
+                        }
 
-                    /* ---- DEFAULT ---- */
-                    return (
-                      <td key={colIndex} className="py-[3px] px-2">
-                        <div
-                          className={`flex ${column.justifyItems} items-center h-full`}
-                        >
-                          {String(value)}
-                        </div>
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                        /* ---- DEFAULT ---- */
+                        return (
+                          <td key={colIndex} className="py-[3px] px-2">
+                            <div
+                              className={`flex ${column.justifyItems} items-center h-full`}
+                            >
+                              {String(value)}
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-      {/* -------- PAGINATION -------- */}
-      <div className="h-[70px] flex items-center justify-center bg-white">
-        <PageNavigationComponent
-          totalPages={totalPages}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-        />
-      </div>
+          {/* -------- PAGINATION -------- */}
+          <div className="h-[70px] flex items-center justify-center bg-white">
+            <PageNavigationComponent
+              totalPages={totalPages}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+            />
+          </div>
+        </ div>
+      }
     </div>
   );
 };

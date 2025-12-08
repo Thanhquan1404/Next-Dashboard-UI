@@ -12,7 +12,7 @@ const Page = () => {
       {/* PAGE HEADER  */}
       <QuotationPageHeader />
       <QuotationStatistic />
-      <QuotationTable sampleData={quotationSamples} totalPages={5} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+      <QuotationTable totalPages={1} currentPage={1} setCurrentPage={setCurrentPage}/>
     </div>
   )
 }
