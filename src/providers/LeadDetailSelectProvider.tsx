@@ -14,17 +14,23 @@ import useUpdateLeadStage from "@/fetching/lead/updateLeadStage";
 import useUpdateLeadDetail from "@/fetching/lead/updateLeadDetail";
 import { useLeadStageColumn } from "./LeadStageColumnProvider";
 import useAddLeadActivity from "@/fetching/lead/addLeadActivity";
+import useCompleteActivity from "@/fetching/lead/completeActivity";
+import useDeleteActivity from "@/fetching/lead/deleteActivity";
 
 interface LeadDetailSelectContextType {
   selectedLeadId: string | null;
   leadDetailInfo: LeadDetailType | null;
   leadSequenceActivity: ApiResponseDataLeadActivity[] | null;
   loadingGetLeadDetail: boolean;
+  loadingCompleteLeadActivity: boolean;
+  loadingDeleteActivity: boolean,
   selectLeadDetail: (leadID: string) => void;
   removeSelectedLeadDetail: () => void;
   addingNewLeadActivity: (newLead: RequestAddNewLeadActivity) => void;
   updateALeadDetail: (newLeadDetail: LeadDetailType) => void;
   updateLeadStage: (leadID: string, forwardStageID: string) => void;
+  completeLeadActivity: (activityID: string) => void;
+  deleteLeadActivity: (activityID: string) => void;
 }
 
 const LeadDetailSelectContext = createContext<LeadDetailSelectContextType | null>(null);
@@ -52,6 +58,8 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
   const { loading: loadingGetLeadDetail, getLeadDetailInformation } = useGetLeadDetail();
   const { loading: loadingUpdateLeadStage, updateLeadStage: updateStage } = useUpdateLeadStage();
   const { loading: loadingAddLeadActivity, addLeadActivity } = useAddLeadActivity();
+  const { loading: loadingCompleteLeadActivity, completeActivity } = useCompleteActivity();
+  const { loading: loadingDeleteActivity, deleteActivity } = useDeleteActivity();
   // HANDLE CLICK ON A LEAD
   const selectLeadDetail = (leadID: string) => {
     setSelectedLeadId(leadID);
@@ -148,17 +156,89 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
     }
   };
 
+  // COMPLETE LEAD ACTIVITY
+  const completeLeadActivity = async (activityID: string) => {
+    try {
+      if (!selectedLeadId) return;
+
+      const success = await completeActivity(selectedLeadId, activityID);
+
+      if (!success) {
+        showNotification("There is error in complete an activity", true);
+        return;
+      }
+
+      showNotification("Successfully complete an activity");
+
+      setLeadSequenceActivity(prev => {
+        if (!prev) return prev;
+
+        const index = prev.findIndex(item => item.id === activityID);
+        if (index === -1) {
+          showNotification(
+            "There is error in async with UI when complete an activity",
+            true
+          );
+          return prev;
+        }
+
+        const newList = [...prev];
+        newList[index] = {
+          ...newList[index],
+          status: "DONE",
+          completed: true,
+        };
+
+        return newList;
+      });
+
+    } catch (err) {
+      showNotification(String(err), true);
+    }
+  };
+
+  const deleteLeadActivity = async (activityID: string) => {
+     try {
+      if (!selectedLeadId) return;
+
+      const success = await deleteActivity(selectedLeadId, activityID);
+
+      if (!success) {
+        showNotification("There is error in delete an activity", true);
+        return;
+      }
+
+      showNotification("Successfully delete an activity");
+
+      setLeadSequenceActivity(prev => {
+        if (!prev) return prev;
+
+        const newList = prev.filter(item => item.id !== activityID);
+
+        return newList
+      });
+
+    } catch (err) {
+      showNotification(String(err), true);
+    }
+  }
+
+
 
   const value: LeadDetailSelectContextType = {
     selectedLeadId,
     leadDetailInfo,
     leadSequenceActivity,
     loadingGetLeadDetail,
+    loadingCompleteLeadActivity,
+    loadingDeleteActivity,
     selectLeadDetail,
     removeSelectedLeadDetail,
     addingNewLeadActivity,
     updateALeadDetail,
-    updateLeadStage
+    updateLeadStage,
+    completeLeadActivity,
+    deleteLeadActivity,
   };
 
   return (

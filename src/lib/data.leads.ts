@@ -19,7 +19,7 @@ export interface leadType {
   email: string;
   rating: number;
   expectedRevenue: number;
-  source: leadSourceType;
+  source: string;
   status: string;
 }
 
@@ -53,67 +53,6 @@ export interface LeadDetailActivitySequenceTimeline {
   sequenceActivities: LeadDetailActivityTimeline[],
 }
 
-// ---------------------------------------- LEAD DETAIL SEQUENCE ACTIVITY TIMELINE SAMPLES ----------------------------------------
-export const leadActivitySequences: Record<string, LeadDetailActivitySequenceTimeline> = {
-  "L001": {
-    leadID: "L001",
-    sequenceActivities: [
-      {
-        title: "First call",
-        assignTo: "Sales A",
-        closingDate: "2025-11-20T00:00:00+07:00",
-        rate: 3
-      },
-      {
-        title: "Gửi báo giá",
-        assignTo: "Sales A",
-        closingDate: "2025-11-22T00:00:00+07:00",
-        rate: 4
-      }
-    ]
-  },
-  "L006": {
-    leadID: "L006",
-    sequenceActivities: [
-      {
-        title: "Gọi xác nhận form",
-        assignTo: "Sales Pro",
-        closingDate: "2025-11-13T00:00:00+07:00",
-        rate: 5
-      },
-      {
-        title: "Hẹn gặp trực tiếp",
-        assignTo: "Sales Pro",
-        closingDate: "2025-11-28T00:00:00+07:00",
-        rate: 5
-      }
-    ]
-  },
-  "L016": {
-    leadID: "L016",
-    sequenceActivities: [
-      {
-        title: "Chốt giá sơ bộ",
-        assignTo: "Closer Team",
-        closingDate: "2025-11-15T00:00:00+07:00",
-        rate: 5
-      },
-      {
-        title: "Gửi hợp đồng",
-        assignTo: "Closer Team",
-        closingDate: "2025-11-18T00:00:00+07:00",
-        rate: 5
-      },
-      {
-        title: "Ký kết",
-        assignTo: "CEO",
-        closingDate: "2025-11-25T00:00:00+07:00",
-        rate: 5
-      }
-    ]
-  }
-};
-
 
 //---------------------------------------- LEAD KEY ---------------------------------------- 
 
@@ -139,6 +78,8 @@ export interface ApiResponseDataLeadType {
   rating: number,
   phoneNumber: string,
   email: string,
+  source: string,
+  avatarUrl: string,
   createdAt: string,
   updatedAt: string,
   responsibleBy: {

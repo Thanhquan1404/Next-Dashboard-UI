@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 
 const path = `${URL}/leads`;
 
-export async function POST(req: NextRequest) {
+export async function PATCH(req: NextRequest) {
   try {
     const cookieStorage = cookies();
     const accessToken = cookieStorage.get("accessToken")?.value;
@@ -16,7 +16,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const leadID = req.nextUrl.searchParams.get("leadID");
+    const formData = await req.formData();
+
+    const leadID = formData.get("leadID");
 
     if (!leadID){
       return NextResponse.json(
@@ -24,32 +26,25 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    const formData = await req.formData();
+    
+    const activityID = formData.get("activityID");
 
-    const content = formData.get("content");
-    const type = formData.get("type");
-    const validUntil = formData.get("validUntil");
-
-    const payloadObj: Record<string, any> = {
-      content,
-      type,
-    };
-
-    if (validUntil) {
-      payloadObj.validUntil = validUntil;
+    if (!activityID){
+      return NextResponse.json(
+        { code: 400, message: "Fill in activity ID" },
+        { status: 400 }
+      );
     }
 
-    const backendRes = await fetch(`${path}/${leadID}/activities`, {
-      method: "POST",
+    const backendRes = await fetch(`${path}/${leadID}/activities/${activityID}/complete`, {
+      method: "PATCH",
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payloadObj),
-    });
-
-    const result = await backendRes.json();
+      }
+    })
     
+    const result = await backendRes.json();
+
     return NextResponse.json(result, {status: backendRes.status});
   } catch (err: any) {
     const message = err?.message || "Unknown error";

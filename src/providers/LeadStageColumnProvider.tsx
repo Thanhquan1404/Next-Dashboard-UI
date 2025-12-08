@@ -73,13 +73,13 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
 
         const leadsInThisStage: leadType[] = stageData?.leads.map((item) => ({
           leadID: item.id,
-          avatarURL: "",
+          avatarURL: item.avatarUrl || "",
           name: item.fullName,
           createdDate: item.createdAt,
           phone: item.phoneNumber || "",
           email: item.email || "",
           rating: item.rating ?? 0,
-          source: "Facebook",
+          source: item.source || "Facebook",
           status: stageColumn.status,
           expectedRevenue: item.expectedRevenue,
         })) ?? [];
