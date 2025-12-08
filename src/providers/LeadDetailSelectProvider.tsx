@@ -2,7 +2,6 @@
 
 import {
   ApiResponseDataLeadActivity,
-  leadActivitySequences,
   LeadDetailActivityTimeline,
   LeadDetailType,
   RequestAddNewLeadActivity
