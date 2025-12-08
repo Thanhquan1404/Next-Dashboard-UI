@@ -20,6 +20,7 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
   const [newColumnTitle, setNewColumnTitle] = useState<string>("");
   const [isOpenAddingNewColumnWindow, setIsOpenAddingNewColumnWindow] = useState<boolean>(false);
 
+
   const resetAllState = () => {
     setSelectedColor("#000000");
     setNewColumnTitle("");

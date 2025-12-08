@@ -8,6 +8,7 @@ import { useNotification } from "./NotificationProvider";
 import useDeleteLead from "@/fetching/lead/deleteLead";
 import useUpdateLeadStage from "@/fetching/lead/updateLeadStage";
 import useAddStage from "@/fetching/stage/addStage";
+import useDeleteStage from "@/fetching/stage/deleteStage";
 
 // CONTEXT VALUE TYPE
 interface LeadStageColumnContextType {
@@ -17,6 +18,7 @@ interface LeadStageColumnContextType {
   deleteLeadLoading: boolean,
   updateDropStageLoading: boolean,
   addStageLoading: boolean,
+  deleteStageLoading: boolean,
   leadItemsInStage: Record<string, leadType[]>,
   updateLeadStage: (leadId: string, newStage: string) => void,
   addingNewLead: (newLead: leadType, targetColumn: string, stageID: string) => void,
@@ -24,6 +26,7 @@ interface LeadStageColumnContextType {
   deleteALead: (leadID: string) => void,
   syncLeadDetail: (lead: LeadDetailType) => void;
   syncLeadStage: (leadID: string, stage: string) => void;
+  deleteLeadColumn: (stageID: string) => void;
 }
 
 // CREATE CONTEXT
@@ -51,6 +54,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
   const { loading: addLeadLoading, addLead } = useAddLead();
   const { loading: updateDropStageLoading, updateLeadStage: fetchUpdateLeadStage } = useUpdateLeadStage();
   const { loading: addStageLoading, addStage } = useAddStage();
+  const { loading: deleteStageLoading, deleteStage } = useDeleteStage();
 
   // LEAD ITEMS IN SPECIFIC COLUMN INITIALIZE
   const [leadItemsInStage, setLeadItemsInStage] = useState<Record<string, leadType[]>>({});
@@ -191,7 +195,30 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
     }
   }
 
-  // ADDING NEW COLUMN 
+  // DELETE A LEAD
+  const deleteALead = async (leadID: string) => {
+    try {
+      const success: boolean = await deleteLead(leadID);
+
+      if (success) {
+        setLeadItemsInStage(prev => {
+          const newLead: Record<string, leadType[]> = prev;
+          for (const stage in newLead) {
+            newLead[stage] = newLead[stage].filter((item) => item.leadID !== leadID)
+          }
+
+          return newLead;
+        })
+        showNotification("Successfully delete a lead")
+      } else {
+        showNotification("There is error in delete lead", true);
+      }
+    } catch (err) {
+      showNotification(String(err), true);
+    }
+  }
+
+  // ADDING NEW STAGE COLUMN 
   const addingNewLeadColum = async (columnName: string, columnColor: string) => {
     if (!columnName.trim()) {
       showNotification("Fill in column name", true);
@@ -209,8 +236,8 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
       const newStage = response.data;
 
       setLeadStage((prev) => {
-        const lostIndex = prev.findIndex(s => s.status === "Lost");
-        const wonIndex = prev.findIndex(s => s.status === "Won");
+        const lostIndex = prev.findIndex(stage => stage.status === "Lost");
+        const wonIndex = prev.findIndex(stage => stage.status === "Won");
 
         const newStageItem = {
           id: newStage.id,
@@ -246,27 +273,22 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
     }
   };
 
+  // DELETE A STAGE COLUMN
+  const deleteLeadColumn = async (stageID: string) => {
+    try{
+      const success = await deleteStage(stageID);
 
-  // DELETE A LEAD
-  const deleteALead = async (leadID: string) => {
-    try {
-      const success: boolean = await deleteLead(leadID);
-
-      if (success) {
-        setLeadItemsInStage(prev => {
-          const newLead: Record<string, leadType[]> = prev;
-          for (const stage in newLead) {
-            newLead[stage] = newLead[stage].filter((item) => item.leadID !== leadID)
-          }
-
-          return newLead;
+      if (success){
+        showNotification("Delete stage successfully");
+        setLeadStage(prev => {
+          const newLeadStage = prev.filter(stage => stage.id !== stageID);
+          return newLeadStage;
         })
-        showNotification("Successfully delete a lead")
-      } else {
-        showNotification("There is error in delete lead", true);
+      }else{
+        showNotification("There is errror in delete a stage", true)
       }
-    } catch (err) {
-      showNotification(String(err), true);
+    }catch(error){
+      showNotification(String(error), true);
     }
   }
 
@@ -298,6 +320,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
     });
   };
 
+  // MAKE ASYNC WHEN LEAD STAGE CHANGE
   const syncLeadStage = (leadID: string, forwardStageID: string) => {
     setLeadItemsInStage(prev => {
       let movingLead: leadType | null = null;
@@ -340,6 +363,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
       getListLeadLoading,
       addLeadLoading,
       deleteLeadLoading,
+      deleteStageLoading,
       updateDropStageLoading,
       addStageLoading,
       leadStage,
@@ -350,6 +374,7 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
       deleteALead,
       syncLeadDetail,
       syncLeadStage,
+      deleteLeadColumn,
     }}>
       {children}
     </LeadStageColumnContext.Provider>

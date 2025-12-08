@@ -9,8 +9,9 @@ import Rating from "@mui/material/Rating";
 import LeadSourceComponent from "@/components/LeadSourceComponent";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
-import { moneyFormat } from "@/util/moneyFormat";
+import useDeleteStage from "@/fetching/stage/deleteStage";
 import { useLeadStageColumn } from "@/providers/LeadStageColumnProvider";
+import { useNotification } from "@/providers/NotificationProvider";
 
 interface Props {
   stageID: string;
@@ -22,7 +23,6 @@ interface Props {
   dropEvent: (statusColumnName: string) => void;
   dragOverEvent: (e: React.DragEvent<HTMLDivElement>) => void;
   handleAddingNewLead: (newLead: leadType, targetColumn: string, stageID: string) => void;
-  onDeleteColumn?: (stageID: string) => void;
 }
 
 const LeadStageColumn = ({
@@ -35,10 +35,10 @@ const LeadStageColumn = ({
   dropEvent,
   dragOverEvent,
   handleAddingNewLead,
-  onDeleteColumn,
 }: Props) => {
   // LEAD STAGE PROVIDER
   const { deleteALead, deleteLeadLoading, updateDropStageLoading } = useLeadStageColumn();
+  const { showNotification } = useNotification();
 
   const [isBeingDragged, setIsBeingDragged] = useState(false);
   const [addingLeadToggle, setAddingLeadToggle] = useState(false);
@@ -48,6 +48,7 @@ const LeadStageColumn = ({
   const [leadSource, setLeadSource] = useState("");
   const [leadRate, setLeadRate] = useState("");
   const [leadExpectedRevenue, setLeadExpectedRevenue] = useState<number>(0);
+  const [selectedDeleteStageID, setSelectedDeleteStageID] = useState<string>("");
 
   const resetAllState = () => {
     setLeadName("");
@@ -74,6 +75,13 @@ const LeadStageColumn = ({
 
     handleAddingNewLead(newLead, leadStage, stageID);
   };
+
+
+  const { deleteStageLoading, deleteLeadColumn } = useLeadStageColumn();
+
+  const handleDeleteStage = async (stageID: string) => {
+    deleteLeadColumn(stageID);
+  }
 
   useEffect(() => {
     if (addLeadLoading) { return; }
@@ -134,29 +142,43 @@ const LeadStageColumn = ({
           </div>
 
           {/* DELETE COLUMN */}
-          <button
-            onClick={() => onDeleteColumn && onDeleteColumn(stageID)}
-            className="
+          {
+            deleteStageLoading && selectedDeleteStageID === stageID ?
+              (
+                <FetchingLoadingStatus loading={deleteStageLoading} color={"#FF0000"} size={8}/>
+              )
+              :
+              (
+                <button
+                  onClick={() => {
+                    handleDeleteStage(stageID);
+                    setSelectedDeleteStageID(stageID);
+                  }
+                  }
+                  className="
               p-1.5 rounded-md
               text-gray-400 transition-all duration-150
               hover:text-red-600 hover:bg-red-100 active:scale-[0.95]
             "
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.7}
-              stroke="currentColor"
-              className="w-4 h-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 7h12m-9 4v6m6-6v6m1-10V5a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v2M4 7h16"
-              />
-            </svg>
-          </button>
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.7}
+                    stroke="currentColor"
+                    className="w-4 h-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 7h12m-9 4v6m6-6v6m1-10V5a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v2M4 7h16"
+                    />
+                  </svg>
+                </button>
+              )
+          }
+
         </div>
       </div>
 
