@@ -14,6 +14,7 @@ const menuItems = [
       { icon: "/customers.png", label: "Customers", href: "/customers", visible: ["Admin", "Employee"] },
       { icon: "/products.png", label: "Products", href: "/products", visible: ["Admin", "Employee"] },
       { icon: "/leads.png", label: "Leads", href: "/leads", visible: ["Admin", "Employee"] },
+      { icon: "/quotation.png", label: "Quotations", href: "/quotations", visible: ["Admin", "Employee"]},
       { icon: "/orders.png", label: "Orders", href: "/orders", visible: ["Admin", "Employee"] },
     ],
   },

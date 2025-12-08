@@ -5,22 +5,8 @@ const newAnnouncement = [1, 2, 3, 4];
 
 const Navbar = () => {
   return (
-    <div className="border-none flex items-center justify-between p-4 bg-transparent">
+    <div className="border-none flex items-center p-4 bg-transparent">
       {/* Search bar */}
-      <div className="hidden md:flex items-center justify-center gap-2 ring-[1.5px] ring-gray-300 rounded-full px-2 text-xs transition-all duration-300 focus-within:ring-purple-400 hover:ring-purple-300">
-        <Image
-          src="/search.png"
-          alt="search-icon"
-          width={14}
-          height={14}
-          className="opacity-70"
-        />
-        <input
-          type="text"
-          placeholder="Search..."
-          className="w-[220px] p-[4.5px] bg-transparent outline-none placeholder-gray-400"
-        />
-      </div>
 
       {/* personal information side */}
       <div className="flex items-center gap-6 justify-end w-full">
