@@ -1,6 +1,7 @@
 //---------------------------------------- QUOTATION TABLE -----------------------------------------
 export type QuotationRow = {
   QuotationID?: string | null;
+  QuotationTitle?: string | null;
   QuotationContent?: string | null;
   CreatedAt?: string | null;
   CustomerName?: string | null;

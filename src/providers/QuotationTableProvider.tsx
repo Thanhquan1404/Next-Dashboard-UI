@@ -5,11 +5,14 @@ import { QuotationRow, QuotationStatisticType, QuotationType } from "@/lib/data.
 import { useNotification } from "./NotificationProvider";
 import useGetListQuotation from "@/fetching/quotation/getAllQuotation";
 import useSaveQuotation from "@/fetching/quotation/saveQuotation";
+import useGetListQuotationWithPageNo from "@/fetching/quotation/getAllQuotationWithPageNo";
 
 interface QuotationTableProviderContextType {
   getAllQuotationLoading: boolean,
+  getAllQuotationWithPageNoLoading: boolean,
   saveQuotationLoading: boolean,
   saveAQuotation: (newQuotation: QuotationType, leadID: string) => void,
+  getQuotationWithPageNo: (pageNo: number) => void,
   quotationRows: QuotationRow[],
   quotationStatistic: QuotationStatisticType,
 }
@@ -35,18 +38,19 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
   // API HOOK
   const { loading: getAllQuotationLoading, getAllQuotation } = useGetListQuotation();
   const { loading: saveQuotationLoading, saveQuotation } = useSaveQuotation();
+  const { loading: getAllQuotationWithPageNoLoading, getAllQuotationWithPageNo} = useGetListQuotationWithPageNo();
 
   // STATE
   const [quotationRows, setQuotationRows] = useState<QuotationRow[]>([]);
-  const [quotationStatistic, setQuotationStatistic] =
-    useState<QuotationStatisticType>({});
+  const [quotationStatistic, setQuotationStatistic] = useState<QuotationStatisticType>({});
+  const [totalPages, setTotalPage] = useState<number>();
 
   // GET ALL QUOTATIONS
   const didFetch = useRef(false);
 
   const getQuotation = useCallback(async () => {
     try {
-      const { quotationRows, quotationStatistic } = await getAllQuotation();
+      const { quotationRows, quotationStatistic, dataPaganavigate } = await getAllQuotation();
 
       if (quotationRows && quotationStatistic) {
         setQuotationRows(quotationRows);
@@ -65,6 +69,22 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
     getQuotation();
   }, [getQuotation]);
 
+  // GET ALL QUOTATIONS WITH PAGE NO
+  const getQuotationWithPageNo = async (pageNo: number) => {
+    try {
+      const { quotationRows, quotationStatistic } = await getAllQuotationWithPageNo(pageNo);
+
+      if (quotationRows && quotationStatistic) {
+        setQuotationRows(quotationRows);
+        setQuotationStatistic(quotationStatistic);
+      } else {
+        showNotification("Error loading quotations", true);
+      }
+    } catch (error) {
+      showNotification(String(error), true);
+    }
+  }
+
   // SAVE QUOTATION 
   const saveAQuotation = async (newQuotation: QuotationType, leadID: string) => {
     try {
@@ -72,6 +92,7 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
       const responseQuotation: QuotationRow = {
         QuotationID: resData.id,
         QuotationContent: resData.content,
+        QuotationTitle: resData.title,
         CreatedAt: resData.createdAt,
         CustomerName: resData.lead.fullName,
         FinalAmount: resData.finalAmount,
@@ -87,13 +108,17 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
     }
   };
 
+
+
   return (
     <QuotationTableContext.Provider
       value={{
         getAllQuotationLoading,
         saveQuotationLoading,
+        getAllQuotationWithPageNoLoading,
         quotationRows,
         quotationStatistic,
+        getQuotationWithPageNo,
         saveAQuotation,
       }}
     >

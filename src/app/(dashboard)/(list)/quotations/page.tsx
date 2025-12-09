@@ -6,6 +6,7 @@ import QuotationStatistic from "./QuotationStatistic"
 import QuotationTable from "./QuotationTable"
 const Page = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
+  
   return (
     <div className='w-full h-full flex flex-col gap-5 px-3'>
       {/* PAGE HEADER  */}

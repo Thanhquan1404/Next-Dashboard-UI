@@ -7,10 +7,8 @@ import PageNavigationComponent from "@/components/PageNavigationComponent";
 import { moneyFormat } from "@/util/moneyFormat";
 import { QuotationRow } from "@/lib/data.quotation";
 import { useQuotationTable } from "@/providers/QuotationTableProvider";
-import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 import { useRouter } from "next/navigation";
 
-/* ---------------- HEADER TYPE ---------------- */
 type HeaderDataType = {
   id: number;
   key: keyof QuotationRow;
@@ -19,12 +17,11 @@ type HeaderDataType = {
   justifyItems: string;
 };
 
-/* ---------------- HEADERS ---------------- */
 const tableHeaders: HeaderDataType[] = [
   {
     id: 1,
-    key: "QuotationContent",
-    label: "Quotation Content",
+    key: "QuotationTitle",
+    label: "Quotation Title",
     width: "w-[20%]",
     justifyItems: "justify-start",
   },
@@ -72,14 +69,13 @@ const tableHeaders: HeaderDataType[] = [
   },
 ];
 
-/* ---------------- PROPS ---------------- */
+
 interface Props {
   totalPages: number;
   currentPage: number;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
-/* ======================================================= */
 
 const QuotationTable = ({
   totalPages,
