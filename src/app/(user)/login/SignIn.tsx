@@ -8,24 +8,29 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useState } from 'react';
 import { userLoginType } from '@/lib/data.user';
-import { setToken } from '@/service/localStorageService';
 
 const FetchingLoadingStatus = ({ loading }: { loading: boolean }) => (
     <div className="mx-auto mt-4">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
     </div>
 ); 
-import useSignInFetching from '@/fetching/user/signInFetching';
 import { useRouter } from 'next/navigation';
 import { useNotification } from '@/providers/NotificationProvider';
+import { useAuthentication } from '@/providers/AuthenticationProvider';
 
 const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
   // INITIALIZE NOTIFICATION PROVIDER 
   const { showNotification } = useNotification();
+
   // INITIALIZE NAVIGATE FUNTION 
   const router = useRouter()
-  // INITIALIZE FETCHING FUNCTION 
-  const { loading, data, error, userLogin } = useSignInFetching();
+
+  // AUTHENTICATION PROVIDER
+  const {
+    loginLoading, userLogin
+  } = useAuthentication();
+  
+  
 
   // STATE 
   const [username, setUsername] = useState<string>("");
@@ -45,28 +50,10 @@ const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
       password: password,
     }
 
-    try {
-      const response = await userLogin(userLoginInput);
-      const resData = response.data;
+    const success = await userLogin(userLoginInput.username, userLoginInput.password);
 
-      if (resData?.code === 200 && resData?.data?.accessToken) {
-        const accessToken = resData.data.accessToken;
-        showNotification("Welcome to our website");
-        resetStateField();
-        // store in local storage
-        setToken(accessToken);
-
-        await fetch("api/set-token", {
-          method: "POST",
-          body: JSON.stringify({token: accessToken})
-        })
-        router.push('/dashboard');
-      } else {
-        const errMessage = resData?.message || "Invalid credentials";
-        alert(`Login failed\n${errMessage}`);
-      }
-    } catch (error: any) {
-      showNotification(`Login failed \n ${error.message}`, true);
+    if (success){
+      router.push("/dashboard")
     }
   }
 
@@ -141,8 +128,8 @@ const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
 
       {/* Sign In Button */}
       {
-        loading ?
-          <FetchingLoadingStatus loading={loading} />
+        loginLoading ?
+          <FetchingLoadingStatus loading={loginLoading} />
           :
           <button
             className="mt-6 bg-[#1e88e5] text-white rounded-full w-[150px] h-11 hover:bg-[#1565c0] 
