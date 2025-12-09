@@ -53,7 +53,7 @@ const QuotationDetailHeader = ({ quotationDetail }: Props) => {
         shippingAddress: shippingAddress.trim(),
       });
 
-      showNotification(`Order \${created.orderCode} created`, );
+      showNotification(`Successfully create order from quotation`, );
       router.push("/orders");
     } catch (err: any) {
       showNotification(err?.message || "Failed to create order", true);

@@ -3,14 +3,19 @@ import AddingNewCustomerWindow from "./AddingNewCustomerWindow"
 import CustomerTable from "./CustomerTable"
 import CustomerTableHeader from "./CustomerTableHeader"
 import { tableRows, tableRowDataType } from '@/lib/data'
-import { useCallback, useState } from "react"
+import { useCallback, useState, useEffect } from "react"
+import useGetAllCustomer from "@/fetching/customer/getAllCustomer";
+import { useNotification } from "@/providers/NotificationProvider";
 
 const Page = () => {
   // DROPBACK WINDOW TOGGLE
-  const [dropbackToggle, setDropbackToggle] = useState<boolean>(true);
+  const [dropbackToggle, setDropbackToggle] = useState<boolean>(false);
 
-  //STATE
-  const [tableData, setTableData] = useState<tableRowDataType[]>(tableRows);
+  //STATE - initialize with local sample rows until real data loads
+  const [tableData, setTableData] = useState<tableRowDataType[]>([]);
+
+  const { getAllCustomer } = useGetAllCustomer();
+  const { showNotification } = useNotification();
 
   const generateCustomerID = useCallback((currentLength: number) => {
     return `CUST${String(currentLength + 1).padStart(3, "0")}`;
@@ -21,7 +26,46 @@ const Page = () => {
       const newID = generateCustomerID(prev.length);
       return [...prev, { ...newRow, customerID: newID } as tableRowDataType];
     });
-  }, [generateCustomerID]);
+  }, []);
+
+  // Fetch customers on mount and set the table data
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getAllCustomer(); // optional pageNo can be passed
+        const payload = res?.data || res; // support both shapes
+        if (Array.isArray(payload)) {
+          const mapped: tableRowDataType[] = payload.map((c: any) => ({
+            info: c.fullName || "",
+            gmail: c.email || "",
+            customerID: c.id || "",
+            majority: c.rating != null ? String(c.rating) : "",
+            company: c.company || "",
+            phone: c.phoneNumber || "",
+            address: c.address || "",
+            actions: "View",
+          }));
+          setTableData(mapped);
+        } else if (payload?.data && Array.isArray(payload.data)) {
+          const mapped: tableRowDataType[] = payload.data.map((c: any) => ({
+            info: c.fullName || "",
+            gmail: c.email || "",
+            customerID: c.id || "",
+            majority: c.rating != null ? String(c.rating) : "",
+            company: c.company || "",
+            phone: c.phoneNumber || "",
+            address: c.address || "",
+            actions: "View",
+          }));
+          setTableData(mapped);
+        } else {
+          // fallback: keep sample
+        }
+      } catch (err: any) {
+        showNotification(err?.message || "Failed to fetch customers", true);
+      }
+    })();
+  }, []);
 
   return (
     <div className='bg-white w-full h-full px-4 py-1 box-border flex flex-col'>
