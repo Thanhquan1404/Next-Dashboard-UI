@@ -3,78 +3,167 @@ import QuotationStatusComponent from "../QuotationStatusComponent";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import useSendMailQuotation from "@/fetching/quotation/sendMailQuotation";
+import useCreateOrderFromQuotation from "@/fetching/order/createOrderFromQuotation";
 import { useNotification } from "@/providers/NotificationProvider";
 import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
+import { useState } from "react";
 
 interface Props {
-  quotationDetail: ApiResponseListAllQuotation,
+  quotationDetail: ApiResponseListAllQuotation;
 }
-const QuotationDetailHeader = ({quotationDetail}: Props) => {
-  // ROUTER
+const QuotationDetailHeader = ({ quotationDetail }: Props) => {
   const router = useRouter();
-  // NOTIFICATION
   const { showNotification } = useNotification();
-  // API HOOKS
-  const {loading: sendMailQuotationLoading, sendMailQuotation} = useSendMailQuotation();
+
+  // send mail hook
+  const { loading: sendMailQuotationLoading, sendMailQuotation } =
+    useSendMailQuotation();
+
+  // create order hook
+  const { loading: createOrderLoading, createOrderFromQuotation } =
+    useCreateOrderFromQuotation();
+
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [orderCode, setOrderCode] = useState("");
+  const [shippingAddress, setShippingAddress] = useState("");
 
   const handleSendMail = async () => {
-    try{
+    try {
       const success = await sendMailQuotation(quotationDetail.id);
 
-      if (success){
+      if (success) {
         showNotification("Send mail successfully");
-      }else{
+      } else {
         showNotification("There is error in send mail", true);
       }
-    }catch(error){
+    } catch (error) {
       showNotification(String(error), true);
+    }
+  };
+
+  const handleCreateOrder = async () => {
+    if (!orderCode.trim() || !shippingAddress.trim()) {
+      showNotification("Please provide order code and shipping address", true);
+      return;
+    }
+
+    try {
+      const created = await createOrderFromQuotation(quotationDetail.id, {
+        orderCode: orderCode.trim(),
+        shippingAddress: shippingAddress.trim(),
+      });
+
+      showNotification(`Order \${created.orderCode} created`, );
+      router.push("/orders");
+    } catch (err: any) {
+      showNotification(err?.message || "Failed to create order", true);
     }
   };
 
   return (
     <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <button className="p-2 hover:bg-gray-100 rounded-lg transition" onClick={() => router.push("/quotations")}>
-                <ArrowLeft className="h-5 w-5 text-gray-600" />
-              </button>
-              <div>
-                <div className="flex gap-4"> 
-                  <h1 className="text-2xl font-bold text-gray-900">{quotationDetail.title}</h1>
-                  <QuotationStatusComponent status={quotationDetail.status} />
-                </div>
-                <p className="text-sm text-gray-500 mt-1">ID: {quotationDetail.id}</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <button
+              className="p-2 hover:bg-gray-100 rounded-lg transition"
+              onClick={() => router.push("/quotations")}
+            >
+              <ArrowLeft className="h-5 w-5 text-gray-600" />
+            </button>
+            <div>
+              <div className="flex gap-4">
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {quotationDetail.title}
+                </h1>
+                <QuotationStatusComponent status={quotationDetail.status} />
               </div>
+              <p className="text-sm text-gray-500 mt-1">ID: {quotationDetail.id}</p>
             </div>
-            <div className="flex items-center space-x-3">
-              {quotationDetail.fileUrl ? (
-                <a
-                  href={quotationDetail.fileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-2 bg-blue-600 text-white px-3 py-2 text-xs rounded-lg hover:bg-blue-700 transition"
+          </div>
+
+          <div className="flex items-center space-x-3">
+            {/* Create Order button + form — only show when status is Sent */}
+            {quotationDetail.status === "Sent" && (
+              <div className="flex items-center space-x-2">
+                {createOrderLoading ? (
+                  <FetchingLoadingStatus loading={createOrderLoading} color={"blue"} size={20} />
+                ) : showCreateForm ? (
+                  <div className="bg-white border border-gray-200 p-3 rounded-lg shadow-sm flex items-center space-x-2">
+                    <input
+                      value={orderCode}
+                      onChange={(e) => setOrderCode(e.target.value)}
+                      placeholder="Order code"
+                      className="text-xs px-2 py-1 border rounded-md"
+                    />
+                    <input
+                      value={shippingAddress}
+                      onChange={(e) => setShippingAddress(e.target.value)}
+                      placeholder="Shipping address"
+                      className="text-xs px-2 py-1 border rounded-md w-64"
+                    />
+                    <button
+                      onClick={handleCreateOrder}
+                      className="text-xs bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700"
+                    >
+                      Create
+                    </button>
+                    <button
+                      onClick={() => setShowCreateForm(false)}
+                      className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-md hover:bg-gray-200"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowCreateForm(true)}
+                    className="text-xs bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-700 transition"
+                  >
+                    Create Order
+                  </button>
+                )}
+              </div>
+            )}
+
+            {quotationDetail.fileUrl ? (
+              <a
+                href={quotationDetail.fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 bg-blue-600 text-white px-3 py-2 text-xs rounded-lg hover:bg-blue-700 transition"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-4"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                  </svg>
-                  <span>Download PDF</span>
-                </a>
-              ) : (
-                sendMailQuotationLoading ? 
-                  <FetchingLoadingStatus loading={sendMailQuotationLoading} color={"blue"} size={10} />
-                :
-                <div 
-                  onClick={() => handleSendMail()}
-                  className="text-xs bg-blue-600 px-2 py-1.5  text-white rounded-lg opacity-70 hover:opacity-100 hover:shadow-lg transition-all duration-350 cursor-pointer">
-                  Send mail
-                </div>
-              )}
-            </div>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+                  />
+                </svg>
+                <span>Download PDF</span>
+              </a>
+            ) : sendMailQuotationLoading ? (
+              <FetchingLoadingStatus loading={sendMailQuotationLoading} color={"blue"} size={10} />
+            ) : (
+              <div
+                onClick={() => handleSendMail()}
+                className="text-xs bg-blue-600 px-2 py-1.5  text-white rounded-lg opacity-70 hover:opacity-100 hover:shadow-lg transition-all duration-350 cursor-pointer"
+              >
+                Send mail
+              </div>
+            )}
           </div>
         </div>
       </div>
-  )
-}
+    </div>
+  );
+};
 
-export default QuotationDetailHeader
+export default QuotationDetailHeader;
