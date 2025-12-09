@@ -2,7 +2,8 @@
 
 export let role = "Employee";
 
-export const URL = "http://13.251.45.52:8088/crm/api/v1";
+// export const URL = "http://13.251.45.52:8088/crm/api/v1";
+export const URL = "https://vero-3mfn.onrender.com/crm/api/v1";
 
 
 // YOU SHOULD CHANGE THE DATES OF THE EVENTS TO THE CURRENT DATE TO SEE THE EVENTS ON THE CALENDAR
