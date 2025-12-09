@@ -2,9 +2,8 @@
 
 export let role = "Employee";
 
-export const URL = "https://vero-3mfn.onrender.com/crm/api/v1";
+export const URL = "http://13.251.45.52:8088/crm/api/v1";
 
-export const accessToken = 'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzZXJ2ZXIiLCJzdWIiOiJ0cmFubXlkdXllbiIsImV4cCI6MTc2NDgzMjI5NywiaWF0IjoxNzY0NjUyMjk3LCJqdGkiOiIwZDYwM2MwZC02YmJjLTQxOTgtYjAzZC0xYjAyYTJjODJmYzEifQ.UAZm-nEPX9I0FiMp_EnIPqc0_-LDp2ggRlq5tAuK6Ao'
 
 // YOU SHOULD CHANGE THE DATES OF THE EVENTS TO THE CURRENT DATE TO SEE THE EVENTS ON THE CALENDAR
 export const calendarEvents = [

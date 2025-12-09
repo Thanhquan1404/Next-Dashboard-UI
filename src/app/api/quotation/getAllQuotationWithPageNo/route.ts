@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ code: 401, message: "Fill in page no value" }, { status: 401 });
     }
 
-    const backendRes = await fetch(`${path}?pageNo=${pageNo}`, {
+    const backendRes = await fetch(`${path}?pageNo=${pageNo}&sortBy=createdAt&sortOrder=desc`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,

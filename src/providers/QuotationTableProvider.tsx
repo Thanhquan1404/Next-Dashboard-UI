@@ -65,7 +65,7 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
     } catch (error) {
       showNotification(String(error), true);
     }
-  }, [getAllQuotationWithPageNo, showNotification]);
+  }, []);
 
   useEffect(() => {
     if (didFetch.current) return;
@@ -92,37 +92,39 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
     }
   }
 
-  // Aggregate quotationStatistic across all pages
-  const aggregateQuotationStatistics = useCallback(async (pages?: number) => {
-    if (!pages || pages <= 1) return;
-    try {
-      const aggregated: QuotationStatisticType = {};
-      for (let p = 1; p <= pages; p++) {
-        try {
-          const res = await getAllQuotationWithPageNo(p);
-          const pageStat = res.quotationStatistic || {};
-          Object.keys(pageStat).forEach((k) => {
-            aggregated[k] = (aggregated[k] || 0) + (pageStat[k] || 0);
-          });
-        } catch (err) {
-          // continue to next page but notify
-          showNotification(`Failed to fetch page ${p} for aggregation`, true);
-        }
-      }
-      // update the statistic state with aggregated values
-      setQuotationStatistic(aggregated);
-    } catch (err) {
-      showNotification(String(err), true);
-    }
-  }, []);
+  // // Aggregate quotationStatistic across all pages
+  // const aggregateQuotationStatistics = useCallback(async (pages?: number) => {
+  //   if (!pages || pages <= 1) return;
+  //   try {
+  //     const aggregated: QuotationStatisticType = {};
+  //     for (let p = 1; p <= pages; p++) {
+  //       try {
+  //         const res = await getAllQuotationWithPageNo(p);
+  //         const pageStat = res.quotationStatistic || {};
+  //         Object.keys(pageStat).forEach((k) => {
+  //           aggregated[k] = (aggregated[k] || 0) + (pageStat[k] || 0);
+  //         });
+  //       } catch (err) {
+  //         // continue to next page but notify
+  //         showNotification(`Failed to fetch page ${p} for aggregation`, true);
+  //       }
+  //     }
+  //     // update the statistic state with aggregated values
+  //     setQuotationStatistic(aggregated);
+  //   } catch (err) {
+  //     showNotification(String(err), true);
+  //   }
+  // }, []);
 
-  // whenever totalPages becomes available, run aggregation in background
-  useEffect(() => {
-    if (totalPages && totalPages > 1) {
-      // run async aggregator (no need to await)
-      aggregateQuotationStatistics(totalPages);
-    }
-  }, [totalPages, aggregateQuotationStatistics]);
+  // const didCalcualte = useRef<boolean>(false);
+  // // whenever totalPages becomes available, run aggregation in background
+  // useEffect(() => {
+  //   if (totalPages && totalPages > 1 && didCalcualte.current !== true) {
+  //     // run async aggregator (no need to await)
+  //     aggregateQuotationStatistics(totalPages);
+  //     didCalcualte.current=true;
+  //   }
+  // }, [quotationRows]);
 
   // SAVE QUOTATION 
   const saveAQuotation = async (newQuotation: QuotationType, leadID: string) => {

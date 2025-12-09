@@ -13,7 +13,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ code: 401, message: "Unauthorized" }, { status: 401 });
     }
 
-    const backendRes = await fetch(path, {
+    const backendRes = await fetch(`/${path}?sortBy=createdAt&sortOrder=desc`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
