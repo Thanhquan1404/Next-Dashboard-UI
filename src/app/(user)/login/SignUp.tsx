@@ -5,8 +5,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
 import { useState } from 'react';
 import { UserSignUpType } from '@/lib/data.user';
-import { useSignUpFetching } from '@/fetching/user/signUpFetching';
 import FetchingLoadingStatus from '@/components/FetchingLoadingStatus';
+import { useAuthentication } from '@/providers/AuthenticationProvider';
 
 interface Props {
   isSignIn: boolean;
@@ -48,9 +48,6 @@ const checkSignUpInput = (newSignUp: UserSignUpType): boolean => {
 };
 
 const SignUp = ({ isSignIn, handleToggle }: Props) => {
-  // INITALIZE USER SIGN UP FETCHING 
-  const { loading, data, error, userRegister } = useSignUpFetching();
-
   const [visible, setVisible] = useState(false);
   const handleVisible = () => setVisible((prev) => !prev);
 
@@ -71,35 +68,16 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
     setInputPassword("");
   }
 
+  // AUTHENTICATION PROVIDER 
+  const { signUpLoading, userSignUp} = useAuthentication();
+
   // HANDLE SUBMIT BUTTON 
   const handleSubmitButton = async () => {
-    const newSignUpInput: UserSignUpType = {
-      firstName: inputFirstName,
-      lastName: inputLastName,
-      userName: inputUserName,
-      phone: inputPhone,
-      email: inputEmail,
-      password: inputPassword,
-    };
-
-    if (!checkSignUpInput(newSignUpInput)) {
-      return;
+    const success = await userSignUp(inputUserName, inputPassword, inputFirstName, inputLastName, inputEmail, inputPhone);
+    if(success){
+      resetStateField();
     }
-
-    try {
-      await userRegister(newSignUpInput);
-
-      if (data?.code === 200) {
-        alert("You have signed up successfully!");
-        resetStateField();
-        handleToggle(); 
-      } else {
-        alert("Registration failed. Please try again.");
-      }
-    } catch (err: any) {
-      alert(`Registration failed \n${`${err}` || "Unknown error"}`);
-    }
-  }
+  } 
 
   const inputContainerStyle = "w-full h-10 bg-white/10 rounded-lg px-4 flex items-center gap-4 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#1e88e5] focus-within:bg-white/20";
   const inputStyle = "w-full bg-transparent outline-none placeholder-gray-300 text-white";
@@ -125,7 +103,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
       <div className="flex flex-row gap-3">
         <div className={inputContainerStyle}>
           <input
-            disabled={loading}
+            disabled={signUpLoading}
             type="text"
             placeholder="First Name"
             value={inputFirstName}
@@ -135,7 +113,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
         </div>
         <div className={inputContainerStyle}>
           <input
-            disabled={loading}
+            disabled={signUpLoading}
             type="text"
             placeholder="Last Name"
             value={inputLastName}
@@ -149,7 +127,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
       <div className={inputContainerStyle}>
         <PersonIcon className="text-white/70" style={iconStyle} />
         <input
-          disabled={loading}
+          disabled={signUpLoading}
           type="text"
           placeholder="Username"
           value={inputUserName}
@@ -162,7 +140,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
       <div className={inputContainerStyle}>
         <PhoneIphoneIcon className="text-white/70" style={iconStyle} />
         <input
-          disabled={loading}
+          disabled={signUpLoading}
           type="text"
           placeholder="Phone Number"
           value={inputPhone}
@@ -175,7 +153,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
       <div className={inputContainerStyle}>
         <EmailIcon className="text-white/70" style={iconStyle} />
         <input
-          disabled={loading}
+          disabled={signUpLoading}
           type="text"
           placeholder="Email Address"
           value={inputEmail}
@@ -200,7 +178,7 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
           />
         )}
         <input
-          disabled={loading}
+          disabled={signUpLoading}
           type={visible ? "text" : "password"}
           placeholder="Password (min 6 chars)"
           value={inputPassword}
@@ -210,14 +188,14 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
       </div>
 
       {/* BUTTON */}
-      {loading ? (
-        <FetchingLoadingStatus loading={loading} />
+      {signUpLoading ? (
+        <FetchingLoadingStatus loading={signUpLoading} />
       ) : (
         <div className='flex justify-center'>
           <button
-            disabled={loading}
+            disabled={signUpLoading}
             className={`mt-100 bg-[#1e88e5] text-white rounded-full w-[150px] h-11
-                     ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#1565c0]"}
+                     ${signUpLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#1565c0]"}
                      mx-auto shadow-xl hover:shadow-2xl hover:scale-[1.05] transition-all duration-300 font-bold`}
             onClick={handleSubmitButton}
           >

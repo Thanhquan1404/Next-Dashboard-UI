@@ -7,7 +7,7 @@ export interface loginRequestType {
 export interface loginResponseType {
   code: number,
   message: string,
-  error? : {
+  error?: {
     code: string,
     message: string,
   }
@@ -18,3 +18,37 @@ export interface loginResponseType {
     avatarUrl: string,
   }
 }
+
+//------------------- USER SIGN UP API RESQUEST AND RESPONSE -------------------//
+export interface signUpRequestType {
+  username: string,
+  password: string,
+  firstName: string,
+  lastName: string,
+  email: string,
+  phoneNumber: string,
+  address?: string,
+}
+
+export interface signUpResponseType {
+  code: number;
+  message: string;
+  data?: {
+    id: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    address: string;
+    avatarUrl: string;
+    createdAt: string; 
+    updatedAt: string; 
+  };
+  error?: {
+    code: number;
+    errorField: string;
+    message: string;
+  }
+}
+

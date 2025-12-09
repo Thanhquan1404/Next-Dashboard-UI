@@ -1,9 +1,10 @@
 import { loginRequestType, loginResponseType } from "@/lib/data.authentication";
 import { useState } from "react";
 
-/** 
-* API hook - user login
-*/
+/**
+ * API Hook - handle  fetching progress to user login
+ * @returns loading status - login function
+ */
 const useLogin = () => {
   const [loading, setLoading] = useState(false);
 
@@ -30,8 +31,6 @@ const useLogin = () => {
       } catch {
         result = {};
       }
-
-      console.log(result);
 
       if (!res.ok) {
         return {
