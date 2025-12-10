@@ -35,8 +35,8 @@ const ProductInCSVFile = ({ selectedCSVFile, setSelectedCSVFile, handleWindowTog
         skipEmptyLines: true,
         complete: (results) => {
           if (results.data && results.data.length > 0) {
-            const firstRow = results.data[0] as string[]; // COLUMN HEADER
-            const secondRow = results.data[1] as string[]; // FIRST DATA ROW
+            const firstRow = results.data[0] as string[]; 
+            const secondRow = results.data[1] as string[]; 
             setFilefirstDataRow(secondRow);
             setFileName(selectedCSVFile.name);
             setFileHeader(firstRow);
@@ -138,15 +138,12 @@ const ProductInCSVFile = ({ selectedCSVFile, setSelectedCSVFile, handleWindowTog
 
               {/* MAPPED ROWS */}
               {fileHeader.map((row, index) => {
-                // Sửa: Xác định giá trị hiện tại. Nếu key không tồn tại trong mapping, kiểm tra xem nó có trong ignoredColumns không.
                 let currentValue = propertyMapping[row];
 
                 if (currentValue === undefined && ignoredColumns.includes(row)) {
-                  // Nếu cột này bị bỏ qua, set giá trị hiển thị trong selector là "Do not choose this column"
                   currentValue = "Do not choose this column";
                 }
 
-                // Yêu cầu 2: Logic Icon. Icon hiển thị nếu cột đó có mapping HOẶC nằm trong ignoredColumns
                 const isMappedOrIgnored = propertyMapping[row] !== undefined || ignoredColumns.includes(row);
 
                 return (
@@ -184,7 +181,6 @@ const ProductInCSVFile = ({ selectedCSVFile, setSelectedCSVFile, handleWindowTog
                         width="flex-1"
                       />
                       {
-                        // SỬA: Logic Icon mới
                         isMappedOrIgnored ?
                           <div>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 text-green-500">

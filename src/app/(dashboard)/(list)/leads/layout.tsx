@@ -2,6 +2,7 @@
 
 import { LeadStageColumnProvider } from "@/providers/LeadStageColumnProvider";
 import { LeadDetailSelectProvider } from "@/providers/LeadDetailSelectProvider";
+import { LeadUploadCSVProvider } from "@/providers/leads/LeadUpLoadCSVPrivider";
 
 export default function LeadsLayout({
   children,
@@ -11,7 +12,9 @@ export default function LeadsLayout({
   return (
     <LeadStageColumnProvider>
       <LeadDetailSelectProvider>
-        {children}
+        <LeadUploadCSVProvider>
+          {children}
+        </LeadUploadCSVProvider>
       </LeadDetailSelectProvider>
     </LeadStageColumnProvider>
   );
