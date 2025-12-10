@@ -13,6 +13,7 @@ interface AuthenticationConTextType {
   // ACTIONS
   userLogin: (username: string, password: string) => Promise<boolean>,
   userSignUp: (username: string, password: string, firstName: string, lastName: string, email: string, phoneNumber: string, address?: string) => Promise<boolean>,
+  userLogOut: () => void,
 }
 
 const AuthenticationContext = createContext<AuthenticationConTextType | null>(null);
@@ -68,7 +69,7 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderProps
         body: JSON.stringify({ token: result.data?.accessToken })
       })
 
-      showNotification("Login successfully");
+      showNotification(`Welcome ${result.data?.fullName}`);
       return true;
     } catch (error) {
       showNotification(String(error), true);
@@ -76,6 +77,10 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderProps
     return true;
   }
 
+  /**
+   * sign up - used to handle user sign up action
+   * @returns status of sign up action
+   */
   const userSignUp = async (
     username: string,
     password: string,
@@ -96,8 +101,6 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderProps
         address,
       });
 
-      console.log(result);
-
       if (result.code !== 200) {
         showNotification(result.message, true);
         return false;
@@ -111,6 +114,21 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderProps
     }
   };
 
+  /**
+   * log out - used to handle the log out action to send request to delete the user active status
+   */
+  const userLogOut = async () => {
+    try{
+      const resBackend = await fetch("api/authentication/logout", {method: "POST", credentials: "include"});
+      const result = await resBackend.json();
+      if (result.code !== 200){
+        showNotification("Failed to log out", true);
+      }
+    }catch{
+      showNotification("Internal connection failed", true);
+    }
+  }
+
 
   const value: AuthenticationConTextType = {
     // FETCHING STATUS
@@ -119,7 +137,8 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderProps
 
     // ACTIONS
     userLogin,
-    userSignUp
+    userSignUp,
+    userLogOut
   }
 
   return (
