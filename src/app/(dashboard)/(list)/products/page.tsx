@@ -262,7 +262,6 @@ const Page = () => {
     const arr = [...products];
     arr.push(newProduct);
     setProducts(arr);
-    console.log(arr);
   }
   // FUNCTION TO HANDLE 'ADDING PRODUCT DETAIL' ACTION
   const handleAddingDetailProductEvent = (newProductDetail: ProductDetailType): void => {
@@ -277,11 +276,9 @@ const Page = () => {
     if (product) {
       const productID = product.getAttribute("id");
       setSelectedProduct(productID);
-      console.log("Retrieve product ID successfully");
     }
     else {
       setSelectedProduct(null);
-      console.log("clear the set Selected Product");
     }
   }
   // FUNCTION TO HANDLE 'DELETE SPECIFIC PRODUCT' ACTION

@@ -1,10 +1,11 @@
 import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 import InputColorComponent from "@/components/InputColorComponent";
 import SelectorComponent from "@/components/SelectorComponent";
-import { statusOptions, companyOptions } from "@/lib/data.leads";
+import UploadLeadFileCSV from "@/components/UploadLeadFileCSV";
 import { useLeadStageColumn } from "@/providers/LeadStageColumnProvider";
 import { useNotification } from "@/providers/NotificationProvider";
 import { useState } from "react";
+import LeadCSVMatching from "./LeadCSVMatching";
 
 interface Props {
   selectedStatus: string,
@@ -15,6 +16,7 @@ interface Props {
 const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany, selectedCompany }: Props) => {
   const { addingNewLeadColum, addStageLoading, searchLeadLoading, searchLead } = useLeadStageColumn();
   const { showNotification } = useNotification();
+
   // ADDING NEW COLUMN STATE 
   const [selectedColor, setSelectedColor] = useState<string>("#000000");
   const [newColumnTitle, setNewColumnTitle] = useState<string>("");
@@ -26,6 +28,7 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
     setSelectedColor("#000000");
     setNewColumnTitle("");
   }
+
   const handleAddingNewColumn = () => {
     try {
       addingNewLeadColum(newColumnTitle, selectedColor);
@@ -37,8 +40,9 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
       setIsOpenAddingNewColumnWindow(prev => !prev);
     }
   }
+
   return (
-    <div className="w-full h-[15%] px-4 py-4 bg-white">
+    <div className="w-full h-[15%] px-4 py-4 bg-white relative">
       <div className="w-full h-1/2 flex justify-between items-center">
         <div className="text-xl font-bold tracking-wide">
           Leads
@@ -54,16 +58,19 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
               )
               :
               (
-                <button
-                  onClick={() => setIsOpenAddingNewColumnWindow(prev => !prev)}
-                  className="
+                <div className="flex gap-3">
+                  <UploadLeadFileCSV />
+                  <button
+                    onClick={() => setIsOpenAddingNewColumnWindow(prev => !prev)}
+                    className="
               text-xs bg-blue-500/80 text-white px-3 py-1.5 rounded-lg 
               hover:bg-blue-500 hover:shadow-md hover:scale-[1.03]
               transition-all duration-300
             "
-                >
-                  New Column
-                </button>
+                  >
+                    New Column
+                  </button>
+                </div>
               )
           }
           {/* Popup panel */}
@@ -124,7 +131,7 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
         <div className="w-1/3 flex gap-3">
           <div className="w-1/3 min-w-[260px] flex">
             <div
-                className={`
+              className={`
                     flex items-center gap-2
                     w-full h-[36px]
                     px-3
@@ -133,9 +140,9 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
                     bg-white
                     transition
                     ${searchLeadLoading
-                    ? `border-[${"#3B82F6"}] ring-2 ring-[${"#3B82F6"}]/20`
-                    : "border-gray-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20"
-                    }
+                  ? `border-[${"#3B82F6"}] ring-2 ring-[${"#3B82F6"}]/20`
+                  : "border-gray-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20"
+                }
                 `}
             >
               {/* Icon / Loading */}
@@ -205,6 +212,7 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
         </div>
       </div>
 
+      <LeadCSVMatching />
     </div>
   )
 }

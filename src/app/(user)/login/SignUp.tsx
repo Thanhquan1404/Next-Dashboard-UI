@@ -71,12 +71,27 @@ const SignUp = ({ isSignIn, handleToggle }: Props) => {
   // AUTHENTICATION PROVIDER 
   const { signUpLoading, userSignUp} = useAuthentication();
 
-  // HANDLE SUBMIT BUTTON 
+  /**
+   * Sign up button - handle user click on confitm sign up 
+   */
   const handleSubmitButton = async () => {
+    const newSignUp: UserSignUpType = {
+      lastName: inputLastName,
+      firstName: inputFirstName,
+      userName: inputUserName,
+      password: inputPassword,
+      email: inputEmail,
+      phone: inputPhone,
+    }
+
+    if (!checkSignUpInput(newSignUp)){return;}
+
     const success = await userSignUp(inputUserName, inputPassword, inputFirstName, inputLastName, inputEmail, inputPhone);
+
     if(success){
       resetStateField();
     }
+
   } 
 
   const inputContainerStyle = "w-full h-10 bg-white/10 rounded-lg px-4 flex items-center gap-4 transition-all duration-300 focus-within:ring-2 focus-within:ring-[#1e88e5] focus-within:bg-white/20";
