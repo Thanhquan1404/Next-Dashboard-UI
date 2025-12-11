@@ -4,11 +4,16 @@ import { useLeadUploadCSV } from "@/providers/leads/LeadUpLoadCSVPrivider";
 import { useEffect, useState } from "react";
 
 const availableProperties = [
-  { id: "first_name", label: "First Name", type: "text" },
-  { id: "last_name", label: "Last Name", type: "text" },
+  { id: "fullName", label: "Full Name", type: "text" },
+  { id: "dateOfBirth", label: "Date of birth", type: "text" },
   { id: "email", label: "Email", type: "email" },
-  { id: "phone", label: "Phone", type: "phone" },
+  { id: "phoneNumber", label: "Phone number", type: "phone" },
   { id: "company", label: "Company", type: "text" },
+  { id: "rating", label: "Rating", type: "text" },
+  { id: "expectedRevenue", label: "Expected revenue", type: "text" },
+  { id: "note", label: "Note", type: "text" },
+  { id: "source", label: "Source", type: "text" },
+  { id: "avatarUrl", label: "Avatar url", type: "text" },
   { id: "skip", label: "Do not import", type: "skip" }
 ];
 

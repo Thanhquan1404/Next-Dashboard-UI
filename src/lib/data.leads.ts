@@ -96,14 +96,43 @@ export interface ApiResponseDataLeadActivity {
   type: string;
   content: string;
   createdAt: string;
-  updatedAt: string; 
-  validUntil: string; 
-  status: string; 
+  updatedAt: string;
+  validUntil: string;
+  status: string;
   completed: boolean;
 }
 
 export interface RequestAddNewLeadActivity {
-  content: string, 
+  content: string,
   validUntil: string,
   type: string,
+}
+
+//---------------------------------------- REQUEST AND RESPONSE UPLOAD LEADS BY CSV ---------------------------------------- 
+export interface ApiResponseUploadLeadByCSV {
+  code: number,
+  message: string,
+  data?: {
+    activities: null,
+    assignTo: null,
+    avatarUrl: string | null,
+    company: string | null,
+    createdAt: string | null
+    dateOfBirth: string | null,
+    email: string | null,
+    expectedRevenue: number | null,
+    fullName: string | null,
+    id: string | null,
+    note: string | null,
+    phoneNumber: string | null,
+    rating: number | null,
+    source: string | null,
+    stage: string | null,
+    updatedAt: string | null,
+  } [],
+  error?: {
+    code?: number;
+    message?: string;
+    [key: string]: any;
+  }
 }

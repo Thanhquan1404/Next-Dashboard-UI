@@ -57,11 +57,8 @@ export const Menu = () => {
                   className={`
                   flex items-center gap-4 lg:justify-start justify-center
                   p-2 rounded-md relative transition-all duration-300 ease-in-out
-
                   ${false ? "text-blue-600 bg-blue-50 translate-x-2" : "text-gray-500"}
-
                   hover:bg-gray-100 hover:text-blue-600 hover:translate-x-2 hover:scale-[1.03]
-
                   before:content-[''] before:absolute before:left-0 before:w-[4px] before:rounded-r-md
                   before:transition-all before:duration-300
                   ${false ? "before:h-full before:bg-blue-500" : "before:h-0 hover:before:h-full before:bg-blue-500"}

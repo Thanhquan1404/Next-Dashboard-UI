@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import {URL} from "@/lib/data";
 import { cookies } from "next/headers";
-import { resolveNaptr } from "dns";
 
-const path =`${URL}/authentication`;
+const path =`${URL}/authentication/logout`;
 
 export async function POST(req: NextRequest){
   try {
     const cookieStorage = cookies();
-    const accessToken = cookies();
+    const accessToken = cookieStorage.get("accessToken")?.value;
 
     if (!accessToken){
       return NextResponse.json(
@@ -17,10 +16,10 @@ export async function POST(req: NextRequest){
       )
     }
 
-    const resBackend = await fetch(`${path}/logout`, {
+    const resBackend = await fetch(`${path}`, {
       method: "POST",
       headers: {
-        Authentication: `Bearer ${accessToken}`
+        Authorization: `Bearer ${accessToken}`
       }
     });
 
@@ -39,7 +38,7 @@ export async function POST(req: NextRequest){
     )
   } catch (error) {
     return NextResponse.json(
-      {code: 500, message: "Internal connection failed"},
+      {code: 500, message: "Internal failed"},
       {status: 500}
     )
   }

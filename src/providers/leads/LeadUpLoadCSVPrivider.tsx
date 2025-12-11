@@ -7,7 +7,7 @@ interface LeadUploadCSVContextType {
   // API HOOKS
   uploadCSVLoading: boolean,
   // STATE
-  fileRow: Record<string, string[]> | null, 
+  fileRow: Record<string, string[]> | null,
 
   // AcTIONS 
   handleUploadCSV: (leadInCSV: File) => void,
@@ -32,9 +32,9 @@ interface useLeadUploadCSVProviderProps {
 /**
  * Lead upload by CSV - handle all action relates with upload lead by csv
  */
-export const LeadUploadCSVProvider = ({children}: useLeadUploadCSVProviderProps) => {
+export const LeadUploadCSVProvider = ({ children }: useLeadUploadCSVProviderProps) => {
   // API HOOKS
-  const {loading: uploadCSVLoading, uploadCSV} = useUploadCSV();
+  const { loading: uploadCSVLoading, uploadCSV } = useUploadCSV();
 
   // STATE
   const [uploadFile, setUploadFile] = useState<File | null>(null);
@@ -54,7 +54,7 @@ export const LeadUploadCSVProvider = ({children}: useLeadUploadCSVProviderProps)
    * @returns headers of file (string datatype)
    */
   const compileFileHeader = () => {
-    if (uploadFile){ 
+    if (uploadFile) {
       Papa.parse(uploadFile, {
         header: false,
         skipEmptyLines: true,
@@ -79,21 +79,43 @@ export const LeadUploadCSVProvider = ({children}: useLeadUploadCSVProviderProps)
    * @param matching user's file header and business property matching
    */
   const confirmUploadFile = async (matching: Record<string, string>) => {
-    if ( !uploadFile ){ showNotification("Can not read file", true); return}
-    try{
-      const result = await uploadCSV(matching, uploadFile);
 
-    }catch{
-
+    if (!uploadFile) {
+      showNotification("Cannot read file", true);
+      return;
     }
-  }
+
+    const response = await uploadCSV(matching, uploadFile);
+
+    if (response.code !== 200) {
+      const msg =
+        typeof response.error === "object"
+          ? response.error.message || "Upload failed"
+          : "Upload failed";
+
+      showNotification(msg, true);
+      return;
+    }
+
+    resetAllState();
+    showNotification("Upload success");
+  };
+
 
   /**
    * cancel upload leads by CSV - reset all fields into null
    */
-  const cancelUploadFile = () =>{
+  const cancelUploadFile = () => {
     setUploadFile(null);
     setFileRow(null)
+  }
+
+  /**
+   * reset uplaod leads upload by CSV state - reset all fields into null whenever successful
+   */
+  const resetAllState = () => {
+    setUploadFile(null);
+    setFileRow(null);
   }
 
   /**

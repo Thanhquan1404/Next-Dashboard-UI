@@ -22,7 +22,6 @@ export async function POST(req: NextRequest){
       body: formData,
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "Content-type": "multipart/form-data",
       }
     })
 
