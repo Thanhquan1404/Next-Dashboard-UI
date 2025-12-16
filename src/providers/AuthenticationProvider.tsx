@@ -1,7 +1,7 @@
 "use client"
 import useLogin from "@/fetching/authentication/login";
 import { loginRequestType } from "@/lib/data.authentication";
-import { createContext, useContext } from "react";
+import { createContext, useCallback, useContext } from "react";
 import { useNotification } from "./NotificationProvider";
 import useSignUp from "@/fetching/authentication/signUp";
 
@@ -60,8 +60,6 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderProps
         showNotification(result.error?.message || "Login failed");
         return false;
       }
-
-      console.log(result.data || "Can not find login data response");
 
       // STORE ACCESSTOKEN
       await fetch("api/set-token", {

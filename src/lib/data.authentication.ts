@@ -52,3 +52,16 @@ export interface signUpResponseType {
   }
 }
 
+//------------------- GET INFO API RESQUEST AND RESPONSE -------------------//
+export interface GetInfoResponse {
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  avatarUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
