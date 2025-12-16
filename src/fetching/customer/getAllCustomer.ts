@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { getAllCustomersResponse } from "@/lib/data.customers";
+import { useState, useCallback } from "react";
 
 const useGetAllCustomer = () => {
   const [loading, setLoading] = useState(false);
 
-  const getAllCustomer = async (pageNo?: number) => {
+  const getAllCustomer = useCallback(async (pageNo?: number) => {
     setLoading(true);
     try {
       const query = pageNo ? `?pageNo=${pageNo}` : "";
@@ -18,12 +19,12 @@ const useGetAllCustomer = () => {
         throw new Error(err?.message || "Get customers failed");
       }
 
-      const data = await res.json();
-      return data;
+      const result = await res.json();
+      return result;
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   return { loading, getAllCustomer };
 };

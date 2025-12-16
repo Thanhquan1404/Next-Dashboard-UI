@@ -1,45 +1,15 @@
-//************************************************ CUSTOMER PAGE ****************************************************/
-
-interface ActivityType {
-  subject: string, 
-  verb: string, 
-  object: string,
-  date: string,
+// ------------------- GET ALL CUSTOMERS RESPONSE -------------------- 
+export interface getAllCustomersResponse {
+  id: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  company: string;
+  rating: number;
+  avatarUrl: string;
+  assignTo: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
 }
-
-interface CustomerSequenceActivityType {
-  customerID: string,
-  sequenceActivities: ActivityType[],
-}
-
-export const customerSequenceActivity: CustomerSequenceActivityType[] = [
-  {
-    customerID: "001",
-    sequenceActivities: [
-      {
-        subject: "Santi Cazorla",
-        verb: "was added to contacts",
-        object: "contacts",
-        date: "11:12AM - May 12, 2025",
-      },
-      {
-        subject: "Santi Cazorla",
-        verb: "was created by",
-        object: "Nguyen Thanh Quan",
-        date: "10:12AM - May 12, 2025",
-      },
-      {
-        subject: "Santi Cazorla",
-        verb: "was added to contacts",
-        object: "contacts",
-        date: "11:12AM - May 12, 2025",
-      },
-      {
-        subject: "Santi Cazorla",
-        verb: "was created by",
-        object: "Nguyen Thanh Quan",
-        date: "10:12AM - May 12, 2025",
-      },
-    ],
-  },
-]
