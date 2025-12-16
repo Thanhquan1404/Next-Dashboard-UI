@@ -40,6 +40,10 @@ export const CustomerProvider: React.FC<CustomerProviderProps> = ({children}) =>
   const {loading: getAllCustomerLoading, getAllCustomer} = useGetAllCustomer();
 
 
+  /**
+   * get customer with page no - handle the action when user change page or pagination action
+   * @param pageNo current page
+   */
   const getCustomersWithPageNo = async (pageNo: number) => {
     try {
       const result = await getAllCustomer(pageNo);

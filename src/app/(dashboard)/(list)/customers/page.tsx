@@ -5,12 +5,15 @@ import PageNavigationComponent from '@/components/PageNavigationComponent';
 import Image  from 'next/image';
 import { useCustomer } from '@/providers/CustomerProvider';
 import PageLoader from '@/components/PageLoader';
+import { useRouter } from 'next/navigation';
 
 
   
 const CustomerManagement = () => {
   // CUSTOMER PROVIDER
   const { customers, getAllCustomerLoading, totalPages, getCustomersWithPageNo } = useCustomer();
+
+  const router = useRouter();
 
   // STATE
   const [searchTerm, setSearchTerm] = useState('');
@@ -112,7 +115,12 @@ const CustomerManagement = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {customers && customers.map((customer) => (
-                <tr key={customer.id} className="hover:bg-gray-50 transition">
+                <tr key={customer.id} 
+                    onClick={() => {
+                      router.push(`/customers/${customer.id}`);
+                      console.log("hello")
+                    }}
+                    className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <Image
