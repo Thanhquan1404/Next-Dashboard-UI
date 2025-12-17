@@ -11,7 +11,7 @@ interface orderStatisticType {
   Cancelled: number,
   Total: number,
 }
-const OrderHeader = ({ orders }: { orders: OrderDataType[] }) => {
+const OrderHeader = () => {
   const { showNotification } = useNotification();
   const { loading: getOrderStatisticLoading, orderSummary } = useOrderSummary();
   const [orderStatistic, setOrderStatistic] = useState<orderStatisticType | null>(null);
@@ -33,6 +33,7 @@ const OrderHeader = ({ orders }: { orders: OrderDataType[] }) => {
       showNotification(String(error), true);
     }
   }, []);
+  
   useEffect(() => {
     if (didFetch.current) { return; }
     didFetch.current = true;

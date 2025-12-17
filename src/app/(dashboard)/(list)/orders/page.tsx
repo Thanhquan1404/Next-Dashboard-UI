@@ -9,40 +9,28 @@ import PageLoader from "@/components/PageLoader";
 import useOrderSummary from "@/fetching/order/orderSummary";
 
 const Page = () => {
-  // STATE
-  const [allOrder, setAllOrder] = useState<OrderDataType[]>([]);
 
   // API HOOK
-  const { loading: getListOrderLoading, getListOrder } = useGetListOrder();
-  const { loading: orderSummaryLoading, orderSummary} = useOrderSummary();
-  const didFetch = useRef(false);
-
-  const fetchAllOrders = useCallback(async () => {
-    const { orderRows } = await getListOrder();
-    setAllOrder(orderRows);
-  }, [getListOrder]);
-
-  useEffect(() => {
-    if (didFetch.current) return;
-    didFetch.current = true;
-    fetchAllOrders();
-  }, []);
+  const { loading: getListOrderLoading } = useGetListOrder();
+  const { loading: orderSummaryLoading} = useOrderSummary();
+  
 
   if (getListOrderLoading || orderSummaryLoading){
     return (
       <PageLoader />
     )
   }
+
   return (
     <div className="w-full h-full bg-white flex flex-col overflow-hidden">
-      <OrderHeader orders={allOrder} />
+      <OrderHeader />
 
       <div className="h-[5%] w-full border-b border-gray-200 px-4 flex items-end">
         <div className="px-4 py-2 text-blue-600 font-semibold border-b-2 border-blue-600">
           Order table
         </div>
       </div>
-        <OrderTable orders={allOrder} />
+        <OrderTable/>
     </div>
   );
 };

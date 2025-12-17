@@ -1,6 +1,9 @@
 import { OrderDataType } from "@/lib/data.orders";
 import OrderStatusComponent from "./OrderStatusComponent";
 import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef, useCallback } from "react";
+import PageNavigationComponent from "@/components/PageNavigationComponent";
+import useGetListOrder from "@/fetching/order/getAllOrder";
 
 type HeaderDataType = {
   id: number;
@@ -21,15 +24,39 @@ const tableHeaders: HeaderDataType[] = [
   { id: 7, key: "createdByName", label: "Created By", width: "w-[18%]", justifyItems: "justify-start" },
 ];
 
-const OrderTable = ({ orders }: { orders: OrderDataType[] }) => {
+const OrderTable = () => {
   const router = useRouter();
-  
+  const { getOrderWithPageNo, getListOrder } = useGetListOrder();
+
+  // STATE
+  const [allOrder, setAllOrder] = useState<OrderDataType[]>([]);
+  const [pagination, setPagination] = useState<any>(null);
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(amount);
   };
+
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const { orderRows, pagination } = await getOrderWithPageNo(currentPage);
+        setAllOrder(orderRows);
+        setPagination(pagination);
+      } catch (error) {
+        console.error("Failed to fetch orders", error);
+      }
+    };
+    fetchOrders();
+  }, [currentPage]);
+
+  if (!allOrder || !pagination) {
+    return;
+  }
 
   return (
     <div className="p-4 flex-1 w-full overflow-y-auto">
@@ -75,7 +102,7 @@ const OrderTable = ({ orders }: { orders: OrderDataType[] }) => {
       </div>
 
       {/* ORDER TABLE */}
-      <div className="w-full h-[92%] py-2 overflow-y-auto">
+      <div className="w-full h-[82%] py-2 overflow-y-auto">
         <table className="w-full border-separate border-spacing-y-1">
           <thead>
             <tr className="text-gray-400 font-semibold text-sm bg-gray-100/50">
@@ -89,7 +116,7 @@ const OrderTable = ({ orders }: { orders: OrderDataType[] }) => {
             </tr>
           </thead>
           <tbody>
-            {orders.map((row, index) => (
+            {allOrder.map((row, index) => (
               <tr key={index} className="h-[40px] text-sm text-gray-700 hover:bg-blue-100 transition-colors duration-200" onClick={() => router.push(`/orders/${row.id}`)}>
                 {tableHeaders.map((column, idx) => {
                   if (column.key === "status") {
@@ -162,6 +189,8 @@ const OrderTable = ({ orders }: { orders: OrderDataType[] }) => {
           </tbody>
         </table>
       </div>
+
+      <PageNavigationComponent currentPage={currentPage} setCurrentPage={setCurrentPage} totalPages={pagination.totalPages} />
     </div>
   );
 };
