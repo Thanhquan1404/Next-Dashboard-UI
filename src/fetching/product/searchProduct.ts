@@ -4,11 +4,17 @@ import { useState } from "react";
 function useSearchProduct(){
   const [loading, setLoading] = useState<boolean>(false);
   
-  const searchProduct = async (query: string) => {
+  const searchProduct = async (query: string, status: string, orderBy: string) => {
     setLoading(true);
-
+    let more: string = "";
+    if (status){
+      more = more + `&status=${status}`;
+    }
+    if (orderBy){
+      more = more + `&orderBy=${orderBy}`;
+    }
     try{
-      const response = await fetch(`api/product/searchProduct?query=${query}`, {
+      const response = await fetch(`api/product/searchProduct?query=${query}${more}`, {
         method: "GET",
         credentials: "include",
       })

@@ -79,6 +79,7 @@ const Page = () => {
     error: errorGetListProductsWithNo,
     getListProductsWithPageNo
   } = useGetListProductWithPageNo();
+
   // STATE 
   const [products, setProducts] = useState<ProductDataType[]>([]);
   const [detailProducts, setDetailProducts] = useState<ProductDetailType[]>([]);
@@ -210,11 +211,11 @@ const Page = () => {
   }, [detailProducts]);
 
   // FUNCTION TO HANDLE 'DEARCH PRODUCT` ACTION 
-  const handleSearchProductEvent = async (query: string) => {
+  const handleSearchProductEvent = async (query: string, status: string, orderBy: string) => {
 
     
     try {
-      const response = await searchProduct(query);
+      const response = await searchProduct(query, status, orderBy);
       const resData: ProductDetailResponseType[] = response.data;
       const pagination = response.pagination;
 
@@ -310,7 +311,7 @@ const Page = () => {
         {/* PAGE HEADER */}
         <ProductsPageHeader handleWindowToggle={handleWindowToggle} handleSearchProductEvent={handleSearchProductEvent} />
         {/* CATEGORY FILTER */}
-        <CategoryOptions detailProducts={detailProducts} setDetailProducts={setDetailProducts} />
+        {/* <CategoryOptions detailProducts={detailProducts} setDetailProducts={setDetailProducts} /> */}
         {/* PRODUCT TABLE */}
         <ProductsTable
           loadingDeleteProduct={loadingDeleteProduct}

@@ -6,7 +6,7 @@ import { ApiResponseListAllQuotation, QuotationType } from "@/lib/data.quotation
 const useSendMailQuotation = () => {
   const [loading, setLoading] = useState(false);
 
-  const sendMailQuotation = async (quotationID: string): Promise<boolean> => {
+  const sendMailQuotation = async (quotationID: string) => {
     setLoading(true);
 
     try {
@@ -24,7 +24,7 @@ const useSendMailQuotation = () => {
         throw new Error(resData?.message || "Send mail quotation failed");
       }
 
-      return resData.code === 200;
+      return resData;
     } finally {
       setLoading(false);
     }

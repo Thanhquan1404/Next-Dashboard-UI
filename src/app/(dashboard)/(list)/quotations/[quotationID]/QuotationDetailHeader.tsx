@@ -10,8 +10,9 @@ import { useState } from "react";
 
 interface Props {
   quotationDetail: ApiResponseListAllQuotation;
+  setQuotationDetail: React.Dispatch<React.SetStateAction<ApiResponseListAllQuotation | undefined>>
 }
-const QuotationDetailHeader = ({ quotationDetail }: Props) => {
+const QuotationDetailHeader = ({ quotationDetail, setQuotationDetail }: Props) => {
   const router = useRouter();
   const { showNotification } = useNotification();
 
@@ -29,9 +30,13 @@ const QuotationDetailHeader = ({ quotationDetail }: Props) => {
 
   const handleSendMail = async () => {
     try {
-      const success = await sendMailQuotation(quotationDetail.id);
+      const result = await sendMailQuotation(quotationDetail.id);
+      console.log(result);
+      setQuotationDetail(result.data);
 
-      if (success) {
+      console.log(quotationDetail)
+
+      if (result && result?.code === 200) {
         showNotification("Send mail successfully");
       } else {
         showNotification("There is error in send mail", true);

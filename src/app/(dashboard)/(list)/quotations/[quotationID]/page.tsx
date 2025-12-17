@@ -8,6 +8,7 @@ import { FileText, Calendar, User, Package, DollarSign, Mail, Clock, Download, A
 import QuotationStatusComponent from "../QuotationStatusComponent";
 import { useRouter } from "next/navigation";
 import QuotationDetailHeader from "./QuotationDetailHeader";
+import PageLoader from "@/components/PageLoader";
 
 const Page = () => {
   const params = useParams();
@@ -55,12 +56,7 @@ const Page = () => {
 
   if (getQuotationDetailLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading quotation details...</p>
-        </div>
-      </div>
+      <PageLoader />
     );
   }
 
@@ -82,7 +78,7 @@ const Page = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Section */}
-      <QuotationDetailHeader quotationDetail={quotationDetail} />
+      <QuotationDetailHeader quotationDetail={quotationDetail} setQuotationDetail={setQuotationDetail}/>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Overview Cards */}

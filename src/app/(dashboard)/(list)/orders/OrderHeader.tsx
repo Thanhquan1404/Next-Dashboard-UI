@@ -23,10 +23,10 @@ const OrderHeader = () => {
 
       setOrderStatistic(prev => ({
         totalAmount: result.totalAmount,
-        Pending: result.Pending,
-        Delivered: result.Delivered,
-        Cancelled: result.Cancelled,
-        Total: result.Pending + result.Delivered + result.Cancelled,
+        Pending: result.Pending || 0,
+        Delivered: result.Delivered || 0,
+        Cancelled: result.Cancelled || 0,
+        Total: (result.Pending || 0) + (result.Delivered || 0) + (result.Cancelled || 0),
       }));
 
     } catch (error) {

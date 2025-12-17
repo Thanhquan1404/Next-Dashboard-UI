@@ -6,15 +6,15 @@ import { useState } from "react";
 import ReorderOutlinedIcon from '@mui/icons-material/ReorderOutlined';
 import GridViewIcon from '@mui/icons-material/GridView';
 
-const showOptions = ["All Products", "New Arrivals", "Top Rated"];
-const sortByOptions: string[] = ["Default", "Product Name"];
+const showOptions = ["None", "Active", "Preorder", "Low Stock", "Out of Stock"];
+const sortByOptions: string[] = ["Default", "ascending", "descending"];
 interface Props {
   handleWindowToggle: () => void,
-  handleSearchProductEvent: (query: string) => void,
+  handleSearchProductEvent: (query: string, status: string, orderBy: string) => void,
 }
 const ProductsPageHeader = ({ handleWindowToggle, handleSearchProductEvent }: Props) => {
-  const [showOptionSelect, setShowOptionSelect] = useState(showOptions[0]);
-  const [sortByOptionSelect, setSortByOptionSelect] = useState(sortByOptions[0]);
+  const [showOptionSelect, setShowOptionSelect] = useState<string>(showOptions[0]);
+  const [sortByOptionSelect, setSortByOptionSelect] = useState<string>(sortByOptions[0]);
 
   return (
     <div className='w-full flex justify-between items-center px-4 bg-white py-2'>
@@ -31,14 +31,14 @@ const ProductsPageHeader = ({ handleWindowToggle, handleSearchProductEvent }: Pr
         </div>
         {/* SEARCH BAR  */}
         <div
-          className="bg-gray-100  hidden md:flex items-center w-fit justify-center gap-2 ring-[1.0px] ring-gray-300 rounded-md px-2 text-xs transition-all duration-300 focus-within:ring-purple-400 hover:ring-purple-300">
+          className="bg-gray-100  hidden md:flex items-center w-fit justify-center gap-2 ring-[1.0px] ring-gray-300 rounded-md px-2 text-xs transition-all duration-300 focus-within:ring-purple-400 hover:ring-blue-300">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 opacity-80">
             <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
           </svg>
           <input
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                handleSearchProductEvent(e.currentTarget.value);
+                handleSearchProductEvent(e.currentTarget.value, showOptionSelect, sortByOptionSelect);
                 e.currentTarget.value = "";
               }
             }}
@@ -54,7 +54,7 @@ const ProductsPageHeader = ({ handleWindowToggle, handleSearchProductEvent }: Pr
               {/* Dropdown Button */}
               <Listbox.Button className="bg-gray-100 hover:bg-white/70 transition-bg duration-200 w-full flex justify-between items-center backdrop-blur-md border border-gray-200 rounded-xl px-4 py-1 text-sm text-gray-700 shadow-sm">
                 <div className="flex items-center gap-1">
-                  <span className="block text-xs text-gray-500">Show:</span>
+                  <span className="block text-xs text-gray-500">Status:</span>
                   <span className="font-medium text-gray-700 text-sm font-semibold">{showOptionSelect}</span>
                 </div>
                 <ChevronDown className="w-4 h-4 text-gray-500" />

@@ -19,7 +19,18 @@ export async function GET(req: NextRequest) {
 
     const query = req.nextUrl.searchParams.get("query");
 
-    const resBackend = await fetch(`${path}/search?query=${query}`, {
+    const status = req.nextUrl.searchParams.get("status");
+    const orderBy = req.nextUrl.searchParams.get("orderBy");
+
+    let more: string = "";
+    if (status){
+      more = more + `&status=${status}`;
+    }
+    if (orderBy){
+      more = more + `&orderBy=${orderBy}`;
+    }
+
+    const resBackend = await fetch(`${path}/search?query=${query}${more}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`
