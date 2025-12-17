@@ -1,13 +1,55 @@
+import PageLoader from "@/components/PageLoader";
+import useOrderSummary from "@/fetching/order/orderSummary";
 import { OrderDataType } from "@/lib/data.orders";
+import { useNotification } from "@/providers/NotificationProvider";
+import { useCallback, useEffect, useRef, useState } from "react";
 
+interface orderStatisticType {
+  totalAmount: number,
+  Pending: number,
+  Delivered: number,
+  Cancelled: number,
+  Total: number,
+}
 const OrderHeader = ({ orders }: { orders: OrderDataType[] }) => {
-  const total = orders.length;
-  const pending = orders.filter(o => o.status === "Pending").length;
-  const processing = orders.filter(o => o.status === "Processing").length;
-  const delivered = orders.filter(o => o.status === "Delivered").length;
-  const cancelled = orders.filter(o => o.status === "Cancelled").length;
+  const { showNotification } = useNotification();
+  const { loading: getOrderStatisticLoading, orderSummary } = useOrderSummary();
+  const [orderStatistic, setOrderStatistic] = useState<orderStatisticType | null>(null);
 
-  const totalAmount = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+  const didFetch = useRef<boolean>(false);
+  const getOrderStatistic = useCallback(async () => {
+    try {
+      const result = await orderSummary();
+
+      setOrderStatistic(prev => ({
+        totalAmount: result.totalAmount,
+        Pending: result.Pending,
+        Delivered: result.Delivered,
+        Cancelled: result.Cancelled,
+        Total: result.Pending + result.Delivered + result.Cancelled,
+      }));
+
+    } catch (error) {
+      showNotification(String(error), true);
+    }
+  }, []);
+  useEffect(() => {
+    if (didFetch.current) { return; }
+    didFetch.current = true;
+    getOrderStatistic();
+  }, []);
+
+  if (!orderStatistic){
+    return
+  }
+
+  const total = orderStatistic.Total;
+  const pending = orderStatistic.Pending;
+  const processing = 0;
+  const delivered = orderStatistic.Delivered;
+  const cancelled = orderStatistic.Cancelled;
+
+  const totalAmount = orderStatistic.totalAmount;
 
   const pendingPct = (pending / total) * 100 || 0;
   const processingPct = (processing / total) * 100 || 0;
@@ -55,11 +97,11 @@ const OrderHeader = ({ orders }: { orders: OrderDataType[] }) => {
             <span className="text-gray-600 text-sm">Pending:</span>
             <span className="font-semibold text-[15px]">{pending}</span>
           </div>
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-blue-500"></span>
             <span className="text-gray-600 text-sm">Processing:</span>
             <span className="font-semibold text-[15px]">{processing}</span>
-          </div>
+          </div> */}
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-green-500"></span>
             <span className="text-gray-600 text-sm">Delivered:</span>

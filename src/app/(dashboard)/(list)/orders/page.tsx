@@ -5,6 +5,8 @@ import OrderTable from "./OrderTable";
 import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 import { useRef, useCallback, useEffect, useState } from "react";
 import useGetListOrder from "@/fetching/order/getAllOrder";
+import PageLoader from "@/components/PageLoader";
+import useOrderSummary from "@/fetching/order/orderSummary";
 
 const Page = () => {
   // STATE
@@ -12,7 +14,7 @@ const Page = () => {
 
   // API HOOK
   const { loading: getListOrderLoading, getListOrder } = useGetListOrder();
-
+  const { loading: orderSummaryLoading, orderSummary} = useOrderSummary();
   const didFetch = useRef(false);
 
   const fetchAllOrders = useCallback(async () => {
@@ -26,6 +28,11 @@ const Page = () => {
     fetchAllOrders();
   }, []);
 
+  if (getListOrderLoading || orderSummaryLoading){
+    return (
+      <PageLoader />
+    )
+  }
   return (
     <div className="w-full h-full bg-white flex flex-col overflow-hidden">
       <OrderHeader orders={allOrder} />
@@ -35,14 +42,7 @@ const Page = () => {
           Order table
         </div>
       </div>
-
-      {getListOrderLoading ? (
-        <div className="flex-1 flex items-center justify-center">
-          <FetchingLoadingStatus loading color="blue" size={20} />
-        </div>
-      ) : (
         <OrderTable orders={allOrder} />
-      )}
     </div>
   );
 };
