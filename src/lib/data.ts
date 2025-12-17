@@ -1,6 +1,6 @@
 // TEMPORARY DATA
 
-export let role = "Employee";
+export let role = "Admin";
 
 // export const URL = "http://13.251.45.52:8088/crm/api/v1";
 export const URL = "https://vero-3mfn.onrender.com/crm/api/v1";
@@ -470,5 +470,11 @@ export interface ApiResponse{
   message: string,
   data?: any,
   error?: ApiResponseError | ApiResponseError[],
+}
+export interface ApiResponsePagination{
+  hasPre: boolean,
+  hasNext: boolean,
+  pageNumber: number,
+  totalPages: number,
 }
 

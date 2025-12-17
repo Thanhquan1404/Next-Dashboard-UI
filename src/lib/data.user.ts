@@ -14,21 +14,16 @@ export interface userLoginType {
   password: string;
 }
 
-//-------------------- EMPLOYEE SAMPLES --------------------
-export interface UserType {
-  UserID: string,
-  username: string,
+//--------------------GET LIST USER REQUEST AND RESPONSE TYPE --------------------
+export interface GetListUserResponseType{
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  avatarUrl: string | null;
+  createdAt: string;  
+  updatedAt: string;  
 }
-
-export const listUserSamples: UserType[] = [
-  { UserID: "001", username: "Nguyen Thanh Quan" },
-  { UserID: "002", username: "Tran Thi Mai Anh" },
-  { UserID: "003", username: "Le Van Minh" },
-  { UserID: "004", username: "Pham Hoang Nam" },
-  { UserID: "005", username: "Hoang Thi Lan" },
-  { UserID: "006", username: "Vu Minh Tuan" },
-  { UserID: "007", username: "Dang Ngoc Linh" },
-  { UserID: "008", username: "Bui Quang Huy" },
-  { UserID: "009", username: "Do Thi Kim Oanh" },
-  { UserID: "010", username: "Ngo Van Duc" },
-];

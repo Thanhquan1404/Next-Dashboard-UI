@@ -1,5 +1,4 @@
-import { LeadDetailActivityTimeline, RequestAddNewLeadActivity } from "@/lib/data.leads";
-import { listUserSamples } from "@/lib/data.user"
+import { RequestAddNewLeadActivity } from "@/lib/data.leads";
 import { useLeadDetailSelect } from "@/providers/LeadDetailSelectProvider";
 import { useNotification } from "@/providers/NotificationProvider";
 import { useState } from "react"
