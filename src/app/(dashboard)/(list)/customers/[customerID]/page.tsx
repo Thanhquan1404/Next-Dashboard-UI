@@ -1,7 +1,6 @@
 "use client"
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Mail, Phone, Building2, Calendar, Star, User, Clock, Edit2, Trash2, X, Save } from 'lucide-react';
-import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { ArrowLeft, Mail, Phone, Building2, Calendar, Star, Clock, Edit2, Trash2, X, Save } from 'lucide-react';
 import useGetCustomerDetail from '@/fetching/customer/getCustomerDetail';
 import { useParams } from 'next/navigation';
 import PageLoader from '@/components/PageLoader';
@@ -11,6 +10,8 @@ import { useNotification } from '@/providers/NotificationProvider';
 import useUpdateCustomerDetail from '@/fetching/customer/updateCustomerDetail';
 import { isValidPhoneNumber } from '@/util/phoneNumberValidation';
 import { isValidEmail } from '@/util/emailValidation';
+import FetchingLoadingStatus from '@/components/FetchingLoadingStatus';
+import useDeleteCustomer from '@/fetching/customer/deleteCustomer';
 
 const getInitials = (name: string) => {
   if (!name) return "?";
@@ -50,6 +51,7 @@ const CustomerDetail = () => {
   const customerID = params.customerID as string;
   const { loading: getCustomerDetailLoading, getCustomerDetail } = useGetCustomerDetail();
   const { loading: updateCustomerDetailLoading, updateCustomerDetail } = useUpdateCustomerDetail();
+  const { loading: deleteCustomerLoading, deleteCustomer}= useDeleteCustomer();
   const router = useRouter();
   const { showNotification } = useNotification();
 
@@ -147,7 +149,22 @@ const CustomerDetail = () => {
     }
   };
 
-  if (!customer) {
+  const handleDeleteCustomer = async () => {
+    if (!customerID){ return; }
+
+    try {
+      const success = await deleteCustomer(customerID);
+
+      if (success){
+        showNotification("Successfully delete customer");
+        router.push("/customers/");
+      }
+    } catch (error) {
+      showNotification(String(error) || "Processed failed", true);
+    }
+  }
+
+  if (!customer || getCustomerDetailLoading) {
     return <PageLoader />;
   }
 
@@ -160,7 +177,10 @@ const CustomerDetail = () => {
           <span className="font-medium" onClick={() => { router.push("/customers") }}>Back to Customers</span>
         </button>
         <div className="flex gap-3">
-          {isEditing ? (
+          {isEditing ? 
+            updateCustomerDetailLoading ? 
+              <FetchingLoadingStatus loading={updateCustomerDetailLoading} color="green" size={20} />
+            : (
             <>
               <button
                 onClick={handleSave}
@@ -182,7 +202,10 @@ const CustomerDetail = () => {
                 Cancel
               </button>
             </>
-          ) : (
+          ) : 
+            deleteCustomerLoading ?
+              <FetchingLoadingStatus loading={deleteCustomerLoading} color="red" size={20} />
+            : (
             <>
               <button
                 onClick={handleEditToggle}
@@ -191,7 +214,10 @@ const CustomerDetail = () => {
                 <Edit2 className="w-4 h-4 mr-2" />
                 Edit
               </button>
-              <button className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+              <button 
+                onClick={() => handleDeleteCustomer()}
+                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+              >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Delete
               </button>
