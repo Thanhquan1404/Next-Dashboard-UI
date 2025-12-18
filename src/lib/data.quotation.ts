@@ -72,3 +72,11 @@ export interface ApiResponseListAllQuotation {
   untaxedAmount: number;
   finalAmount: number | null;
 }
+
+//---------------------------------------- REQUEST AND RESPONSE QUOTAION SUMMARY -----------------------------------------
+export interface ApiResponseQuotationSummary{
+  Draft: number,
+  Ordered: number,
+  Expired: number,
+  Sent: number,
+}

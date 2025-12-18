@@ -7,6 +7,7 @@ import useCreateOrderFromQuotation from "@/fetching/order/createOrderFromQuotati
 import { useNotification } from "@/providers/NotificationProvider";
 import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 import { useState } from "react";
+import useDeleteQuotation from "@/fetching/quotation/deleteQuotation";
 
 interface Props {
   quotationDetail: ApiResponseListAllQuotation;
@@ -24,6 +25,9 @@ const QuotationDetailHeader = ({ quotationDetail, setQuotationDetail }: Props) =
   const { loading: createOrderLoading, createOrderFromQuotation } =
     useCreateOrderFromQuotation();
 
+  // delete quotation 
+  const { loading: deleteQuotationLoading, deleteQuotation } = useDeleteQuotation();
+
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [orderCode, setOrderCode] = useState("");
   const [shippingAddress, setShippingAddress] = useState("");
@@ -31,10 +35,7 @@ const QuotationDetailHeader = ({ quotationDetail, setQuotationDetail }: Props) =
   const handleSendMail = async () => {
     try {
       const result = await sendMailQuotation(quotationDetail.id);
-      console.log(result);
       setQuotationDetail(result.data);
-
-      console.log(quotationDetail)
 
       if (result && result?.code === 200) {
         showNotification("Send mail successfully");
@@ -46,6 +47,9 @@ const QuotationDetailHeader = ({ quotationDetail, setQuotationDetail }: Props) =
     }
   };
 
+  /**
+   * create order from quotation - change status of quotation into order
+   */
   const handleCreateOrder = async () => {
     if (!orderCode.trim() || !shippingAddress.trim()) {
       showNotification("Please provide order code and shipping address", true);
@@ -58,12 +62,25 @@ const QuotationDetailHeader = ({ quotationDetail, setQuotationDetail }: Props) =
         shippingAddress: shippingAddress.trim(),
       });
 
-      showNotification(`Successfully create order from quotation`, );
+      showNotification(`Successfully create order from quotation`,);
       router.push("/orders");
     } catch (err: any) {
       showNotification(err?.message || "Failed to create order", true);
     }
   };
+
+  const handleDeleteQuotation = async () => {
+    try {
+      const result = await deleteQuotation(quotationDetail.id);
+
+      if (result) {
+        showNotification("Successfully delete a quotation");
+        router.push("/quotations");
+      }
+    } catch (error) {
+      showNotification(String(error), true);
+    }
+  }
 
   return (
     <div className="bg-white border-b border-gray-200">
@@ -164,6 +181,24 @@ const QuotationDetailHeader = ({ quotationDetail, setQuotationDetail }: Props) =
                 Send mail
               </div>
             )}
+
+            {
+              deleteQuotationLoading ? 
+                (
+                  <FetchingLoadingStatus loading={deleteQuotationLoading} color="red" size={20}/>
+                )
+              :
+                (
+                  <div>
+                    <button
+                      onClick={() => handleDeleteQuotation()}
+                      className="text-xs bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-gray-400 transition"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )
+            }
           </div>
         </div>
       </div>
