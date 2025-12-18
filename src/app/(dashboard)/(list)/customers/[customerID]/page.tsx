@@ -1,11 +1,16 @@
 "use client"
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowLeft, Mail, Phone, Building2, Calendar, Star, User, Clock, Edit2, Trash2 } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, Building2, Calendar, Star, User, Clock, Edit2, Trash2, X, Save } from 'lucide-react';
 import Image from 'next/image';
 import useGetCustomerDetail from '@/fetching/customer/getCustomerDetail';
 import { useParams } from 'next/navigation';
 import PageLoader from '@/components/PageLoader';
 import { useRouter } from 'next/navigation';
+import UpLoadAvatar from '@/components/UpLoadAvatar';
+import { useNotification } from '@/providers/NotificationProvider';
+import useUpdateCustomerDetail from '@/fetching/customer/updateCustomerDetail';
+import { isValidPhoneNumber } from '@/util/phoneNumberValidation';
+import { isValidEmail } from '@/util/emailValidation';
 
 const getInitials = (name: string) => {
   if (!name) return "?";
@@ -26,14 +31,27 @@ const formatDate = (date: string) => {
   });
 };
 
+const formatDateForInput = (date: string) => {
+  if (!date) return "";
+  return new Date(date).toISOString().split('T')[0];
+};
+
 const CustomerDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [customer, setCustomer] = useState<any>();
+  const [editedData, setEditedData] = useState<any>({});
+  const [updateAvatarFile, setAvatarFile] = useState<File>();
+  const [updateAvatar, setUpdateAvatar] = useState<string>("");
+  const [hasChanges, setHasChanges] = useState(false);
+
+
+
   const params = useParams();
   const customerID = params.customerID as string;
   const { loading: getCustomerDetailLoading, getCustomerDetail } = useGetCustomerDetail();
+  const { loading: updateCustomerDetailLoading, updateCustomerDetail } = useUpdateCustomerDetail();
   const router = useRouter();
-
+  const { showNotification } = useNotification();
 
   useEffect(() => {
     if (!customerID) return;
@@ -41,22 +59,97 @@ const CustomerDetail = () => {
     const fetchData = async () => {
       try {
         const result = await getCustomerDetail(customerID);
-        setCustomer(result.data)
+        console.log(result);
+        setCustomer(result.data);
+        setEditedData({
+          fullName: result.data.fullName,
+          email: result.data.email,
+          phoneNumber: result.data.phoneNumber,
+          company: result.data.company,
+          dateOfBirth: result.data.dateOfBirth,
+          rating: result.data.rating,
+          notes: ""
+        });
       } catch (error) {
-        console.error("Failed to fetch customer detail:", error);
+        showNotification(String(error) || "Failed to get customer detail", true);
       }
     };
 
     fetchData();
   }, []);
 
-  if(!customer){
-    return(
-      <PageLoader />
-    )
+  const handleEditToggle = () => {
+    if (isEditing) {
+      // Reset edited data when canceling
+      setEditedData({
+        fullName: customer.fullName,
+        email: customer.email,
+        phoneNumber: customer.phoneNumber,
+        company: customer.company,
+        dateOfBirth: customer.dateOfBirth,
+        rating: customer.rating,
+        notes: ""
+      });
+    }
+    setHasChanges(false);
+    setIsEditing(!isEditing);
+  };
+
+  const handleInputChange = (field: string, value: any) => {
+    setEditedData((prev: any) => {
+      if (prev[field] === value) return prev;
+
+      setHasChanges(true);
+      return {
+        ...prev,
+        [field]: value
+      };
+    });
+  };
+
+
+  const handleSave = async () => {
+    try {
+      if (!customerID) { return; }
+
+      if (editedData.phoneNumber && !isValidPhoneNumber(editedData.phoneNumber)){
+        showNotification("Your update phone number is not valid", true);
+        return;
+      }
+
+      if (editedData.email && !isValidEmail(editedData.email)){
+        showNotification("Your update email is not valid", true);
+        return;
+      }
+
+
+      const result = await updateCustomerDetail(editedData, updateAvatarFile, customerID);
+
+      if (result.code === 200) {
+        setCustomer((prev: any) => ({
+          ...prev,
+          ...editedData
+        }));
+
+        setIsEditing(false);
+        showNotification("Successfully update customer detail")
+      } else {
+        showNotification("Failed to update customer", true);
+      }
+    } catch (error) {
+      showNotification(String(error) || "Failed to update customer detail", true);
+    }
+  };
+
+  const handleRatingClick = (rating: number) => {
+    if (isEditing) {
+      handleInputChange('rating', rating);
+    }
+  };
+
+  if (!customer) {
+    return <PageLoader />;
   }
-
-
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -64,17 +157,46 @@ const CustomerDetail = () => {
       <div className="mb-6 flex items-center justify-between">
         <button className="flex items-center text-gray-600 hover:text-gray-900 transition">
           <ArrowLeft className="w-5 h-5 mr-2" />
-          <span className="font-medium" onClick={() => { router.push("/customers")}}>Back to Customers</span>
+          <span className="font-medium" onClick={() => { router.push("/customers") }}>Back to Customers</span>
         </button>
         <div className="flex gap-3">
-          <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-            <Edit2 className="w-4 h-4 mr-2" />
-            Edit
-          </button>
-          <button className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-            <Trash2 className="w-4 h-4 mr-2" />
-            Delete
-          </button>
+          {isEditing ? (
+            <>
+              <button
+                onClick={handleSave}
+                disabled={!hasChanges}
+                className={`flex items-center px-4 py-2 rounded-lg transition
+                    ${hasChanges
+                    ? "bg-green-600 hover:bg-green-700 text-white"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Save Changes
+              </button>
+              <button
+                onClick={handleEditToggle}
+                className="flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
+              >
+                <X className="w-4 h-4 mr-2" />
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={handleEditToggle}
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                <Edit2 className="w-4 h-4 mr-2" />
+                Edit
+              </button>
+              <button className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -85,30 +207,32 @@ const CustomerDetail = () => {
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center">
-                {customer.avatarUrl ? (
-                  <Image
-                    width={20}
-                    height={20}
-                    src={customer.avatarUrl}
-                    alt={customer.fullName}
-                    className="w-20 h-20 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">
-                    {getInitials(customer.fullName)}
-                  </div>
-                )}
+                <UpLoadAvatar avatar={updateAvatar || customer.avatarUrl} setAvatar={setUpdateAvatar} setAvatarFile={setAvatarFile} />
                 <div className="ml-4">
-                  <h1 className="text-2xl font-bold text-gray-900">{customer.fullName}</h1>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={editedData.fullName}
+                      onChange={(e) => handleInputChange('fullName', e.target.value)}
+                      className="text-2xl font-bold text-gray-900 border-b-2 border-blue-500 focus:outline-none px-2 py-1"
+                    />
+                  ) : (
+                    <h1 className="text-2xl font-bold text-gray-900">{customer.fullName}</h1>
+                  )}
                   <div className="flex items-center mt-2">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-5 h-5 ${i < customer.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+                        onClick={() => handleRatingClick(i + 1)}
+                        className={`w-5 h-5 ${isEditing ? 'cursor-pointer' : ''} ${i < (isEditing ? editedData.rating : customer.rating)
+                          ? 'text-yellow-400 fill-yellow-400'
+                          : 'text-gray-300'
                           }`}
                       />
                     ))}
-                    <span className="ml-2 text-sm text-gray-600">({customer.rating}/5)</span>
+                    <span className="ml-2 text-sm text-gray-600">
+                      ({isEditing ? editedData.rating : customer.rating}/5)
+                    </span>
                   </div>
                 </div>
               </div>
@@ -120,34 +244,70 @@ const CustomerDetail = () => {
             {/* Contact Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                <Mail className="w-5 h-5 text-blue-600 mr-3" />
-                <div>
+                <Mail className="w-5 h-5 text-blue-600 mr-3 flex-shrink-0" />
+                <div className="flex-1">
                   <p className="text-xs text-gray-500 mb-1">Email</p>
-                  <p className="text-sm font-medium text-gray-900">{customer.email}</p>
+                  {isEditing ? (
+                    <input
+                      type="email"
+                      value={editedData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      className="text-sm font-medium text-gray-900 w-full border-b border-blue-500 focus:outline-none bg-transparent"
+                    />
+                  ) : (
+                    <p className="text-sm font-medium text-gray-900">{customer.email}</p>
+                  )}
                 </div>
               </div>
 
               <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                <Phone className="w-5 h-5 text-green-600 mr-3" />
-                <div>
+                <Phone className="w-5 h-5 text-green-600 mr-3 flex-shrink-0" />
+                <div className="flex-1">
                   <p className="text-xs text-gray-500 mb-1">Phone Number</p>
-                  <p className="text-sm font-medium text-gray-900">{customer.phoneNumber}</p>
+                  {isEditing ? (
+                    <input
+                      type="tel"
+                      value={editedData.phoneNumber}
+                      onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+                      className="text-sm font-medium text-gray-900 w-full border-b border-blue-500 focus:outline-none bg-transparent"
+                    />
+                  ) : (
+                    <p className="text-sm font-medium text-gray-900">{customer.phoneNumber}</p>
+                  )}
                 </div>
               </div>
 
               <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                <Building2 className="w-5 h-5 text-purple-600 mr-3" />
-                <div>
+                <Building2 className="w-5 h-5 text-purple-600 mr-3 flex-shrink-0" />
+                <div className="flex-1">
                   <p className="text-xs text-gray-500 mb-1">Company</p>
-                  <p className="text-sm font-medium text-gray-900">{customer.company}</p>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={editedData.company}
+                      onChange={(e) => handleInputChange('company', e.target.value)}
+                      className="text-sm font-medium text-gray-900 w-full border-b border-blue-500 focus:outline-none bg-transparent"
+                    />
+                  ) : (
+                    <p className="text-sm font-medium text-gray-900">{customer.company}</p>
+                  )}
                 </div>
               </div>
 
               <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                <Calendar className="w-5 h-5 text-orange-600 mr-3" />
-                <div>
+                <Calendar className="w-5 h-5 text-orange-600 mr-3 flex-shrink-0" />
+                <div className="flex-1">
                   <p className="text-xs text-gray-500 mb-1">Date of Birth</p>
-                  <p className="text-sm font-medium text-gray-900">{formatDate(customer.dateOfBirth)}</p>
+                  {isEditing ? (
+                    <input
+                      type="date"
+                      value={formatDateForInput(editedData.dateOfBirth)}
+                      onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+                      className="text-sm font-medium text-gray-900 w-full border-b border-blue-500 focus:outline-none bg-transparent"
+                    />
+                  ) : (
+                    <p className="text-sm font-medium text-gray-900">{formatDate(customer.dateOfBirth)}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -178,12 +338,13 @@ const CustomerDetail = () => {
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Notes</h2>
             <textarea
-              className="w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              value={isEditing ? editedData.notes : ""}
+              onChange={(e) => handleInputChange('notes', e.target.value)}
+              disabled={!isEditing}
+              className={`w-full h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${!isEditing ? 'bg-gray-50 cursor-not-allowed' : ''
+                }`}
               placeholder="Add notes about this customer..."
             ></textarea>
-            <button className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium">
-              Save Note
-            </button>
           </div>
         </div>
 
