@@ -6,17 +6,20 @@ import Image  from 'next/image';
 import { useCustomer } from '@/providers/CustomerProvider';
 import PageLoader from '@/components/PageLoader';
 import { useRouter } from 'next/navigation';
+import FetchingLoadingStatus from '@/components/FetchingLoadingStatus';
 
 
   
 const CustomerManagement = () => {
   // CUSTOMER PROVIDER
-  const { customers, getAllCustomerLoading, totalPages, getCustomersWithPageNo } = useCustomer();
+  const { customers, getAllCustomerLoading, totalPages, 
+          getCustomersWithPageNo, searchTerm, setSearchTerm,
+          handleSearchCustomer
+        } = useCustomer();
 
   const router = useRouter();
 
   // STATE
-  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState<number>(1);
   
   /**
@@ -74,10 +77,15 @@ const CustomerManagement = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6">
-        <div className="relative">
+      <div className="bg-white rounded-lg shadow p-4 mb-6 flex items-center gap-3">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
+            onKeyDown={(e)=>{
+              if(e.key === "Enter"){
+                handleSearchCustomer(currentPage);
+              }
+            }}
             type="text"
             placeholder="Search by name, email, or company..."
             className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
