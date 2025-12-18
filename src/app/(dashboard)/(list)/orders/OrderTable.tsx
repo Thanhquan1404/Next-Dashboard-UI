@@ -4,6 +4,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef, useCallback } from "react";
 import PageNavigationComponent from "@/components/PageNavigationComponent";
 import useGetListOrder from "@/fetching/order/getAllOrder";
+import { useNotification } from "@/providers/NotificationProvider";
+import useSearchOrder from "@/fetching/order/searchOrder";
+import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 
 type HeaderDataType = {
   id: number;
@@ -26,11 +29,14 @@ const tableHeaders: HeaderDataType[] = [
 
 const OrderTable = () => {
   const router = useRouter();
+  const { showNotification } = useNotification();
   const { getOrderWithPageNo, getListOrder } = useGetListOrder();
+  const { loading: searchOrderLoading, searchOrder } = useSearchOrder();
 
   // STATE
   const [allOrder, setAllOrder] = useState<OrderDataType[]>([]);
   const [pagination, setPagination] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -42,13 +48,14 @@ const OrderTable = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
+    if (searchTerm) { handleSearchOrder(); return };
     const fetchOrders = async () => {
       try {
         const { orderRows, pagination } = await getOrderWithPageNo(currentPage);
         setAllOrder(orderRows);
         setPagination(pagination);
       } catch (error) {
-        console.error("Failed to fetch orders", error);
+        showNotification(String(error), true);
       }
     };
     fetchOrders();
@@ -58,37 +65,66 @@ const OrderTable = () => {
     return;
   }
 
+  const handleSearchOrder = async () => {
+    try {
+      const { orderRows, pagination } = await searchOrder(searchTerm, currentPage);
+      setAllOrder(orderRows);
+      setPagination(pagination);
+    } catch (error) {
+      showNotification(String(error), true);
+    }
+  }
+
   return (
     <div className="p-4 flex-1 w-full overflow-y-auto">
       {/* TABLE HEADER */}
       <div className="w-full h-[8%] py-2 flex items-center justify-between">
-        {/* SEARCH BAR */}
-        <div className="w-[22%] h-full flex items-center gap-2 px-3 rounded-full border border-gray-300 bg-gray-100">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-5 text-gray-500"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-          </svg>
-          <input type="text" className="flex-1 bg-transparent text-sm focus:outline-none" placeholder="Search..." />
+        <div className="flex w-full h-full items-center gap-3 py-2">
+          {/* SEARCH BAR */}
+          <div className="w-[22%] h-full flex items-center gap-2 px-3 rounded-full border border-gray-300 bg-gray-100">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-5 text-gray-500"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+            <input
+              disabled={searchOrderLoading}
+              value={searchTerm || ""}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearchOrder();
+                }
+              }}
+              type="text"
+              className="flex-1 bg-transparent text-sm focus:outline-none"
+              placeholder="Search..."
+            />
+          </div>
+          <div>
+            <FetchingLoadingStatus color="blue" size={20} loading={searchOrderLoading} />
+          </div>
         </div>
+
+
 
         {/* ACTION BUTTONS */}
         <div className="w-[22%] h-full flex items-center gap-3 justify-end">
           {/* DELETE */}
-          <button className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg border border-gray-400 text-gray-700 hover:border-red-500 hover:text-red-500 transition">
+          {/* <button className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg border border-gray-400 text-gray-700 hover:border-red-500 hover:text-red-500 transition">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
             Delete
-          </button>
+          </button> */}
 
           {/* NEW ORDER */}
-          <button className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition">
+          {/* <button className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
               <path
                 strokeLinecap="round"
@@ -97,7 +133,7 @@ const OrderTable = () => {
               />
             </svg>
             New order
-          </button>
+          </button> */}
         </div>
       </div>
 

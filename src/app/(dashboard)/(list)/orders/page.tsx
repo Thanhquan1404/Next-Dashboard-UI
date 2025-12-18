@@ -1,9 +1,6 @@
 "use client"
-import { OrderDataType, sampleOrders } from "@/lib/data.orders";
 import OrderHeader from "./OrderHeader";
 import OrderTable from "./OrderTable";
-import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
-import { useRef, useCallback, useEffect, useState } from "react";
 import useGetListOrder from "@/fetching/order/getAllOrder";
 import PageLoader from "@/components/PageLoader";
 import useOrderSummary from "@/fetching/order/orderSummary";
