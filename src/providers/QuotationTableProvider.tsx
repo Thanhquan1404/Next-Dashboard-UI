@@ -1,11 +1,14 @@
 "use client";
 
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { QuotationRow, QuotationStatisticType, QuotationType } from "@/lib/data.quotation";
+import { ApiResponseQuotationSummary, QuotationRow, QuotationStatisticType, QuotationType } from "@/lib/data.quotation";
 import { useNotification } from "./NotificationProvider";
 import useGetListQuotation from "@/fetching/quotation/getAllQuotation";
 import useSaveQuotation from "@/fetching/quotation/saveQuotation";
 import useGetListQuotationWithPageNo from "@/fetching/quotation/getAllQuotationWithPageNo";
+import { useRouter } from "next/navigation";
+import useSearchQuotation from "@/fetching/quotation/searchQuotation";
+import useQuotationSummary from "@/fetching/quotation/quotationSummary";
 
 interface QuotationTableProviderContextType {
   getAllQuotationLoading: boolean;
@@ -13,8 +16,9 @@ interface QuotationTableProviderContextType {
   saveQuotationLoading: boolean;
   saveAQuotation: (newQuotation: QuotationType, leadID: string) => void;
   getQuotationWithPageNo: (pageNo: number) => void;
+  searchQuotationFunction: (searchTerm: string) => void;
   quotationRows: QuotationRow[];
-  quotationStatistic: QuotationStatisticType;
+  quotationStatistic: ApiResponseQuotationSummary | null;
   totalPages?: number;
 }
 
@@ -35,16 +39,20 @@ interface QuotationTableProviderProps {
 
 export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ children }) => {
   const { showNotification } = useNotification();
+  const route = useRouter();
 
   // API HOOKS
   const { loading: getAllQuotationLoading, getAllQuotation } = useGetListQuotation();
   const { loading: saveQuotationLoading, saveQuotation } = useSaveQuotation();
   const { loading: getAllQuotationWithPageNoLoading, getAllQuotationWithPageNo } = useGetListQuotationWithPageNo();
+  const { loading: searchQuotationLoading, searchQuotation} = useSearchQuotation();
+  const { loading: quotaionSummaryLoading, quotationSummary} = useQuotationSummary();
 
   // STATE
   const [quotationRows, setQuotationRows] = useState<QuotationRow[]>([]);
-  const [quotationStatistic, setQuotationStatistic] = useState<QuotationStatisticType>({});
+  const [quotationStatistic, setQuotationStatistic] = useState<ApiResponseQuotationSummary | null>(null);
   const [totalPages, setTotalPage] = useState<number | undefined>(undefined);
+  const [searchTerm, setSearchTerm] = useState<string | null>(null);
 
   // GET ALL QUOTATIONS - initial load uses page 1 pagination-aware endpoint
   const didFetch = useRef(false);
@@ -52,10 +60,11 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
   const getQuotation = useCallback(async () => {
     try {
       const { quotationRows, quotationStatistic, dataPaganavigate } = await getAllQuotationWithPageNo(1);
-
-      if (quotationRows && quotationStatistic) {
+      const result = await quotationSummary();
+      console.log(result);
+      if (quotationRows && result) {
         setQuotationRows(quotationRows);
-        setQuotationStatistic(quotationStatistic);
+        setQuotationStatistic(result);
         if (dataPaganavigate?.totalPages != null) {
           setTotalPage(dataPaganavigate.totalPages);
         }
@@ -65,22 +74,28 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
     } catch (error) {
       showNotification(String(error), true);
     }
-  }, []);
+  }, [getAllQuotationWithPageNo, showNotification]);
 
   useEffect(() => {
     if (didFetch.current) return;
     didFetch.current = true;
     getQuotation();
-  }, []);
+  }, [getQuotation]);
 
   // GET QUOTATIONS WITH PAGE NO (called by UI when page changes)
   const getQuotationWithPageNo = async (pageNo: number) => {
     try {
-      const { quotationRows, quotationStatistic, dataPaganavigate } = await getAllQuotationWithPageNo(pageNo);
+      let result;
+      if (searchTerm) {
+        result = await searchQuotation(searchTerm, pageNo);
+      } else {
+        result = await getAllQuotationWithPageNo(pageNo);
+      }
 
-      if (quotationRows && quotationStatistic) {
+      const { quotationRows, dataPaganavigate } = result;
+
+      if (quotationRows) {
         setQuotationRows(quotationRows);
-        setQuotationStatistic(quotationStatistic);
         if (dataPaganavigate?.totalPages != null) {
           setTotalPage(dataPaganavigate.totalPages);
         }
@@ -92,39 +107,24 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
     }
   }
 
-  // // Aggregate quotationStatistic across all pages
-  // const aggregateQuotationStatistics = useCallback(async (pages?: number) => {
-  //   if (!pages || pages <= 1) return;
-  //   try {
-  //     const aggregated: QuotationStatisticType = {};
-  //     for (let p = 1; p <= pages; p++) {
-  //       try {
-  //         const res = await getAllQuotationWithPageNo(p);
-  //         const pageStat = res.quotationStatistic || {};
-  //         Object.keys(pageStat).forEach((k) => {
-  //           aggregated[k] = (aggregated[k] || 0) + (pageStat[k] || 0);
-  //         });
-  //       } catch (err) {
-  //         // continue to next page but notify
-  //         showNotification(`Failed to fetch page ${p} for aggregation`, true);
-  //       }
-  //     }
-  //     // update the statistic state with aggregated values
-  //     setQuotationStatistic(aggregated);
-  //   } catch (err) {
-  //     showNotification(String(err), true);
-  //   }
-  // }, []);
+  // SEARCH QUOTATION
+  const searchQuotationFunction = async (term: string) => {
+    setSearchTerm(term);
+    try {
+      const { quotationRows, dataPaganavigate } = await searchQuotation(term, 1);
 
-  // const didCalcualte = useRef<boolean>(false);
-  // // whenever totalPages becomes available, run aggregation in background
-  // useEffect(() => {
-  //   if (totalPages && totalPages > 1 && didCalcualte.current !== true) {
-  //     // run async aggregator (no need to await)
-  //     aggregateQuotationStatistics(totalPages);
-  //     didCalcualte.current=true;
-  //   }
-  // }, [quotationRows]);
+      if (quotationRows) {
+        setQuotationRows(quotationRows);
+        if (dataPaganavigate?.totalPages != null) {
+          setTotalPage(dataPaganavigate.totalPages);
+        }
+      } else {
+        showNotification("Error searching quotations", true);
+      }
+    } catch (error) {
+      showNotification(String(error), true);
+    }
+  };
 
   // SAVE QUOTATION 
   const saveAQuotation = async (newQuotation: QuotationType, leadID: string) => {
@@ -144,6 +144,7 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
 
       setQuotationRows( prev => [...prev, responseQuotation]);
       showNotification("Quotation saved successfully");
+      route.push(`/quotations/${resData.id}`);
     } catch (error) {
       showNotification(String(error), true);
     }
@@ -159,6 +160,7 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
         quotationStatistic,
         getQuotationWithPageNo,
         saveAQuotation,
+        searchQuotationFunction,
         totalPages,
       }}
     >
