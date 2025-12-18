@@ -13,6 +13,8 @@ import { isValidEmail } from '@/util/emailValidation';
 import FetchingLoadingStatus from '@/components/FetchingLoadingStatus';
 import useDeleteCustomer from '@/fetching/customer/deleteCustomer';
 import { moneyFormat } from '@/util/moneyFormat';
+import AssignerSelectorComponent from '@/components/AssignerSelectorComponent';
+import useUpdateAssigner from '@/fetching/customer/updateAssigner';
 
 const getInitials = (name: string) => {
   if (!name) return "?";
@@ -55,6 +57,10 @@ const CustomerDetail = () => {
   const [updateAvatarFile, setAvatarFile] = useState<File>();
   const [updateAvatar, setUpdateAvatar] = useState<string>("");
   const [hasChanges, setHasChanges] = useState(false);
+  const [isReassigning, setIsReassigning] = useState(false);
+  const [selectedAssignerId, setSelectedAssignerId] = useState<string>("");
+  const [selectedAssigner, setSelectedAssigner] = useState<any>(null);
+  const [originalAssignerId, setOriginalAssignerId] = useState<string>("");
 
 
 
@@ -62,7 +68,8 @@ const CustomerDetail = () => {
   const customerID = params.customerID as string;
   const { loading: getCustomerDetailLoading, getCustomerDetail } = useGetCustomerDetail();
   const { loading: updateCustomerDetailLoading, updateCustomerDetail } = useUpdateCustomerDetail();
-  const { loading: deleteCustomerLoading, deleteCustomer}= useDeleteCustomer();
+  const { loading: deleteCustomerLoading, deleteCustomer } = useDeleteCustomer();
+  const { loading: updateAssignerLoading, updateAssigner } = useUpdateAssigner();
   const router = useRouter();
   const { showNotification } = useNotification();
 
@@ -83,6 +90,9 @@ const CustomerDetail = () => {
           rating: result.data.rating,
           notes: ""
         });
+        setOriginalAssignerId(result.data.assignTo.id);
+        setSelectedAssignerId(result.data.assignTo.id);
+        setSelectedAssigner(result.data.assignTo);
       } catch (error) {
         showNotification(String(error) || "Failed to get customer detail", true);
       }
@@ -125,12 +135,12 @@ const CustomerDetail = () => {
     try {
       if (!customerID) { return; }
 
-      if (editedData.phoneNumber && !isValidPhoneNumber(editedData.phoneNumber)){
+      if (editedData.phoneNumber && !isValidPhoneNumber(editedData.phoneNumber)) {
         showNotification("Your update phone number is not valid", true);
         return;
       }
 
-      if (editedData.email && !isValidEmail(editedData.email)){
+      if (editedData.email && !isValidEmail(editedData.email)) {
         showNotification("Your update email is not valid", true);
         return;
       }
@@ -161,12 +171,12 @@ const CustomerDetail = () => {
   };
 
   const handleDeleteCustomer = async () => {
-    if (!customerID){ return; }
+    if (!customerID) { return; }
 
     try {
       const success = await deleteCustomer(customerID);
 
-      if (success){
+      if (success) {
         showNotification("Successfully delete customer");
         router.push("/customers/");
       }
@@ -174,6 +184,50 @@ const CustomerDetail = () => {
       showNotification(String(error) || "Processed failed", true);
     }
   }
+
+  const handleReassignToggle = () => {
+    if (isReassigning) {
+      setSelectedAssignerId(originalAssignerId);
+      setSelectedAssigner(customer.assignTo);
+    }
+    setIsReassigning(!isReassigning);
+  };
+
+  const handleAssignerChange = (assigner: any) => {
+    setSelectedAssignerId(assigner?.id || "");
+    setSelectedAssigner(assigner);
+  };
+
+  const handleConfirmReassign = async () => {
+    if (!selectedAssignerId || selectedAssignerId === originalAssignerId) {
+      showNotification("No changes to assigner", true);
+      return;
+    }
+
+    try {
+      const success = await updateAssigner(customerID, selectedAssignerId);
+
+      // For now, simulate success
+      if (success) {
+        showNotification("Customer reassigned successfully");
+
+
+        setCustomer((prev: any) => ({
+          ...prev,
+          assignTo: {
+            fullName: selectedAssigner.fullName
+          }
+        }));
+
+        setOriginalAssignerId(selectedAssignerId);
+        setIsReassigning(false);
+      } else {
+        showNotification("Failed to reassign new user", true);
+      }
+    } catch (error) {
+      showNotification(String(error) || "Failed to reassign customer", true);
+    }
+  };
 
   if (!customer || getCustomerDetailLoading) {
     return <PageLoader />;
@@ -188,52 +242,52 @@ const CustomerDetail = () => {
           <span className="font-medium" onClick={() => { router.push("/customers") }}>Back to Customers</span>
         </button>
         <div className="flex gap-3">
-          {isEditing ? 
-            updateCustomerDetailLoading ? 
+          {isEditing ?
+            updateCustomerDetailLoading ?
               <FetchingLoadingStatus loading={updateCustomerDetailLoading} color="green" size={20} />
-            : (
-            <>
-              <button
-                onClick={handleSave}
-                disabled={!hasChanges}
-                className={`flex items-center px-4 py-2 rounded-lg transition
+              : (
+                <>
+                  <button
+                    onClick={handleSave}
+                    disabled={!hasChanges}
+                    className={`flex items-center px-4 py-2 rounded-lg transition
                     ${hasChanges
-                    ? "bg-green-600 hover:bg-green-700 text-white"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  }`}
-              >
-                <Save className="w-4 h-4 mr-2" />
-                Save Changes
-              </button>
-              <button
-                onClick={handleEditToggle}
-                className="flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
-              >
-                <X className="w-4 h-4 mr-2" />
-                Cancel
-              </button>
-            </>
-          ) : 
+                        ? "bg-green-600 hover:bg-green-700 text-white"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      }`}
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Changes
+                  </button>
+                  <button
+                    onClick={handleEditToggle}
+                    className="flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Cancel
+                  </button>
+                </>
+              ) :
             deleteCustomerLoading ?
               <FetchingLoadingStatus loading={deleteCustomerLoading} color="red" size={20} />
-            : (
-            <>
-              <button
-                onClick={handleEditToggle}
-                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
-                <Edit2 className="w-4 h-4 mr-2" />
-                Edit
-              </button>
-              <button 
-                onClick={() => handleDeleteCustomer()}
-                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete
-              </button>
-            </>
-          )}
+              : (
+                <>
+                  <button
+                    onClick={handleEditToggle}
+                    className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                  >
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteCustomer()}
+                    className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete
+                  </button>
+                </>
+              )}
         </div>
       </div>
 
@@ -396,14 +450,50 @@ const CustomerDetail = () => {
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium text-gray-900">
-                  {customer.assignTo.firstName} {customer.assignTo.lastName}
+                  {customer.assignTo.lastName} {customer.assignTo.firstName}
                 </p>
                 <p className="text-xs text-gray-500">{customer.assignTo.email}</p>
               </div>
             </div>
-            <button className="mt-4 w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm font-medium">
-              Reassign Customer
-            </button>
+            {isReassigning ? (
+              <div className="mt-4 space-y-3">
+                <AssignerSelectorComponent
+                  value={selectedAssignerId}
+                  onChange={handleAssignerChange}
+                />
+                {
+                  updateAssignerLoading ?
+                    <FetchingLoadingStatus loading={updateAssignerLoading} color={"green"} size={20} />
+                    : (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleConfirmReassign}
+                          disabled={selectedAssignerId === originalAssignerId}
+                          className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition ${selectedAssignerId !== originalAssignerId
+                            ? "bg-green-600 hover:bg-green-700 text-white"
+                            : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            }`}
+                        >
+                          Confirm
+                        </button>
+                        <button
+                          onClick={handleReassignToggle}
+                          className="flex-1 px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition text-sm font-medium"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )
+                }
+              </div>
+            ) : (
+              <button
+                onClick={handleReassignToggle}
+                className="mt-4 w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm font-medium"
+              >
+                Reassign Customer
+              </button>
+            )}
           </div>
 
           {/* Customer Stats */}

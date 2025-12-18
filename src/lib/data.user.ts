@@ -27,3 +27,9 @@ export interface GetListUserResponseType{
   createdAt: string;  
   updatedAt: string;  
 }
+
+//--------------------GET ASSIGNERS REQUEST AND RESPONSE TYPE --------------------
+export interface ApiResponseGetAssignersType {
+  id: string,
+  fullName: string
+}
