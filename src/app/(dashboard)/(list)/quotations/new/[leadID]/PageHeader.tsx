@@ -60,7 +60,7 @@ const PageHeader = ({
               </button>
             )}
 
-            <button
+            {/* <button
               disabled={!validToSendEmail}
               aria-disabled={!validToSendEmail}
               className={`px-4 py-2 rounded-lg text-sm text-white
@@ -71,7 +71,7 @@ const PageHeader = ({
                 }`}
             >
               Send Email
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
