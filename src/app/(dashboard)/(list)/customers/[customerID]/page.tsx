@@ -12,6 +12,7 @@ import { isValidPhoneNumber } from '@/util/phoneNumberValidation';
 import { isValidEmail } from '@/util/emailValidation';
 import FetchingLoadingStatus from '@/components/FetchingLoadingStatus';
 import useDeleteCustomer from '@/fetching/customer/deleteCustomer';
+import { moneyFormat } from '@/util/moneyFormat';
 
 const getInitials = (name: string) => {
   if (!name) return "?";
@@ -36,6 +37,16 @@ const formatDateForInput = (date: string) => {
   if (!date) return "";
   return new Date(date).toISOString().split('T')[0];
 };
+
+const getDaysSince = (date?: string) => {
+  if (!date) return "—";
+
+  const diffMs = Date.now() - new Date(date).getTime();
+  if (isNaN(diffMs)) return "—";
+
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24));
+};
+
 
 const CustomerDetail = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -401,19 +412,19 @@ const CustomerDetail = () => {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Total Orders</span>
-                <span className="text-lg font-bold text-gray-900">24</span>
+                <span className="text-lg font-bold text-gray-900">{customer.orderStatisticInfo.totalOrders || 0}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Total Spent</span>
-                <span className="text-lg font-bold text-gray-900">$12,450</span>
+                <span className="text-lg font-bold text-gray-900">{moneyFormat(customer.orderStatisticInfo.totalSpent || 0)}đ</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Average Order</span>
-                <span className="text-lg font-bold text-gray-900">$518</span>
+                <span className="text-lg font-bold text-gray-900">{moneyFormat(customer.orderStatisticInfo.averageOrder || 0)}đ</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Last Order</span>
-                <span className="text-sm font-medium text-gray-900">2 days ago</span>
+                <span className="text-sm font-medium text-gray-900">{getDaysSince(customer.orderStatisticInfo?.lastOrderAt)} days ago</span>
               </div>
             </div>
           </div>
