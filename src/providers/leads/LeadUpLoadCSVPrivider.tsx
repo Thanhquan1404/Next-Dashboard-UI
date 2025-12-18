@@ -39,7 +39,7 @@ export const LeadUploadCSVProvider = ({ children }: useLeadUploadCSVProviderProp
   // STATE
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [fileRow, setFileRow] = useState<Record<string, string[]> | null>(null)
-  const { showNotification } = useNotification();
+  const { showNotification, showNotificationLeadCSV } = useNotification();
 
   /**
    * set the file csv of user to selected CSV file
@@ -97,8 +97,14 @@ export const LeadUploadCSVProvider = ({ children }: useLeadUploadCSVProviderProp
       return;
     }
 
+    if (response.error?.length !== 0){
+      showNotificationLeadCSV(response.error);
+      resetAllState();
+      return;
+    }
+
     resetAllState();
-    showNotification("Upload success");
+    showNotification("Successfully import leads by CSV");
   };
 
 

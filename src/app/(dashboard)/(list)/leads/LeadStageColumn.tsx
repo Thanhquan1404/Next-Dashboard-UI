@@ -12,6 +12,8 @@ import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 import useDeleteStage from "@/fetching/stage/deleteStage";
 import { useLeadStageColumn } from "@/providers/LeadStageColumnProvider";
 import { useNotification } from "@/providers/NotificationProvider";
+import { isValidPhoneNumber } from "@/util/phoneNumberValidation";
+import { isValidEmail } from "@/util/emailValidation";
 
 interface Props {
   stageID: string;
@@ -73,6 +75,10 @@ const LeadStageColumn = ({
       status: leadStage,
     };
 
+    if (!isValidPhoneNumber(leadPhone) || !isValidEmail(leadEmail)){
+      showNotification("Your phone number is not satisfied 10 number or email is not valid", true);
+      return;
+    }
     handleAddingNewLead(newLead, leadStage, stageID);
   };
 
@@ -138,7 +144,7 @@ const LeadStageColumn = ({
           <div
             className="bg-gray-200 px-2 py-[3px] rounded-md shadow-sm text-gray-700 text-xs"
           >
-            {leadItems.length} leads
+            {leadItems?.length ?? 0} leads
           </div>
 
           {/* DELETE COLUMN */}
@@ -184,7 +190,7 @@ const LeadStageColumn = ({
 
       {/* LEAD CARDS */}
       <div className="flex flex-col gap-4 flex-1 min-h-0">
-        {leadItems.map((leadItem) => (
+        {leadItems?.map((leadItem) => (
           <div
             key={leadItem.leadID}
             draggable

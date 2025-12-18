@@ -43,8 +43,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
    */
   const getUsers = useCallback( async() => {
     try {
-      const result = await getListUser();
-      setUsers(result);
+      const {users, pagination} = await getListUser();
+      setUsers(users || []);
     } catch (error) {
       console.error("Failed to fetch users:", error);
       setUsers([]); 

@@ -68,7 +68,7 @@ const LeadsPageHeader = ({ selectedStatus, setSelectedStatus, setSelectedCompany
               transition-all duration-300
             "
                   >
-                    New Column
+                    New Stage
                   </button>
                 </div>
               )

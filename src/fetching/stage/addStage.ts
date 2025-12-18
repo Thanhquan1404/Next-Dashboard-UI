@@ -25,7 +25,7 @@ const useAddStage = () => {
       if (!res.ok) {
         const errMessage =
           (resData?.error && Array.isArray(resData.error) && resData.error[0]?.message) ||
-          resData?.message ||
+          resData?.error?.message ||
           "Unknown error";
         throw new Error(errMessage);
       }

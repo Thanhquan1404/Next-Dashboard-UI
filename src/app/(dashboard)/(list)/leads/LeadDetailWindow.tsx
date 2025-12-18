@@ -44,6 +44,8 @@ const LeadDetailWindow = () => {
 
     if (forwardStageID){
       updateLeadStage(leadDetailInfo.leadID, forwardStageID);
+      leadDetailInfo.status = updateStatus || "";
+      console.log(leadDetailInfo);
       setIsUpdated(false);
     }
 

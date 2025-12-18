@@ -35,7 +35,7 @@ const useUpdateLeadStage = () => {
 
       const result = await res.json()
 
-      return result.code === 200;
+      return result;
     } catch (err) {
       const errAxios = err as AxiosError<any>;
       const errData = errAxios.response?.data;

@@ -5,6 +5,7 @@ import { createContext, useContext, useState, useCallback } from "react";
 interface NotificationContextType {
   showNotification: (msg: string, error?: boolean) => void;
   showCSVNotification: (msg: ProductDetailResponseType[], error?: boolean) => void;
+  showNotificationLeadCSV: (errorLead: any) => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | null>(null);
@@ -13,6 +14,7 @@ export const useNotification = () => useContext(NotificationContext)!;
 
 export const NotificationProvider = ({ children }: { children: React.ReactNode }) => {
   const [csvMessage, setCSVMessage] = useState<ProductDetailResponseType[]>([]);
+  const [leadCSVMessage, setLeadCSVMessage] = useState<any[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [isError, setIsError] = useState<boolean>(false);
 
@@ -36,6 +38,17 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
     }
   }, []);
 
+  const showNotificationLeadCSV = useCallback((errorLead: any) => {
+    setLeadCSVMessage(Array.isArray(errorLead) ? errorLead : [errorLead]);
+    setIsError(true);
+
+    const timer = setTimeout(() => {
+      setLeadCSVMessage([]);
+      setIsError(false);
+      clearTimeout(timer);
+    }, 12000);
+  }, []);
+
   const showNotification = useCallback((msg: string, error = false) => {
     setMessage(msg);
     setIsError(error);
@@ -48,7 +61,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
   }, []);
 
   return (
-    <NotificationContext.Provider value={{ showNotification, showCSVNotification }}>
+    <NotificationContext.Provider value={{ showNotification, showCSVNotification, showNotificationLeadCSV }}>
       {children}
 
       {/* UI Notification */}
@@ -81,7 +94,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
         </div>
       )}
 
-      {/* UI CSV NOTIFICATITION */}
+      {/* UI CSV NOTIFICATION */}
       {csvMessage.length > 0 && (
         <div
           className={`
@@ -138,6 +151,78 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
                   <p className="mt-2 text-xs text-yellow-200 italic">
                     Reason: This item already exists in the system (duplicate SKU/ID).
                   </p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Footer */}
+          <p className="text-white/80 mt-4 text-xs pt-2 border-t border-white/40">
+            Please review the items above and correct them in your CSV file before trying again.
+          </p>
+        </div>
+      )}
+
+      {/* UI LEAD CSV NOTIFICATION */}
+      {leadCSVMessage.length > 0 && (
+        <div
+          className="
+            fixed top-6 right-6 
+            z-[100000]
+            px-4 py-4
+            rounded-xl
+            shadow-xl
+            text-white text-sm
+            border
+            w-full max-w-sm
+            animate-slide-in
+            bg-red-500 border-red-600
+          "
+          style={{
+            position: "fixed",
+            inset: "auto",
+            top: "30px",
+            right: "20px",
+            maxWidth: "300px",
+            pointerEvents: "auto",
+          }}
+        >
+          {/* Header */}
+          <div className="font-bold mb-3 border-b border-white/40 pb-2">
+            Lead CSV Import Failed — {leadCSVMessage.length} item(s) could not be processed
+          </div>
+
+          {/* Scrollable list */}
+          <div className="max-h-60 overflow-y-auto pr-2 space-y-3">
+            {leadCSVMessage.map((item, index) => {
+              const identifier =
+                item.fullName || item.email || item.phoneNumber || `Row #${index + 1}`;
+
+              return (
+                <div key={index} className="p-3 bg-white/10 rounded-lg">
+                  <p className="font-semibold text-white/90 truncate">
+                    {identifier}
+                  </p>
+
+                  {item.phoneNumber && (
+                    <p className="text-xs text-white/70 mt-1">
+                      <span className="font-medium">Phone:</span>{" "}
+                      {item.phoneNumber}
+                    </p>
+                  )}
+
+                  {item.company && item.company !== "Unknown" && (
+                    <p className="text-xs text-white/70">
+                      <span className="font-medium">Company:</span>{" "}
+                      {item.company}
+                    </p>
+                  )}
+
+                  {item.note && (
+                    <p className="mt-2 text-xs text-yellow-200 italic">
+                      Reason: {item.note}
+                    </p>
+                  )}
                 </div>
               );
             })}

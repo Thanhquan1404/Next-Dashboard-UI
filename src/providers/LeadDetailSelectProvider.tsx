@@ -15,6 +15,8 @@ import { useLeadStageColumn } from "./LeadStageColumnProvider";
 import useAddLeadActivity from "@/fetching/lead/addLeadActivity";
 import useCompleteActivity from "@/fetching/lead/completeActivity";
 import useDeleteActivity from "@/fetching/lead/deleteActivity";
+import { isValidPhoneNumber } from "@/util/phoneNumberValidation";
+import { isValidEmail } from "@/util/emailValidation";
 
 interface LeadDetailSelectContextType {
   selectedLeadId: string | null;
@@ -125,6 +127,16 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
 
   const updateALeadDetail = async (newLeadDetail: LeadDetailType, avatarFile: File | undefined) => {
     try {
+      if (
+        (newLeadDetail.phone?.length && !isValidPhoneNumber(newLeadDetail.phone))
+        ||
+        (newLeadDetail.email?.length && !isValidEmail(newLeadDetail.email))
+      ) {
+        showNotification("Your update phone number or email is not valid", true);
+        return;
+      }
+
+
       const { resData, updatedLead } =
         await updateLeadDetail(newLeadDetail, avatarFile);
 
@@ -197,7 +209,7 @@ export const LeadDetailSelectProvider = ({ children }: LeadDetailSelectProviderP
   };
 
   const deleteLeadActivity = async (activityID: string) => {
-     try {
+    try {
       if (!selectedLeadId) return;
 
       const success = await deleteActivity(selectedLeadId, activityID);
