@@ -31,5 +31,7 @@ export interface GetListUserResponseType{
 //--------------------GET ASSIGNERS REQUEST AND RESPONSE TYPE --------------------
 export interface ApiResponseGetAssignersType {
   id: string,
-  fullName: string
+  fullName: string,
+  avatarUrl: string,
+  email: string,
 }

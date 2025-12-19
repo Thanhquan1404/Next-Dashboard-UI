@@ -207,15 +207,17 @@ const CustomerDetail = () => {
     try {
       const success = await updateAssigner(customerID, selectedAssignerId);
 
-      // For now, simulate success
       if (success) {
         showNotification("Customer reassigned successfully");
 
-
+        // Update local state with the new assigner data
         setCustomer((prev: any) => ({
           ...prev,
           assignTo: {
-            fullName: selectedAssigner.fullName
+            ...prev.assignTo, // Keep existing properties
+            ...selectedAssigner, // Override with new assigner data
+            fullName: selectedAssigner.fullName,
+            email: selectedAssigner.email
           }
         }));
 
@@ -446,11 +448,11 @@ const CustomerDetail = () => {
             <h2 className="text-lg font-bold text-gray-900 mb-4">Assigned To</h2>
             <div className="flex items-center">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white text-lg font-bold">
-                {getInitials(`${customer.assignTo.firstName} ${customer.assignTo.lastName}`)}
+                {getInitials(customer.assignTo.fullName || `${customer.assignTo.firstName} ${customer.assignTo.lastName}`)}
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium text-gray-900">
-                  {customer.assignTo.lastName} {customer.assignTo.firstName}
+                  {customer.assignTo.fullName || `${customer.assignTo.lastName} ${customer.assignTo.firstName}`}
                 </p>
                 <p className="text-xs text-gray-500">{customer.assignTo.email}</p>
               </div>
