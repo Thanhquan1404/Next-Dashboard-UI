@@ -12,7 +12,7 @@ const useLogin = () => {
    * login - send data to api route to make communication with backend to login authentication 
    * @param data username - password 
    */
-  const login = async (data: loginRequestType): Promise<loginResponseType> => {
+  const login = async (data: loginRequestType) => {
     setLoading(true);
 
     try {
@@ -33,29 +33,12 @@ const useLogin = () => {
       }
 
       if (!res.ok) {
-        return {
-          code: result?.code ?? res.status,
-          message: result?.message ?? "Login failed",
-          error: result?.error
-            ? {
-                code: result.error.code,
-                message: result.error.message,
-              }
-            : undefined,
-        };
+        throw new Error(result.error.message || result.message || "Processed failed");
       }
+      
+      
 
-      return {
-        code: result.code,
-        message: result.message,
-        data: {
-          accessToken: result.data.accessToken,
-          refreshToken: result.data.refreshToken,
-          fullName: result.data.fullName,
-          avatarUrl: result.data.avatarUrl,
-        },
-      };
-
+      return result;
     } catch {
       return {
         code: 500,

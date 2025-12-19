@@ -1,9 +1,17 @@
+"use client"
 import Image from "next/image";
 import { role } from "@/lib/data";
+import { useAuthentication } from "@/providers/AuthenticationProvider";
 
 const newAnnouncement = [1, 2, 3, 4];
 
 const Navbar = () => {
+  const {userInfo} = useAuthentication();
+
+  if (!userInfo){
+    return;
+  }
+
   return (
     <div className="border-none flex items-center p-4 bg-transparent">
       {/* Search bar */}
@@ -36,9 +44,9 @@ const Navbar = () => {
         {/* User info */}
         <div className="flex flex-col text-right">
           <span className="text-xs leading-3 font-medium">
-            Nguyen Thanh Quan
+            {userInfo.data?.fullName}
           </span>
-          <span className="text-[12px] text-gray-500">{role}</span>
+          <span className="text-[12px] text-gray-500">{userInfo.data?.role}</span>
         </div>
 
         {/* Avatar */}

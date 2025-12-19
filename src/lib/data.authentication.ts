@@ -16,6 +16,7 @@ export interface loginResponseType {
     refreshToken: string,
     fullName: string,
     avatarUrl: string,
+    role: string,
   }
 }
 

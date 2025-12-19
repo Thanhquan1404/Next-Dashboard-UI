@@ -10,29 +10,33 @@ const menuItems = [
   {
     title: "MENU",
     items: [
-      { icon: "/dashboard.png", label: "Dashboard", href: "/dashboard", visible: ["Admin", "Employee"] },
-      { icon: "/sale_report.png", label: "Sale report", href: "/sale-report", visible: ["Admin", "Employee"] },
-      { icon: "/customers.png", label: "Customers", href: "/customers", visible: ["Admin", "Employee"] },
-      { icon: "/products.png", label: "Products", href: "/products", visible: ["Admin", "Employee"] },
-      { icon: "/leads.png", label: "Leads", href: "/leads", visible: ["Admin", "Employee"] },
-      { icon: "/quotation.png", label: "Quotations", href: "/quotations", visible: ["Admin", "Employee"] },
-      { icon: "/orders.png", label: "Orders", href: "/orders", visible: ["Admin", "Employee"] },
-      { icon: "/users.png", label: "Users", href: "/users", visible: ["Admin"] },
+      { icon: "/dashboard.png", label: "Dashboard", href: "/dashboard", visible: ["ADMIN", "USER"] },
+      { icon: "/sale_report.png", label: "Sale report", href: "/sale-report", visible: ["ADMIN", "USER"] },
+      { icon: "/relationship.png", label: "Customers", href: "/customers", visible: ["ADMIN", "USER"] },
+      { icon: "/products.png", label: "Products", href: "/products", visible: ["ADMIN", "USER"] },
+      { icon: "/leads.png", label: "Leads", href: "/leads", visible: ["ADMIN", "USER"] },
+      { icon: "/quotation.png", label: "Quotations", href: "/quotations", visible: ["ADMIN", "USER"] },
+      { icon: "/orders.png", label: "Orders", href: "/orders", visible: ["ADMIN", "USER"] },
+      { icon: "/group.png", label: "Users", href: "/users", visible: ["ADMIN"] },
     ],
   },
   {
     title: "OTHER",
     items: [
-      { icon: "/profile.png", label: "Profile", href: "/profile", visible: ["Admin", "Employee"] },
-      { icon: "/setting.png", label: "Settings", href: "/settings", visible: ["Admin", "Employee"] },
-      { icon: "/logout.png", label: "Logout", href: "/", visible: ["Admin", "Employee"] },
+      { icon: "/profile.png", label: "Profile", href: "/profile", visible: ["ADMIN", "USER"] },
+      { icon: "/setting.png", label: "Settings", href: "/settings", visible: ["ADMIN", "USER"] },
+      { icon: "/logout.png", label: "Logout", href: "/", visible: ["ADMIN", "USER"] },
     ],
   },
 ];
 
 export const Menu = () => {
-  const {userLogOut} = useAuthentication();
+  const {userLogOut, userInfo} = useAuthentication();
   const pathname = usePathname();
+
+  if (!userInfo){
+    return;
+  }
 
   return (
     <div className="mt-4 text-sm">
@@ -45,7 +49,7 @@ export const Menu = () => {
 
           {/* Menu items */}
           {section.items.map((item) => {
-            if (!item.visible.includes(role)) return null;
+            if (!item.visible.includes(userInfo.data?.role || "")) return null;
 
             const isActive = pathname.startsWith(item.href);
 

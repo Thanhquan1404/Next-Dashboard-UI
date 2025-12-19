@@ -18,6 +18,7 @@ import { useCallback, useEffect, useState } from "react";
 import PageLoader from "@/components/PageLoader";
 import { GetInfoResponse } from "@/lib/data.authentication";
 import { useRouter } from "next/navigation";
+import { useAuthentication } from "@/providers/AuthenticationProvider";
 
 
 const containerVariants = {
@@ -33,10 +34,20 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 }
 };
 
+const roleConvert = (role: string) => {
+  if (role === "ADMIN"){
+    return "Administrator"
+  }
+  if (role === "USER"){
+    return "User"
+  }
+  return "Unidentified";
+}
 
 const Page = () => {
   const {loading: getInfoLoading, getInfo} = useGetInfo();
   const [userInfo, setUserInfo] = useState<GetInfoResponse | null>(null);
+  const {userInfo: info} = useAuthentication();
   const router = useRouter();
 
   const getUserInfo = useCallback( async() => {
@@ -110,7 +121,7 @@ const Page = () => {
 
             {/* TODO: replace role */}
             <p className="text-[#1e88e5] font-medium mt-1">
-              CRM Administrator
+              CRM {roleConvert(info?.data?.role || "")}
             </p>
 
             <p className="text-gray-600 text-sm mt-4">
@@ -150,7 +161,7 @@ const Page = () => {
 
               <div className="grid md:grid-cols-2 gap-6 text-sm">
                 <InfoItem label="Username" value={userInfo?.username} />
-                <InfoItem label="Role" value="Administrator" />
+                <InfoItem label="Role" value={roleConvert(info?.data?.role || "")} />
                 <InfoItem label="Account Status" value="Active" />
                 <InfoItem label="Created At" value={userInfo?.createdAt} />
               </div>
