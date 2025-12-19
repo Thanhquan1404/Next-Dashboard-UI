@@ -5,11 +5,11 @@ import { useState } from "react";
 const useGetListUser = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
-  const getListUser = async (): Promise<{users: GetListUserResponseType[], pagination: ApiResponsePagination}> =>{
+  const getListUser = async (pageNo?: number): Promise<{users: GetListUserResponseType[], pagination: ApiResponsePagination}> =>{
     setLoading(true);
 
     try {
-      const resBackend = await fetch('/api/admin/user/getListUser', {
+      const resBackend = await fetch(`/api/admin/getListUser?pageNo=${pageNo}`, {
         method: "GET",
       })
 

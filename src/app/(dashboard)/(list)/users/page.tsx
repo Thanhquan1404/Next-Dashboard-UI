@@ -9,17 +9,25 @@ import { useRouter } from 'next/navigation';
 
 
 const UserManagement = () => {
+  const [currentPage, setCurrentPage] = useState<number>(1);
   // USER PROVIDER
-  const { users, getListUserLoading, getUsers } = useUser();
+  const { users, getListUserLoading, getUsers, getUsersWithPageNo,
+         totalPage, setSearchTerm, searchTerm, handleSearchUser } = useUser();
 
   const router = useRouter();
 
-  // STATE
-  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     getUsers();
   }, []);
+
+  useEffect( () => {
+    const getUserPageNo = async () => {
+      getUsersWithPageNo(currentPage);
+    }
+
+    getUserPageNo();
+  }, [currentPage]);
 
   if (getListUserLoading){
     return (
@@ -28,12 +36,6 @@ const UserManagement = () => {
   }
 
   // Filter users based on search term
-  const filteredUsers = users ? users.filter(user =>
-    user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.username.toLowerCase().includes(searchTerm.toLowerCase())
-  ) : [];
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -87,8 +89,13 @@ const UserManagement = () => {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearchUser(currentPage);
+              }
+            }}
             type="text"
-            placeholder="Search by name, email, or username..."
+            placeholder={`Search by name, email, or username...`}
             className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -123,8 +130,12 @@ const UserManagement = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50 transition">
+              {users && users.map((user) => (
+                <tr 
+                  onClick={() => {
+                    router.push(`/users/${user.id}`)
+                  }}
+                  key={user.id} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <Image
@@ -164,6 +175,8 @@ const UserManagement = () => {
           </table>
         </div>
       </div>
+
+      <PageNavigationComponent currentPage={currentPage} totalPages={totalPage} setCurrentPage={setCurrentPage} />
     </div>
   );
 };

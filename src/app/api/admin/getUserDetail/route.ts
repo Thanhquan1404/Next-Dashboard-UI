@@ -25,7 +25,7 @@ export async function GET(req: NextRequest){
       )
     }
 
-    const resBackend = await fetch(`${path}/${userID}`, {
+    const resBackend = await fetch(`${path}/${userID}/details`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`

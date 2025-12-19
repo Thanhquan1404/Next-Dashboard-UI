@@ -1,8 +1,10 @@
 "use client"
 
 import useGetListUser from "@/fetching/user/getListUsers";
+import useSearchUsers from "@/fetching/user/searchUsers";
 import { GetListUserResponseType } from "@/lib/data.user";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react"
+import { useNotification } from "./NotificationProvider";
 
 interface UserProviderContextType {
   // LOADING 
@@ -10,9 +12,14 @@ interface UserProviderContextType {
 
   // STATE
   users: GetListUserResponseType[] | null,
+  totalPage: number,
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>,
+  searchTerm: string,
 
   // FUNCTION 
   getUsers: () => void,
+  getUsersWithPageNo: (pageNo: number) => void,
+  handleSearchUser: (pageNo: number) => void,
 };
 
 const UserContext = createContext<UserProviderContextType | null>(null);
@@ -32,25 +39,30 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
+  const { showNotification } = useNotification();
+
   // STATE 
   const [users, setUsers] = useState<GetListUserResponseType[] | null>(null);
+  const [totalPage, setTotalPage] = useState<number>(1);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
   // API HOOK
   const {loading: getListUserLoading, getListUser} = useGetListUser();
-
+  const {loading: searchUserLoading, searchUsers} = useSearchUsers();
 
   /**
    * get users - initialize to take all users from backend, and then set to 'users' state
    */
   const getUsers = useCallback( async() => {
     try {
-      const {users, pagination} = await getListUser();
+      const {users, pagination} = await getListUser(1);
+      setTotalPage(pagination.totalPages);
       setUsers(users || []);
     } catch (error) {
       console.error("Failed to fetch users:", error);
       setUsers([]); 
     }
   }, []);
-
   const didFetch = useRef<boolean>(false);
   useEffect( () => {
     if (didFetch.current){ return; }
@@ -58,12 +70,46 @@ export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
     getUsers();
   }, []);
 
+  /**
+   * get users with page number - handle the action when user want to change page to view more user
+   * @param pageNo current pgae number
+   */
+  const getUsersWithPageNo = async (pageNo: number) => {
+    if (searchTerm){ handleSearchUser(pageNo); return; }
+    try {
+      const {users, pagination} = await getListUser(pageNo);
+      setUsers(users || []);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+      setUsers([]); 
+    }
+  }
+
+  const handleSearchUser = async (pageNo: number) => {
+    try {
+      const {users, pagination} = await searchUsers(searchTerm, pageNo);
+      
+      if (users.length !== 0){
+        setTotalPage(pagination.totalPages);
+        setUsers(users || []);
+      }
+    } catch (error) {
+      showNotification(String(error) || "Processed failed", true);
+    }
+  }
+
+
   const value: UserProviderContextType = {
     getListUserLoading,
 
     users,
+    totalPage,
+    setSearchTerm,
+    searchTerm,
 
     getUsers,
+    getUsersWithPageNo,
+    handleSearchUser,
   }
   return (
     <UserContext.Provider value={value}>
