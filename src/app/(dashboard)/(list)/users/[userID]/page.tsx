@@ -19,32 +19,32 @@ import Image from "next/image";
 
 
 const getStatusColor = (status: string) =>
-    status === "DONE"
-      ? "bg-green-100 text-green-800"
-      : "bg-yellow-100 text-yellow-800";
+  status === "DONE"
+    ? "bg-green-100 text-green-800"
+    : "bg-yellow-100 text-yellow-800";
 
 const UserManagementPage = () => {
-  const {loading: getUserDetailLoading, getUserDetail} = useGetUserDetail();
-  const {showNotification} = useNotification();
+  const { loading: getUserDetailLoading, getUserDetail } = useGetUserDetail();
+  const { showNotification } = useNotification();
 
-  const [ userData, setUserData ] = useState<ApiResponseGetUserDetailType>();
+  const [userData, setUserData] = useState<ApiResponseGetUserDetailType>();
   const params = useParams();
   const userID = params.userID as string;
 
   const fetching = useCallback(async () => {
-    if (!userID){ return; }
-    try{
+    if (!userID) { return; }
+    try {
       const user = await getUserDetail(userID);
       setUserData(user);
-    }catch(error){
+    } catch (error) {
       showNotification(String(error), true);
     }
   }, []);
 
   const didFetch = useRef<boolean>(false);
-  useEffect( () => {
-    if (didFetch.current){ return; }
-    didFetch.current=true;
+  useEffect(() => {
+    if (didFetch.current) { return; }
+    didFetch.current = true;
     fetching();
   }, [userID]);
 
@@ -59,9 +59,9 @@ const UserManagementPage = () => {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6 flex justify-between">
           <div className="flex items-center gap-4">
-            <Image width={60} height={60} src={userData.avatarUrl || ""} alt="UserAvatar" className="rounded-full"/>
+            <Image width={60} height={60} src={userData.avatarUrl || ""} alt="UserAvatar" className="rounded-full" />
             <div>
               <h1 className="text-3xl font-bold text-gray-800">
                 {userData.firstName} {userData.lastName}
@@ -72,6 +72,23 @@ const UserManagementPage = () => {
               </span>
             </div>
           </div>
+          <div>
+            <button
+              className="
+                flex items-center justify-center gap-2
+                px-4 py-2
+                rounded-lg
+                bg-red-500
+                text-white
+                text-sm font-medium
+                border border-red-300
+                shadow-sm
+              "
+            >
+              Disabled
+            </button>
+          </div>
+
         </div>
 
         {/* User Information */}

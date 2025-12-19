@@ -30,7 +30,7 @@ const UserManagement = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   // USER PROVIDER
   const { users, getListUserLoading, getUsers, getUsersWithPageNo,
-         totalPage, setSearchTerm, searchTerm, handleSearchUser } = useUser();
+         totalPage, setSearchTerm, searchTerm, handleSearchUser, userSummaryStatistic } = useUser();
 
   const router = useRouter();
 
@@ -47,7 +47,7 @@ const UserManagement = () => {
     getUserPageNo();
   }, [currentPage]);
 
-  if (getListUserLoading){
+  if (getListUserLoading || !userSummaryStatistic){
     return (
       <PageLoader />
     )
@@ -63,7 +63,7 @@ const UserManagement = () => {
         <div className="bg-white rounded-lg shadow p-6 flex items-center justify-between h-40">
           <div>
             <p className="text-gray-500 text-sm font-medium mb-2">Total Users</p>
-            <p className="text-4xl font-bold text-gray-900">{users?.length || 0}</p>
+            <p className="text-4xl font-bold text-gray-900">{userSummaryStatistic.totalUsers || 0}</p>
             <p className="text-green-600 text-sm mt-2">Active users</p>
           </div>
           <div className="bg-blue-100 p-4 rounded-full">
@@ -76,11 +76,7 @@ const UserManagement = () => {
           <div>
             <p className="text-gray-500 text-sm font-medium mb-2">New This Month</p>
             <p className="text-4xl font-bold text-gray-900">
-              {users?.filter(user => {
-                const createdAt = new Date(user.createdAt);
-                const now = new Date();
-                return createdAt.getMonth() === now.getMonth() && createdAt.getFullYear() === now.getFullYear();
-              }).length || 0}
+              {userSummaryStatistic.newThisMonth || 0}
             </p>
             <p className="text-green-600 text-sm mt-2">Recently joined</p>
           </div>
@@ -93,7 +89,7 @@ const UserManagement = () => {
         <div className="bg-white rounded-lg shadow p-6 flex items-center justify-between h-40">
           <div>
             <p className="text-gray-500 text-sm font-medium mb-2">Active Users</p>
-            <p className="text-4xl font-bold text-gray-900">{users?.length || 0}</p>
+            <p className="text-4xl font-bold text-gray-900">{userSummaryStatistic.activeUsers || 0}</p>
             <p className="text-blue-600 text-sm mt-2">Currently active</p>
           </div>
           <div className="bg-purple-100 p-4 rounded-full">

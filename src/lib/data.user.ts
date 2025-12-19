@@ -69,3 +69,10 @@ export interface ApiResponseGetUserDetailType {
     leadCompany: string;
   } [];
 }
+
+//--------------------GET USER SUMMARY REQUEST AND RESPONSE TYPE --------------------
+export interface ApiResponseGetUserSummary{
+  activeUsers: number,
+  newThisMonth: number,
+  totalUsers: number,
+}

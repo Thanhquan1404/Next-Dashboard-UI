@@ -2,9 +2,10 @@
 
 import useGetListUser from "@/fetching/user/getListUsers";
 import useSearchUsers from "@/fetching/user/searchUsers";
-import { GetListUserResponseType } from "@/lib/data.user";
+import { ApiResponseGetUserSummary, GetListUserResponseType } from "@/lib/data.user";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react"
 import { useNotification } from "./NotificationProvider";
+import useUserSummary from "@/fetching/user/userSummary";
 
 interface UserProviderContextType {
   // LOADING 
@@ -15,6 +16,7 @@ interface UserProviderContextType {
   totalPage: number,
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>,
   searchTerm: string,
+  userSummaryStatistic: ApiResponseGetUserSummary | undefined,
 
   // FUNCTION 
   getUsers: () => void,
@@ -45,10 +47,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
   const [users, setUsers] = useState<GetListUserResponseType[] | null>(null);
   const [totalPage, setTotalPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [userSummaryStatistic, setUserSummaryStatistic] = useState<ApiResponseGetUserSummary>();
 
   // API HOOK
   const {loading: getListUserLoading, getListUser} = useGetListUser();
   const {loading: searchUserLoading, searchUsers} = useSearchUsers();
+  const {loading: getUserSummaryLoading, userSummary} = useUserSummary();
 
   /**
    * get users - initialize to take all users from backend, and then set to 'users' state
@@ -56,6 +60,9 @@ export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
   const getUsers = useCallback( async() => {
     try {
       const {users, pagination} = await getListUser(1);
+      const userStatistic = await userSummary();
+      console.log(userStatistic);
+      setUserSummaryStatistic(userStatistic);
       setTotalPage(pagination.totalPages);
       setUsers(users || []);
     } catch (error) {
@@ -106,6 +113,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
     totalPage,
     setSearchTerm,
     searchTerm,
+    userSummaryStatistic,
 
     getUsers,
     getUsersWithPageNo,
