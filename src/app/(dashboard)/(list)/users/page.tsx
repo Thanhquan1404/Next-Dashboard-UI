@@ -8,7 +8,7 @@ import PageLoader from '@/components/PageLoader';
 import { useRouter } from 'next/navigation';
 import { CheckCircle, XCircle } from "lucide-react";
 
-export const Active = () => {
+const Active = () => {
   return (
     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-100 text-green-700 border border-green-200">
       <CheckCircle size={16} />
@@ -17,7 +17,7 @@ export const Active = () => {
   );
 };
 
-export const Disabled = () => {
+const Disabled = () => {
   return (
     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 text-gray-500 border border-gray-200">
       <XCircle size={16} />
