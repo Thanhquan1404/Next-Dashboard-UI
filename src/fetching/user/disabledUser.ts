@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 
-const useEnableUser = () => {
+const useDisableUser = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
-  const enableUser = async (userID: string): Promise<boolean> => {
+  const disableUser = async (userID: string): Promise<boolean> => {
     setLoading(true);
     try{
-      const resBackend = await fetch(`/api/user/enableUser?userID=${userID}`, {
+      const resBackend = await fetch(`/api/user/disableUser?userID=${userID}`, {
         method: "PATCH"
       });
 
@@ -26,7 +26,7 @@ const useEnableUser = () => {
     }
   }
 
-  return {loading, enableUser}
+  return {loading, disableUser}
 }
 
-export default useEnableUser;
+export default useDisableUser;

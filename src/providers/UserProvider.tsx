@@ -7,11 +7,13 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, u
 import { useNotification } from "./NotificationProvider";
 import useUserSummary from "@/fetching/user/userSummary";
 import useEnableUser from "@/fetching/user/enableUser";
+import useDisableUser from "@/fetching/user/disabledUser";
 
 interface UserProviderContextType {
   // LOADING 
   getListUserLoading: boolean,
   enableUserLoading: boolean,
+  disableUserLoading: boolean,
 
   // STATE
   users: GetListUserResponseType[] | null,
@@ -25,6 +27,7 @@ interface UserProviderContextType {
   getUsersWithPageNo: (pageNo: number) => void,
   handleSearchUser: (pageNo: number) => void,
   handleEnableUser: (userID: string) => Promise<boolean>,
+  handleDisableUser: (userID: string) => Promise<boolean>,
 };
 
 const UserContext = createContext<UserProviderContextType | null>(null);
@@ -57,6 +60,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
   const {loading: searchUserLoading, searchUsers} = useSearchUsers();
   const {loading: getUserSummaryLoading, userSummary} = useUserSummary();
   const {loading: enableUserLoading, enableUser} = useEnableUser();
+  const {loading: disableUserLoading, disableUser} = useDisableUser();
 
   /**
    * get users - initialize to take all users from backend, and then set to 'users' state
@@ -125,10 +129,27 @@ export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
     }
   }
 
+  const handleDisableUser = async (userID: string): Promise<boolean> => {
+    try {
+      const success = await disableUser(userID);
+      
+      if (success){
+        showNotification("Successfully enable user");
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      showNotification(String(error) || "Processed failed", true);
+      return false;
+    }
+  }
+
 
   const value: UserProviderContextType = {
     getListUserLoading,
     enableUserLoading,
+    disableUserLoading,
 
     users,
     totalPage,
@@ -139,7 +160,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
     getUsers,
     getUsersWithPageNo,
     handleSearchUser,
-    handleEnableUser
+    handleEnableUser,
+    handleDisableUser,
   }
   return (
     <UserContext.Provider value={value}>

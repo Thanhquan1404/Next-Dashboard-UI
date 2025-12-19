@@ -29,7 +29,7 @@ const UserManagementPage = () => {
   const { loading: getUserDetailLoading, getUserDetail } = useGetUserDetail();
   const { showNotification } = useNotification();
 
-  const { handleEnableUser, enableUserLoading} = useUser();
+  const { handleEnableUser, enableUserLoading, handleDisableUser, disableUserLoading} = useUser();
 
   const [userData, setUserData] = useState<ApiResponseGetUserDetailType>();
   const params = useParams();
@@ -77,9 +77,21 @@ const UserManagementPage = () => {
             </div>
           </div>
           <div>
-            {
+            { 
+              disableUserLoading ? 
+                  <FetchingLoadingStatus loading={disableUserLoading} size={20} color="red"/>
+              :
               !userData.deleted ? (
                 <button
+                  onClick={() =>  {
+                    const action = async () => {
+                      const success = await handleDisableUser(userData.id);
+                      if (success){
+                        setUserData(prev => prev ? { ...prev, deleted: true } : prev);
+                      }
+                    }
+                    action();
+                  }}
                   className="
                     flex items-center justify-center gap-2
                     px-4 py-2
