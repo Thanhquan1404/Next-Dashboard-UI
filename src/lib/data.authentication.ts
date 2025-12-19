@@ -61,6 +61,7 @@ export interface GetInfoResponse {
   lastName: string;
   email: string;
   phoneNumber: string;
+  deleted: boolean;
   address: string;
   avatarUrl: string | null;
   createdAt: string;

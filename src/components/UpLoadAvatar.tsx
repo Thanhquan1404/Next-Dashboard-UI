@@ -7,9 +7,26 @@ interface Props {
   setAvatarFile?: React.Dispatch<React.SetStateAction<File | undefined>>;
   setAvatar?: React.Dispatch<React.SetStateAction<string>>;
   avatar?: string;
+
+  /** Size control */
+  width?: number;
+  height?: number;
+
+  /** Optional styling override */
+  className?: string;
+
+  disabled?: boolean;
 }
 
-const UpLoadAvatar = ({ setAvatarFile, avatar, setAvatar }: Props) => {
+const UpLoadAvatar = ({
+  setAvatarFile,
+  avatar,
+  setAvatar,
+  width = 35,
+  height = 35,
+  className = "",
+  disabled = false,
+}: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
@@ -37,6 +54,7 @@ const UpLoadAvatar = ({ setAvatarFile, avatar, setAvatar }: Props) => {
   return (
     <div>
       <input
+        disabled={disabled ? true : false}
         ref={inputRef}
         type="file"
         accept="image/png, image/jpg, image/jpeg"
@@ -45,15 +63,15 @@ const UpLoadAvatar = ({ setAvatarFile, avatar, setAvatar }: Props) => {
       />
 
       <div
-        className="cursor-pointer"
+        className={`cursor-pointer inline-block ${className}`}
         onClick={handleClick}
         aria-label="Upload avatar"
       >
         <Image
           src={avatar || "/profile.png"}
-          alt="Lead avatar"
-          width={35}
-          height={35}
+          alt="User avatar"
+          width={width}
+          height={height}
           className="rounded-full object-cover"
         />
       </div>
