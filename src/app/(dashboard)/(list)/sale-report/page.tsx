@@ -7,10 +7,13 @@ import StatisticsGrid from "./StatisticGrid";
 import useGetOrderRevenue from "@/fetching/sale-report/getOrderRevenue";
 import PageLoader from "@/components/PageLoader";
 import useGetQuotationRevenue from "@/fetching/sale-report/getQuotationRevenue";
+import useGetTasksCompleted from "@/fetching/sale-report/getTasksCompleted";
 
 const SalesStatisticsPage = () => {
   const {loading: getOrderRevenueLoading, getOrderRevenue} = useGetOrderRevenue();
   const {loading: getQuotationRevenueLoading, getQuotationRevenue} = useGetQuotationRevenue();
+  const {loading: getTasksCompletedLoading, getTasksCompleted} = useGetTasksCompleted();
+
 
   const [statsData, setStatsData] = useState({
     orderRevenue: {
@@ -105,7 +108,8 @@ const SalesStatisticsPage = () => {
       const quotationRevenue = await getQuotationRevenue();
       setStatsData(prev => ({...prev, quotationRevenue: quotationRevenue}))
 
-
+      const tasksCompleted = await getTasksCompleted();
+      setStatsData(prev => ({...prev, tasksCompleted: tasksCompleted}))
     }catch(error){
       console.error(String(error));
     }
@@ -117,7 +121,7 @@ const SalesStatisticsPage = () => {
     fetching();
   }, []);
 
-  if (getOrderRevenueLoading || getQuotationRevenueLoading){
+  if (getOrderRevenueLoading || getQuotationRevenueLoading || getTasksCompletedLoading){
     return (
       <PageLoader />
     )
