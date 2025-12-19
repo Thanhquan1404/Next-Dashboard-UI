@@ -2,13 +2,13 @@
 
 import { useState } from "react"
 
-const useGetOrderRevenue = () => {
+const useGetQuotationRevenue = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
-  const getOrderRevenue =  async (): Promise<any> => {
+  const getQuotationRevenue =  async (): Promise<any> => {
     setLoading(true);
     try{
-      const resBackend = await fetch(`/api/sale-report/orderRevenue`, {
+      const resBackend = await fetch(`/api/sale-report/quotationRevenue`, {
         method: "GET"
       })
 
@@ -26,7 +26,7 @@ const useGetOrderRevenue = () => {
     }
   }
 
-  return {loading, getOrderRevenue}
+  return {loading, getQuotationRevenue}
 }
 
-export default useGetOrderRevenue;
+export default useGetQuotationRevenue;

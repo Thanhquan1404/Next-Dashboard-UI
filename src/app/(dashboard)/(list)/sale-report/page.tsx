@@ -6,9 +6,12 @@ import SummaryCards from "./SummaryCards";
 import StatisticsGrid from "./StatisticGrid";
 import useGetOrderRevenue from "@/fetching/sale-report/getOrderRevenue";
 import PageLoader from "@/components/PageLoader";
+import useGetQuotationRevenue from "@/fetching/sale-report/getQuotationRevenue";
 
 const SalesStatisticsPage = () => {
   const {loading: getOrderRevenueLoading, getOrderRevenue} = useGetOrderRevenue();
+  const {loading: getQuotationRevenueLoading, getQuotationRevenue} = useGetQuotationRevenue();
+
   const [statsData, setStatsData] = useState({
     orderRevenue: {
       name: "Order Revenue",
@@ -96,9 +99,13 @@ const SalesStatisticsPage = () => {
 
   const fetching = useCallback(async() => {
     try{
-      const result = await getOrderRevenue();
+      const orderRevenue = await getOrderRevenue();
+      setStatsData(prev => ({...prev, orderRevenue: orderRevenue}))
 
-      setStatsData(prev => ({...prev, orderRevenue: result}))
+      const quotationRevenue = await getQuotationRevenue();
+      setStatsData(prev => ({...prev, quotationRevenue: quotationRevenue}))
+
+
     }catch(error){
       console.error(String(error));
     }
@@ -110,7 +117,7 @@ const SalesStatisticsPage = () => {
     fetching();
   }, []);
 
-  if (getOrderRevenueLoading){
+  if (getOrderRevenueLoading || getQuotationRevenueLoading){
     return (
       <PageLoader />
     )
