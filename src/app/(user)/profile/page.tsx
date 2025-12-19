@@ -204,7 +204,7 @@ const Page = () => {
       <header className="bg-white/80 backdrop-blur-md shadow-md flex">
         <div className="flex items-center pl-4">
           <Link
-            href="/dashboard"
+            href="/sale-report"
             className="p-2 rounded-full hover:bg-gray-100 transition duration-150 ease-in-out text-gray-600 hover:text-[#1e88e5]"
             aria-label="Go to Dashboard"
           >

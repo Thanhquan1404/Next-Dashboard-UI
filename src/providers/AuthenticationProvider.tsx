@@ -11,7 +11,7 @@ interface AuthenticationConTextType {
   signUpLoading: boolean,
 
   // ACTIONS
-  userLogin: (username: string, password: string) => Promise<boolean>,
+  userLogin: (username: string, password: string) => Promise<any>,
   userSignUp: (username: string, password: string, firstName: string, lastName: string, email: string, phoneNumber: string, address?: string) => Promise<boolean>,
   userLogOut: () => void,
 
@@ -92,7 +92,7 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderProps
    * @param password registered password
    * @returns checking validation of username and password is true or not
    */
-  const userLogin = async (username: string, password: string): Promise<boolean> => {
+  const userLogin = async (username: string, password: string) => {
     try {
       const result = await login({ username, password } as loginRequestType);
 
@@ -111,11 +111,10 @@ export const AuthenticationProvider = ({ children }: AuthenticationProviderProps
       updateUserInfo(result);
       
       showNotification(`Welcome ${result.data?.fullName}`);
-      return true;
+      return result?.data;
     } catch (error) {
       showNotification(String(error), true);
     }
-    return true;
   }
 
   /**

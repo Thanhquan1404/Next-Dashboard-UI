@@ -50,10 +50,15 @@ const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
       password: password,
     }
 
-    const success = await userLogin(userLoginInput.username, userLoginInput.password);
+    const result = await userLogin(userLoginInput.username, userLoginInput.password);
 
-    if (success){
-      router.push("/dashboard")
+    if (result){
+      if (result && result?.role === "USER"){
+        router.push("/customers");
+      }
+      if (result && result.role === "ADMIN"){
+        router.push("/sale-report");
+      }
     }
   }
 

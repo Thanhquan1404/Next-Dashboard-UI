@@ -10,8 +10,8 @@ const menuItems = [
   {
     title: "MENU",
     items: [
-      { icon: "/dashboard.png", label: "Dashboard", href: "/dashboard", visible: ["ADMIN", "USER"] },
-      { icon: "/sale_report.png", label: "Sale report", href: "/sale-report", visible: ["ADMIN", "USER"] },
+      // { icon: "/dashboard.png", label: "Dashboard", href: "/dashboard", visible: ["ADMIN", "USER"] },
+      { icon: "/sale_report.png", label: "Sale report", href: "/sale-report", visible: ["ADMIN"] },
       { icon: "/relationship.png", label: "Customers", href: "/customers", visible: ["ADMIN", "USER"] },
       { icon: "/products.png", label: "Products", href: "/products", visible: ["ADMIN", "USER"] },
       { icon: "/leads.png", label: "Leads", href: "/leads", visible: ["ADMIN", "USER"] },
