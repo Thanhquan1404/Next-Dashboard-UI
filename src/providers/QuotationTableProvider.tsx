@@ -61,7 +61,6 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
     try {
       const { quotationRows, quotationStatistic, dataPaganavigate } = await getAllQuotationWithPageNo(1);
       const result = await quotationSummary();
-      console.log(result);
       if (quotationRows && result) {
         setQuotationRows(quotationRows);
         setQuotationStatistic(result);
@@ -149,6 +148,7 @@ export const QuotationTableProvider: React.FC<QuotationTableProviderProps> = ({ 
       showNotification(String(error), true);
     }
   };
+
 
   return (
     <QuotationTableContext.Provider

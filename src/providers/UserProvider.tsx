@@ -6,10 +6,12 @@ import { ApiResponseGetUserSummary, GetListUserResponseType } from "@/lib/data.u
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react"
 import { useNotification } from "./NotificationProvider";
 import useUserSummary from "@/fetching/user/userSummary";
+import useEnableUser from "@/fetching/user/enableUser";
 
 interface UserProviderContextType {
   // LOADING 
   getListUserLoading: boolean,
+  enableUserLoading: boolean,
 
   // STATE
   users: GetListUserResponseType[] | null,
@@ -22,6 +24,7 @@ interface UserProviderContextType {
   getUsers: () => void,
   getUsersWithPageNo: (pageNo: number) => void,
   handleSearchUser: (pageNo: number) => void,
+  handleEnableUser: (userID: string) => Promise<boolean>,
 };
 
 const UserContext = createContext<UserProviderContextType | null>(null);
@@ -53,6 +56,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
   const {loading: getListUserLoading, getListUser} = useGetListUser();
   const {loading: searchUserLoading, searchUsers} = useSearchUsers();
   const {loading: getUserSummaryLoading, userSummary} = useUserSummary();
+  const {loading: enableUserLoading, enableUser} = useEnableUser();
 
   /**
    * get users - initialize to take all users from backend, and then set to 'users' state
@@ -105,9 +109,26 @@ export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
     }
   }
 
+  const handleEnableUser = async (userID: string): Promise<boolean> => {
+    try {
+      const success = await enableUser(userID);
+      
+      if (success){
+        showNotification("Successfully enable user");
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      showNotification(String(error) || "Processed failed", true);
+      return false;
+    }
+  }
+
 
   const value: UserProviderContextType = {
     getListUserLoading,
+    enableUserLoading,
 
     users,
     totalPage,
@@ -118,6 +139,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({children}) => {
     getUsers,
     getUsersWithPageNo,
     handleSearchUser,
+    handleEnableUser
   }
   return (
     <UserContext.Provider value={value}>

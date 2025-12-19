@@ -46,6 +46,7 @@ export interface ApiResponseGetUserDetailType {
   email: string;
   phoneNumber: string;
   avatarUrl: string | null;
+  deleted: boolean;
   roleName: "USER" | "ADMIN" | string;
 
   statistics: {

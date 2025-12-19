@@ -16,6 +16,8 @@ import { useParams } from "next/navigation";
 import useGetUserDetail from "@/fetching/user/getUserDetail";
 import { useNotification } from "@/providers/NotificationProvider";
 import Image from "next/image";
+import { useUser } from "@/providers/UserProvider";
+import FetchingLoadingStatus from "@/components/FetchingLoadingStatus";
 
 
 const getStatusColor = (status: string) =>
@@ -26,6 +28,8 @@ const getStatusColor = (status: string) =>
 const UserManagementPage = () => {
   const { loading: getUserDetailLoading, getUserDetail } = useGetUserDetail();
   const { showNotification } = useNotification();
+
+  const { handleEnableUser, enableUserLoading} = useUser();
 
   const [userData, setUserData] = useState<ApiResponseGetUserDetailType>();
   const params = useParams();
@@ -73,20 +77,51 @@ const UserManagementPage = () => {
             </div>
           </div>
           <div>
-            <button
-              className="
-                flex items-center justify-center gap-2
-                px-4 py-2
-                rounded-lg
-                bg-red-500
-                text-white
-                text-sm font-medium
-                border border-red-300
-                shadow-sm
-              "
-            >
-              Disabled
-            </button>
+            {
+              !userData.deleted ? (
+                <button
+                  className="
+                    flex items-center justify-center gap-2
+                    px-4 py-2
+                    rounded-lg
+                    bg-red-500
+                    text-white
+                    text-sm font-medium
+                    border border-red-300
+                    shadow-sm
+                  "
+                >
+                  Disabled
+                </button>
+              ) : (
+                enableUserLoading ? 
+                  <FetchingLoadingStatus loading={enableUserLoading} size={20} color="green"/>
+                :
+                <button
+                  onClick={() =>  {
+                    const action = async () => {
+                      const success = await handleEnableUser(userData.id);
+                      if (success){
+                        setUserData(prev => prev ? { ...prev, deleted: false } : prev);
+                      }
+                    }
+                    action();
+                  }}
+                  className="
+                    flex items-center justify-center gap-2
+                    px-4 py-2
+                    rounded-lg
+                    bg-green-500
+                    text-white
+                    text-sm font-medium
+                    border border-green-300
+                    shadow-sm
+                  "
+                >
+                  Active
+                </button>
+              )
+            }
           </div>
 
         </div>
