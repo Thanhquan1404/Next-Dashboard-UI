@@ -22,6 +22,7 @@ export interface GetListUserResponseType{
   lastName: string;
   email: string;
   phoneNumber: string;
+  deleted: boolean;
   address: string;
   avatarUrl: string | null;
   createdAt: string;  
@@ -34,4 +35,37 @@ export interface ApiResponseGetAssignersType {
   fullName: string,
   avatarUrl: string,
   email: string,
+}
+
+//--------------------GET DETAIL USER REQUEST AND RESPONSE TYPE --------------------
+export interface ApiResponseGetUserDetailType {
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  avatarUrl: string | null;
+  roleName: "USER" | "ADMIN" | string;
+
+  statistics: {
+    totalLeads: number;
+    openLeads: number;
+    convertedLeads: number;
+    totalActivities: number;
+    pendingActivities: number;
+    completedActivities: number;
+  };
+  activities: {
+    id: string;
+    type: "SMS" | "EMAIL" | "MEETING" | "CALL" | string;
+    content: string;
+    validUntil: string; 
+    status: "PENDING" | "DONE" | string;
+    completed: boolean;
+    createdAt: string;
+    leadId: string;
+    leadName: string;
+    leadCompany: string;
+  } [];
 }

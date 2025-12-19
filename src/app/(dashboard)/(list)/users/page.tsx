@@ -6,7 +6,25 @@ import Image  from 'next/image';
 import { useUser } from '@/providers/UserProvider';
 import PageLoader from '@/components/PageLoader';
 import { useRouter } from 'next/navigation';
+import { CheckCircle, XCircle } from "lucide-react";
 
+export const Active = () => {
+  return (
+    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-100 text-green-700 border border-green-200">
+      <CheckCircle size={16} />
+      <span className="text-sm font-medium">Active</span>
+    </div>
+  );
+};
+
+export const Disabled = () => {
+  return (
+    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 text-gray-500 border border-gray-200">
+      <XCircle size={16} />
+      <span className="text-sm font-medium">Disabled</span>
+    </div>
+  );
+};
 
 const UserManagement = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -122,7 +140,7 @@ const UserManagement = () => {
                   Phone
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Address
+                  STATUS
                 </th>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Created At
@@ -162,7 +180,9 @@ const UserManagement = () => {
                     <div className="text-sm text-gray-900">{user.phoneNumber}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{user.address}</div>
+                    {
+                      user.deleted ? <Disabled /> : <Active />
+                    }
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
