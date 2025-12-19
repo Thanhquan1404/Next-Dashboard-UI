@@ -15,7 +15,7 @@ interface StatCardProps {
   currentAmount: number;
   pastAmount: number;
   percentage: number;
-  status: "profit" | "loss";
+  status: "profit" | "loss" | "neutral";
   chartData: ChartDataPoint[];
   icon?: React.ReactNode;
   colorScheme?: {

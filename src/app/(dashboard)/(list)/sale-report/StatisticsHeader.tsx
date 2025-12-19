@@ -34,7 +34,7 @@ const StatisticsHeader = ({
           </p>
         </div>
 
-        {/* <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
           {onRefresh && (
             <button
               onClick={onRefresh}
@@ -45,7 +45,7 @@ const StatisticsHeader = ({
             </button>
           )}
           
-          {onExport && (
+          {/* {onExport && (
             <button
               onClick={onExport}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
@@ -53,8 +53,8 @@ const StatisticsHeader = ({
               <Download className="w-4 h-4" />
               Export
             </button>
-          )}
-        </div> */}
+          )} */}
+        </div>
       </div>
     </motion.div>
   );

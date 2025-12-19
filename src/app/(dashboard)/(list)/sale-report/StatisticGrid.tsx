@@ -13,7 +13,7 @@ interface StatData {
   currentAmount: number;
   pastAmount: number;
   percentage: number;
-  status: "profit" | "loss";
+  status: "profit" | "loss" | "neutral";
   chartData: Array<{
     name: string;
     current: number;
