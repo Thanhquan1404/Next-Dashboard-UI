@@ -196,3 +196,11 @@ export interface ProductDetailResponseType {
   imageUrl: string,
   tag: string | null
 }
+
+// types/product.ts
+export interface ProductFilterParams {
+  status: string;
+  pageNo: number;
+  minPrice: number;
+  maxPrice: number;
+}

@@ -39,14 +39,25 @@ export const useGetListProductWithPageNo = () => {
   const [error, setError] = useState<any | null>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const getListProductsWithPageNo = async (pageNumber: number) => {
+  const getListProductsWithPageNo = async (
+    pageOrParams: number | { pageNo: number; status?: string; minPrice?: number | null; maxPrice?: number | null }
+  ) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axios.get(`/api/product/getList`, {
-        params: { pageNo: pageNumber },
-      });
+      let params: any = {};
+
+      if (typeof pageOrParams === "number") {
+        params.pageNo = pageOrParams;
+      } else {
+        params.pageNo = pageOrParams.pageNo;
+        if (pageOrParams.status !== undefined && pageOrParams.status !== "") params.status = pageOrParams.status;
+        if (pageOrParams.minPrice !== undefined && pageOrParams.minPrice !== null) params.minPrice = pageOrParams.minPrice;
+        if (pageOrParams.maxPrice !== undefined && pageOrParams.maxPrice !== null) params.maxPrice = pageOrParams.maxPrice;
+      }
+
+      const response = await axios.get(`/api/product/getList`, { params });
 
       const resData = response.data;
       setData(resData.data);

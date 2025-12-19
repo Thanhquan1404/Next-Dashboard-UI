@@ -3,7 +3,7 @@ import AddingProductWindow from "./AddingProductWindow";
 import CategoryOptions from "./CategoryOptions";
 import ProductsPageHeader from "./ProductsPageHeader";
 import ProductsTable from "./ProductsTable";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { ProductDataType, ProductDetailResponseType, ProductDetailType } from "@/lib/data.product";
 import ProductDetailWindow from "./ProductDetailWindow";
 import { useGetListProducts, useGetListProductWithPageNo } from "@/fetching/product/getListProducts";
@@ -12,6 +12,8 @@ import ProductInCSVFile from "./ProductInCSVFile";
 import { useNotification } from "@/providers/NotificationProvider";
 import { useSearchParams } from "next/navigation";
 import useSearchProduct from "@/fetching/product/searchProduct";
+import { ProductFilterParams } from "@/lib/data.product";
+
 
 // FUNCTION TO ASSIGN PRODUCT DETAIL INTO PRODUCT IN TABLE
 const productTableData = (listProductDetail: ProductDetailType[]): ProductDataType[] => {
@@ -87,6 +89,7 @@ const Page = () => {
   const [productDetailVisible, setProductDetailVisible] = useState<boolean>(false);
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
   const [selectedCSVFile, setSelectedCSVFile] = useState<File | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   // FUNCTION TO HANDLE 'ADDING' WINDOW TOGGLE
   const handleWindowToggle = (): void => {
@@ -95,9 +98,53 @@ const Page = () => {
   // FUNCTION TO FETCHING DATA
   const hasFetched = useRef(false);
   const isInitialPageSet = useRef(false);
+
   // PAGENAVIGATION STATE
   const [totalPages, setTotalPages] = useState<number>(-1);
   const [currentPage, setCurrentPage] = useState<number>(-1);
+
+  const resetPage = useCallback(async () => {
+    try {
+      const response = await getListProducts();
+
+      const resData: ProductDetailResponseType[] = response.data;
+      const pagination = response.pagination;
+
+      if (resData) {
+        const listDetailProduct: ProductDetailType[] = resData.map((item) => ({
+          PRODUCT_ID: item.productId,
+          PRODUCT_BRAND: item.productBrand,
+          PRODUCT_CATEGORY: item.productCategory,
+          PRODUCT_NAME: item.productName,
+          DESCRIPTION: item.description,
+          PRODUCT_SUBTITLE: item.productSubtitle,
+          PURCHASE_UNIT_PRICE: item.purchaseUnitPrice,
+          PRODUCTS: item.quantity,
+          SKU: item.sku,
+          STATUS: item.status,
+          IMAGE1_URL: item.imageUrl,
+          IMAGE2_URL: "",
+          IMAGE3_URL: "",
+          TAG: "",
+          DISCOUNT: item.discount,
+          DISCOUNT_TYPE: item.discountType,
+          COLOR: "",
+        }));
+
+        setDetailProducts(listDetailProduct);
+      }
+
+      // SET PAGINATION
+      if (pagination) {
+        setTotalPages(pagination.totalPages);
+        setCurrentPage(pagination.pageNumber);
+      }
+
+      isInitialPageSet.current = true;
+    } catch (error) {
+      alert(`List product fetching data error \n${error}`);
+    }
+  }, []);
 
   // INITIAL LOADING PRODUCT PAGE
   useEffect(() => {
@@ -156,6 +203,21 @@ const Page = () => {
     const fetchProductsWithPageNo = async () => {
       if (!isInitialPageSet.current) return;
 
+      if (searchTerm) {
+        handleSearchProductEvent(currentPage);
+        return;
+      }
+
+      if (showOptionSelect || minPrice || maxPrice){
+        const params: ProductFilterParams = {
+          status: showOptionSelect,
+          minPrice: Number(minPrice) || 0,
+          maxPrice: Number(maxPrice) || 0,
+          pageNo: currentPage,
+        };
+        handleFilterProductEvent(params);
+        return;
+      }
       try {
         const response = await getListProductsWithPageNo(currentPage);
 
@@ -191,7 +253,7 @@ const Page = () => {
           setTotalPages(pagination.totalPages);
         }
       } catch (error) {
-        alert(`List product fetching data error \n${error}`);
+        showNotification(String(error), true);
       } finally {
         hasFetched.current = true;
       }
@@ -211,11 +273,9 @@ const Page = () => {
   }, [detailProducts]);
 
   // FUNCTION TO HANDLE 'DEARCH PRODUCT` ACTION 
-  const handleSearchProductEvent = async (query: string, status: string, orderBy: string) => {
-
-    
+  const handleSearchProductEvent = async (pageNo?: number) => {
     try {
-      const response = await searchProduct(query, status, orderBy);
+      const response = await searchProduct(searchTerm, pageNo || 1);
       const resData: ProductDetailResponseType[] = response.data;
       const pagination = response.pagination;
 
@@ -252,7 +312,7 @@ const Page = () => {
       isInitialPageSet.current = true;
 
     } catch (error) {
-      alert(`List product fetching data error \n${error}`);
+      showNotification(String(error), true);
     } finally {
       hasFetched.current = true;
     }
@@ -305,13 +365,82 @@ const Page = () => {
     }
   };
 
+  const [showOptionSelect, setShowOptionSelect] = useState<string>("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const handleFilterProductEvent = async ({
+    status,
+    pageNo,
+    minPrice,
+    maxPrice,
+  }: ProductFilterParams) => {
+    try {
+      const response = await getListProductsWithPageNo({
+        pageNo,
+        status,
+        minPrice,
+        maxPrice,
+      });
+
+      const resData: ProductDetailResponseType[] = response.data;
+      const pagination = response.pagination;
+
+      if (resData) {
+        const listDetailProduct: ProductDetailType[] = resData.map((item) => ({
+          PRODUCT_ID: item.productId,
+          PRODUCT_BRAND: item.productBrand,
+          PRODUCT_CATEGORY: item.productCategory,
+          PRODUCT_NAME: item.productName,
+          DESCRIPTION: item.description,
+          PRODUCT_SUBTITLE: item.productSubtitle,
+          PURCHASE_UNIT_PRICE: item.purchaseUnitPrice,
+          PRODUCTS: item.quantity,
+          SKU: item.sku,
+          STATUS: item.status,
+          IMAGE1_URL: item.imageUrl,
+          IMAGE2_URL: "",
+          IMAGE3_URL: "",
+          TAG: "",
+          DISCOUNT: item.discount,
+          DISCOUNT_TYPE: item.discountType,
+          COLOR: "",
+        }));
+
+        setDetailProducts(listDetailProduct);
+      }
+
+      if (pagination) {
+        setTotalPages(pagination.totalPages);
+        setCurrentPage(pagination.pageNumber);
+      } else {
+        setCurrentPage(pageNo);
+      }
+    } catch (error) {
+      showNotification(String(error), true);
+    }
+  };
+
+
   return (
     <div className="w-full h-full relative overflow-hidden">
       <div className="bg-transparent w-full h-full flex flex-col gap-1">
         {/* PAGE HEADER */}
-        <ProductsPageHeader handleWindowToggle={handleWindowToggle} handleSearchProductEvent={handleSearchProductEvent} />
-        {/* CATEGORY FILTER */}
-        {/* <CategoryOptions detailProducts={detailProducts} setDetailProducts={setDetailProducts} /> */}
+        <ProductsPageHeader
+          currentPage={currentPage}
+          resetPage={resetPage}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          handleWindowToggle={handleWindowToggle}
+          handleSearchProductEvent={handleSearchProductEvent}
+          handleFilterProductEvent={handleFilterProductEvent}
+
+          showOptionSelect={showOptionSelect}
+          setShowOptionSelect={setShowOptionSelect}
+          minPrice={minPrice}
+          setMinPrice={setMinPrice}
+          maxPrice={maxPrice}
+          setMaxPrice={setMaxPrice}
+        />
         {/* PRODUCT TABLE */}
         <ProductsTable
           loadingDeleteProduct={loadingDeleteProduct}

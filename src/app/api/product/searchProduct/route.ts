@@ -19,15 +19,11 @@ export async function GET(req: NextRequest) {
 
     const query = req.nextUrl.searchParams.get("query");
 
-    const status = req.nextUrl.searchParams.get("status");
-    const orderBy = req.nextUrl.searchParams.get("orderBy");
+    const pageNo = req.nextUrl.searchParams.get("pageNo");
 
     let more: string = "";
-    if (status){
-      more = more + `&status=${status}`;
-    }
-    if (orderBy){
-      more = more + `&orderBy=${orderBy}`;
+    if (pageNo){
+      more = more + `&pageNo=${pageNo}`;
     }
 
     const resBackend = await fetch(`${path}/search?query=${query}${more}`, {
