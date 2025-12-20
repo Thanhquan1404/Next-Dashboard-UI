@@ -8,7 +8,7 @@ const useAddLead = () => {
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const addLead = async (newLead: leadType, stageID: string): Promise<boolean> => {
+  const addLead = async (newLead: leadType, stageID: string): Promise<any> => {
     setLoading(true);
     setError(null);
 
@@ -31,7 +31,7 @@ const useAddLead = () => {
       }
 
       setData(resData);
-      return (resData?.code ?? 200) === 200;
+      return resData.data;
       
     } catch (err) {
       const errAny = err as Error;

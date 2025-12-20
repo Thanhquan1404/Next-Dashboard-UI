@@ -180,16 +180,29 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
   // ADDING A NEW LEAD 
   const addingNewLead = async (newLead: leadType, targetColumn: string, stageID: string) => {
     try {
-      const success: boolean = await addLead(newLead, stageID);
+      const response = await addLead(newLead, stageID);
 
-      if (!success) {
+      if (!response) {
         showNotification("Failed to add lead", true);
         return false;
       }
 
+      const lead: leadType = {
+        leadID: response.id,
+        avatarURL: response.avatarUrl,
+        name: response.fullName,
+        createdDate: response.createdAt,
+        phone: response.phoneNumber,
+        email: response.email,
+        rating: response.rating,
+        expectedRevenue: response.expectedRevenue,
+        source: response.source,
+        status: response.stage.name,
+      }
+
       setLeadItemsInStage((prev) => ({
         ...prev,
-        [targetColumn]: [...prev[targetColumn], newLead]
+        [targetColumn]: [...prev[targetColumn], lead]
       }));
       showNotification("Successfully add a new lead");
       return true;
@@ -320,19 +333,19 @@ export const LeadStageColumnProvider: React.FC<LeadStageColumnProviderProps> = (
 
   // DELETE A STAGE COLUMN
   const deleteLeadColumn = async (stageID: string) => {
-    try{
+    try {
       const success = await deleteStage(stageID);
 
-      if (success){
+      if (success) {
         showNotification("Delete stage successfully");
         setLeadStage(prev => {
           const newLeadStage = prev.filter(stage => stage.id !== stageID);
           return newLeadStage;
         })
-      }else{
+      } else {
         showNotification("There is errror in delete a stage", true)
       }
-    }catch(error){
+    } catch (error) {
       showNotification(String(error), true);
     }
   }
