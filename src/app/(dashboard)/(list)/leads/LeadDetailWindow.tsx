@@ -47,6 +47,20 @@ const LeadDetailWindow = () => {
       leadDetailInfo.status = updateStatus || "";
       console.log(leadDetailInfo);
       setIsUpdated(false);
+      const changed = 
+        updateAvatar !== (leadDetailInfo.avatarURL || "") ||
+        updateCompany !== (leadDetailInfo.company || "") ||
+        updateEmail !== (leadDetailInfo.email || "") ||
+        updateExpectedValue !== (leadDetailInfo.expectedValue || "") ||
+        updateName !== (leadDetailInfo.name || "") ||
+        updatePhone !== (leadDetailInfo.phone || "") ||
+        updateRating !== (Number(leadDetailInfo.rating) || 1) ||
+        updateSource !== (leadDetailInfo.source || "") ||
+        updateStatus !== (leadDetailInfo.status || null);
+      
+      if (!changed){
+        return;
+      }
     }
 
     const newLeadDetail: LeadDetailType = {
