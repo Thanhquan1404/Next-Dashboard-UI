@@ -9,6 +9,8 @@ import { LeadDetailType } from "@/lib/data.leads";
 import LeadProcessingBar from "@/components/LeadProcessingBar";
 import { moneyFormat } from "@/util/moneyFormat";
 import { useRouter } from "next/navigation";
+import { Divide } from "lucide-react";
+import LeadNote from "./LeadNote";
 
 const LeadDetailWindow = () => {
   // LEAD DETAIL PROVIDER 
@@ -32,6 +34,7 @@ const LeadDetailWindow = () => {
   const [updateRating, setUpdateRating] = useState(1);
   const [updateSource, setUpdateSource] = useState("");
   const [updateStatus, setUpdateStatus] = useState<string | null>(null);
+  const [updateNote, setUpdateNote] = useState("");
   const [forwardStageID, setForwardStageID] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | undefined>();
 
@@ -56,7 +59,8 @@ const LeadDetailWindow = () => {
         updatePhone !== (leadDetailInfo.phone || "") ||
         updateRating !== (Number(leadDetailInfo.rating) || 1) ||
         updateSource !== (leadDetailInfo.source || "") ||
-        updateStatus !== (leadDetailInfo.status || null);
+        updateStatus !== (leadDetailInfo.status || null) ||
+        updateNote !== (leadDetailInfo.note || "");
       
       if (!changed){
         return;
@@ -67,7 +71,7 @@ const LeadDetailWindow = () => {
       leadID: leadDetailInfo.leadID ?? "",
       avatarURL: updateAvatar  === leadDetailInfo.avatarURL ? "" : updateAvatar,
       name: updateName === leadDetailInfo.name ? "" : updateName,
-      expectedValue: updateExpectedValue === leadDetailInfo.expectedValue ? 0 : updateExpectedValue,
+      expectedValue: leadDetailInfo.expectedValue,
       company: updateCompany === leadDetailInfo.company ? "" : updateCompany,
       phone: updatePhone === leadDetailInfo.phone ? "" : updatePhone,
       email: updateEmail === leadDetailInfo.email ? "" : updateEmail,
@@ -76,6 +80,7 @@ const LeadDetailWindow = () => {
       nation: "",
       createdDate: "",
       rating: updateRating === leadDetailInfo.rating ? 0 : updateRating,
+      note: updateNote === leadDetailInfo.note ? "" : updateNote,
       assignTo: "",
     };  
 
@@ -91,6 +96,7 @@ const LeadDetailWindow = () => {
     setUpdateExpectedValue(leadDetailInfo?.expectedValue || 0);
     setUpdatePhone(leadDetailInfo?.phone || "");
     setUpdateStatus(leadDetailInfo?.status || "");
+    setUpdateNote(leadDetailInfo?.note || "");
     setIsUpdated(false);
   };
 
@@ -106,6 +112,7 @@ const LeadDetailWindow = () => {
       setUpdateRating(1);
       setUpdateSource("");
       setUpdateStatus(null);
+      setUpdateNote("");
       setIsUpdated(false);
       return;
     }
@@ -119,6 +126,7 @@ const LeadDetailWindow = () => {
     setUpdateRating(Number(leadDetailInfo.rating) || 1);
     setUpdateSource(leadDetailInfo.source || "");
     setUpdateStatus(leadDetailInfo.status || null);
+    setUpdateNote(leadDetailInfo.note || "");
 
     setIsUpdated(false);
   }, [leadDetailInfo]);
@@ -139,7 +147,8 @@ const LeadDetailWindow = () => {
       updatePhone !== (leadDetailInfo.phone || "") ||
       updateRating !== (Number(leadDetailInfo.rating) || 1) ||
       updateSource !== (leadDetailInfo.source || "") ||
-      updateStatus !== (leadDetailInfo.status || null);
+      updateStatus !== (leadDetailInfo.status || null) ||
+      updateNote !== (leadDetailInfo.note || "");
 
     setIsUpdated(changed);
   }, [
@@ -152,6 +161,7 @@ const LeadDetailWindow = () => {
     updateRating,
     updateSource,
     updateStatus,
+    updateNote,
     leadDetailInfo
   ]);
 
@@ -194,6 +204,7 @@ const LeadDetailWindow = () => {
     setUpdateRating(Number(leadDetailInfo.rating) || 1);
     setUpdateSource(leadDetailInfo.source || "");
     setUpdateStatus(leadDetailInfo.status || null);
+    setUpdateNote(leadDetailInfo.note || "");
 
     setIsUpdated(false);
   }, [leadDetailInfo]);
@@ -277,7 +288,7 @@ const LeadDetailWindow = () => {
         {/* JOB TITLE */}
         <div className="w-fit h-full flex flex-col justify-center items-start">
           <div className="text-[12px] text-gray-500/90">Expected value</div>
-          <div className="text-[14px] w-full h-fit font-semibold"> {moneyFormat(updateExpectedValue)}đ</div>
+          <div className="text-[14px] w-full h-fit font-semibold"> {moneyFormat(leadDetailInfo?.expectedValue || 0)}đ</div>
         </div>
 
         {/* EMAIL */}
@@ -365,7 +376,7 @@ const LeadDetailWindow = () => {
           </div>
 
           {/* ACTIVITY TIME LINE */}
-          <AddingLeadActivityTimeline />
+          { selectedSectionHeader === "Activity Timeline" ? <AddingLeadActivityTimeline /> : <LeadNote note={updateNote} onChange={setUpdateNote} editable={true} />}
         </div>
         {/* LeadActivityTimeLineSequence  */}
         <LeadActivityTimelineSequence sequenceActivity={leadSequenceActivity ? leadSequenceActivity : null} />

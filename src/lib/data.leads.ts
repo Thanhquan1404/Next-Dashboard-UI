@@ -35,6 +35,7 @@ export interface LeadDetailType {
   phone: string;
   email: string;
   rating: number;
+  note: string;
   source: string;
   status: string;
   assignTo: string;

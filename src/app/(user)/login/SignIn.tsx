@@ -3,11 +3,11 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
-import EmailIcon from '@mui/icons-material/Email';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useState } from 'react';
 import { userLoginType } from '@/lib/data.user';
+import { User } from 'lucide-react';
 
 const FetchingLoadingStatus = ({ loading }: { loading: boolean }) => (
     <div className="mx-auto mt-4">
@@ -102,11 +102,11 @@ const SignIn = ({ isSignIn }: { isSignIn: boolean }) => {
 
       {/* Input: Email */}
       <div className={inputContainerStyle}>
-        <EmailIcon className="text-white/70" style={iconStyle} />
+        <User className="text-white/70" style={iconStyle} />
         <input
           type="text"
           onChange={(e) => setUsername(e.target.value)}
-          placeholder="Email Address"
+          placeholder="Username"
           className={inputStyle}
         />
       </div>

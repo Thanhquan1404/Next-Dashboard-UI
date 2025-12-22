@@ -48,6 +48,7 @@ const mappingResponseData = (responseLeadDetail: ApiResponseDataType):
     phone: responseLeadDetail.phoneNumber,
     email: responseLeadDetail.email,
     rating: responseLeadDetail.rating,
+    note: responseLeadDetail.note,
     source: "",
     status: responseLeadDetail.stage.name,
     assignTo: responseLeadDetail.assignTo.lastName + " " + responseLeadDetail.assignTo.firstName,

@@ -61,8 +61,11 @@ const dataConvert = (lead: LeadDetailType, avatarFile: File | undefined) => {
   if (leafIsValidNumber(lead.rating))
     formData.append("rating", String(lead.rating));
 
-  if (leafIsValidNumber(lead.expectedValue))
+  if (lead.expectedValue !== undefined && lead.expectedValue !== null)
     formData.append("expectedRevenue", String(lead.expectedValue));
+
+  if (lead.note !== undefined && lead.note !== "")
+    formData.append("note", lead.note);
 
   if (avatarFile){
     formData.append("image", avatarFile)
@@ -86,6 +89,7 @@ const responseConvert = (updated: any): LeadDetailType => {
     phone: updated.phoneNumber || "",
     email: updated.email || "",
     rating: updated.rating ?? 1,
+    note: updated.note || "",
     source: updated.source || "",
     status: updated.stage?.name || "",
     assignTo: updated.assignTo
